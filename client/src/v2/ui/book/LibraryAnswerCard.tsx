@@ -1,7 +1,7 @@
 import { forwardRef, useId } from 'react';
 import { DashGlyph, ExternalGlyph, FoundGlyph, NotCheckedGlyph, PinGlyph } from '../home/homeIcons';
 import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
-import type { CheckReason } from '../../api';
+import { MAX_CATALOG_MATCHES, type CheckReason } from '../../api';
 
 // Words for each answer (plan A3, the wording table). `unconfirmed` (the
 // catalog answered but did not prove this book) reads as "Couldn't check
@@ -90,7 +90,7 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       {answer === 'found' && matches && matches.length > 0 && <>
         <p id={matchesId}>In the library’s catalog:</p>
         <ul className="library-answer-matches" aria-labelledby={matchesId}>
-          {matches.map((match, index) => <li key={index}>
+          {matches.slice(0, MAX_CATALOG_MATCHES).map((match, index) => <li key={index}>
             {match.url || catalogUrl
               ? <a href={match.url || catalogUrl} target="_blank" rel="noopener noreferrer">{match.title}<span className="visually-hidden">, opens in a new tab</span></a>
               : <span>{match.title}</span>}

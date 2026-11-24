@@ -124,6 +124,11 @@ describe('library answer card', () => {
     expect(screen.getByRole('list', { name: 'In the library’s catalog:' })).toHaveTextContent('Wings of fire');
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
     cleanup();
+    // At most ten rows, in the order given (best match first).
+    show({ answer: 'found', matches: Array.from({ length: 12 }, (_, index) => ({ title: `Row ${index + 1}` })) });
+    expect(within(screen.getByRole('list')).getAllByRole('listitem').map(item => item.textContent))
+      .toEqual(Array.from({ length: 10 }, (_, index) => `Row ${index + 1}`));
+    cleanup();
     // Never on any other answer.
     show({ answer: 'not_found', matches: [{ title: 'Wings of fire' }] });
     expect(screen.queryByRole('list')).not.toBeInTheDocument();

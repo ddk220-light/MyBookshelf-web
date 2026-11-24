@@ -1,18 +1,20 @@
 // What kind of item a catalog row is, from the format the catalog gives it.
-// The one place format labels are read (owner decision, 23 November 2026:
-// "video and music rows never count as a find, where the catalog gives a
-// format"; audiobooks and e-books still count). Adapters pass the catalog's
-// own label through untouched, as `row.format`; libraryBookSearch.js asks
-// `formatKind` what it is.
+// The one place format labels are read. A format never decides whether a row
+// is a find: every row passing the title rule is one, films and music
+// included (owner decisions, 23 November 2026: "Wrongly saying something is
+// found is okay. It's worse to say that something is not there"; films and
+// music "still count as a find, but show last"). The format only orders the
+// card (`formatTier`). Adapters pass the catalog's own label through
+// untouched, as `row.format`; libraryBookSearch.js asks what it is.
 //
-// Kinds:
-//   book       print book, large print, graphic novel, board book, textbook
-//   ebook      e-book, downloadable graphic novel
-//   audiobook  book on CD or tape, e-audiobook, Playaway, a plain "sound recording"
-//   video      DVD, Blu-ray, video recording, film, e-video        (never a find)
-//   music      music CD, e-music, score, sheet music, sound recording of music  (never a find)
-//   other      anything else the catalog names (a serial, a kit, a map)
-//   null       the catalog gave no format: the row is treated as it always was
+// Kinds, and their place on the card (`formatTier`):
+//   book       print book, large print, graphic novel, board book, textbook   0
+//   null       the catalog gave no format: with the books                     0
+//   ebook      e-book, downloadable graphic novel                             1
+//   audiobook  book on CD or tape, e-audiobook, Playaway, a plain "sound recording"  1
+//   other      anything else the catalog names (a serial, a kit, a map)       2
+//   video      DVD, Blu-ray, video recording, film, e-video                   3 (last)
+//   music      music CD, e-music, score, sheet music, sound recording of music  3 (last)
 //
 // A format not listed below is read by the word patterns after the table, so
 // a new label such as "Blu-ray 4K" or "Video cassette" is still video.
@@ -49,8 +51,10 @@ export const FORMAT_LABELS = Object.freeze({
 });
 
 export const FORMAT_KINDS = Object.freeze(['book', 'ebook', 'audiobook', 'video', 'music', 'other']);
-// Rows of these kinds are never a find.
-export const NOT_A_FIND = Object.freeze(new Set(['video', 'music']));
+// A kind's place on the card; a row with no format is with the books.
+export const FORMAT_TIERS = Object.freeze({ book: 0, ebook: 1, audiobook: 1, other: 2, video: 3, music: 3 });
+// Video and music rows: shown after every other row.
+export const LAST_TIER = 3;
 
 const labelKey = value => String(value).normalize('NFKD').replace(/\p{M}+/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
@@ -91,13 +95,8 @@ export function rowFormatKind(row) {
   return formatKind(row?.format);
 }
 
-/** False for a row whose catalog-given format is video or music; true otherwise (no format included). */
-export function countsAsFind(row) {
-  return !NOT_A_FIND.has(rowFormatKind(row));
-}
-
-/** A book row, or a row with no format (shown with the book rows, as before). */
-export function isBookRow(row) {
+/** A row's place on the card: 0 book or no format, 1 e-book or audiobook, 2 other, 3 video or music. */
+export function formatTier(row) {
   const kind = rowFormatKind(row);
-  return kind === null || kind === 'book';
+  return kind === null ? 0 : FORMAT_TIERS[kind];
 }

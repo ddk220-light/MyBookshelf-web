@@ -563,7 +563,8 @@ test('the check script sends nothing when the page loads; a tap is one check, an
       { answer: 'surprise' },
       { answer: 'unknown', reason: 'busy' },
       { answer: 'unknown', reason: 'details' },
-      { answer: 'found' },
+      // Twelve entries: the first ten are shown, in the reply's order (best match first).
+      { answer: 'found', matches: Array.from({ length: 12 }, (_, index) => ({ title: `Entry ${index + 1}` })) },
     ];
     for (let index = 0; index < replies.length; index += 1) {
       assert.equal(api.calls.length, index + 2, `request ${index + 2} only after ${index + 1} answered`);
@@ -596,6 +597,7 @@ test('the check script sends nothing when the page loads; a tap is one check, an
       assert.equal(button(rows[index]).disabled, false, `row ${index}`);
       assert.match(button(rows[index]).textContent, /^Check again: /, `row ${index}`);
     }
+    assert.deepEqual([...rows[9].querySelectorAll('.check-matches li')].map(item => item.textContent), Array.from({ length: 10 }, (_, index) => `Entry ${index + 1}`));
     assert.match(doc.querySelector('[data-check-progress]').textContent, /Checked 10 books\./);
     assert.equal(doc.querySelector('[data-check-all]').disabled, false);
     // Only library IDs and book keys ever leave the page.

@@ -168,11 +168,10 @@ export async function checkPublicAvailability(slug, isbn, title, author) {
 
 // One keyword search (one request) and every row of its page, in the
 // gateway's order, each with the gateway's own format code (`BK`, `EBOOK`,
-// `DVD`, `MUSIC_CD`, ...). Which formats count as a find is decided in one
-// place for every catalog (rowFormats.js, owner decision 23 November 2026):
-// video and music rows never do; books, e-books and audiobooks do. The first
-// results for "the hobbit" are recordings and films, so nothing is capped
-// here.
+// `DVD`, `MUSIC_CD`, ...). Every format counts as a find; the format only
+// orders the card, the same for every catalog (rowFormats.js, owner decisions
+// 23 November 2026: books first, films and music last). The first results for
+// "the hobbit" are recordings and films, so nothing is capped here.
 function searchRows(slug, query) {
   const deadlineAt = Date.now() + DEFAULT_TIMEOUT_MS;
   return cachedTask(`bc:rows:${slug}:${query}`, async () => {

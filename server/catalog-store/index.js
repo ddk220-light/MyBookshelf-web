@@ -4,7 +4,6 @@ import { createPgAnswerStore } from './holdings.js';
 import { createPgHealthRecord } from './health.js';
 import { createPgHostGate, createMemoryHostGate } from './hostGate.js';
 import { createUsageLog } from './usageLog.js';
-import { createOutcomeCounts } from './outcomeCounts.js';
 import { createCheckBudget } from './checkBudget.js';
 import { createSubmissions } from './requests.js';
 import { createCatalogPolicy } from './policy.js';
@@ -12,8 +11,8 @@ import { waitUntil } from './waitUntil.js';
 import { createMemoryAnswerStore, createMemoryHealthRecord } from '../services/catalog-lookup/record.js';
 
 // The catalog store (plan 3.6): stored answers, the health record, the
-// cross-instance host gate, the anonymous operational log with its daily
-// outcome counts per library, submissions and the book-check request budget.
+// cross-instance host gate, the anonymous operational log, submissions and the
+// book-check request budget.
 // Separate infrastructure from the account database, with its own roles;
 // `/api/v2` stays cookie-free and never touches account data.
 //
@@ -46,7 +45,7 @@ export function createStoreStatus(database, { timeoutMs = STORE_STATUS_TIMEOUT_M
 }
 
 export function createCatalogStore({ env = process.env, config = readCatalogStoreConfig(env), policy = createCatalogPolicy(),
-  db = undefined, defer = waitUntil, usageSink = null, outcomeSink = null } = {}) {
+  db = undefined, defer = waitUntil, usageSink = null } = {}) {
   const database = db !== undefined ? db : config.storeEnabled ? createCatalogDatabase(config.databaseUrl) : null;
   const memoryGate = createMemoryHostGate();
   return Object.freeze({
@@ -60,8 +59,6 @@ export function createCatalogStore({ env = process.env, config = readCatalogStor
     health: database ? createPgHealthRecord(database) : createMemoryHealthRecord(),
     hostGate: database ? createPgHostGate(database, { fallback: memoryGate }) : memoryGate,
     usage: createUsageLog({ enabled: config.usageLogEnabled, db: database, sink: usageSink, defer }),
-    // Daily counts per library: no book, text or reader (outcomeCounts.js).
-    outcomes: createOutcomeCounts({ enabled: config.usageLogEnabled, db: database, sink: outcomeSink, defer }),
     // The tap endpoint's budget per library and per client (checkBudget.js).
     checkBudget: createCheckBudget({ db: database, secret: config.bucketSecret }),
     submissions: createSubmissions({ db: database, secret: config.bucketSecret, defer }),

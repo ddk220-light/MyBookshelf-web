@@ -46,10 +46,9 @@ function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_is
   const pending = [];
   const defer = task => { pending.push(Promise.resolve().then(task).catch(() => {})); };
   const logged = [];
-  const counted = [];
   const calls = [];
   const config = { ...readCatalogStoreConfig({}), usageLogEnabled, backgroundChecksEnabled };
-  const built = createCatalogStore({ config, db: null, defer, usageSink: row => logged.push(row), outcomeSink: row => counted.push(row), policy: createCatalogPolicy({ policies }) });
+  const built = createCatalogStore({ config, db: null, defer, usageSink: row => logged.push(row), policy: createCatalogPolicy({ policies }) });
   const store = checkLimits ? { ...built, checkBudget: createCheckBudget({ limits: checkLimits }) } : built;
   const provider = { checkAvailability: async isbn => { calls.push(isbn); return observe(isbn); }, ...(searches || {}) };
   const platforms = bookDeadlineMs ? { ...UNPACED, vega: { ...UNPACED.vega, book: { ...UNPACED.vega.book, deadlineMs: bookDeadlineMs } } } : UNPACED;
@@ -60,7 +59,7 @@ function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_is
     express.use('/api/v2', createPublicV2Router({ directory, books: bookService, catalogStore: store, lookup, rateLimit: { limit: 1000 },
       holdingsOptions: { ...(searchCapMs ? { searchCapMs } : {}), ...(functionWorkMs ? { functionWorkMs } : {}) } }));
   });
-  return { app, store, calls, logged, counted, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
+  return { app, store, calls, logged, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
 }
 
 const lines = text => text.trim().split('\n').map(line => JSON.parse(line));
@@ -702,42 +701,3 @@ test('the client budget keeps no address: only keyed digests of the address and 
   assert.equal(await full.take({ libraryId: vega.id, address: 'c' }), 'library');
 });
 
-// Decision 17 (23 November 2026): the log may keep daily counts per library
-// for no-store catalogs, with no book, no text and no reader.
-test('every live book check adds to the library\'s daily outcome count, with no book, text or reader in it', async () => {
-  const searched = [];
-  const rows = [{ title: 'Matilda', authors: ['Roald Dahl'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record' }];
-  const { app, counted, logged, settle } = harness({ usageLogEnabled: true, policies: shippedPolicies,
-    checkLimits: { perLibraryPerMinute: 4, perClientPerMinute: 100, perClientPerDay: 100 },
-    searches: { search: async term => { searched.push(term); if (term === 'Mockingjay') throw Object.assign(new Error('x'), { code: 'CATALOG_TIMEOUT' }); return rows; } } });
-  const check = bookKey => request(app).post('/api/v2/holdings/check').set('X-Forwarded-For', '203.0.113.50').set('User-Agent', 'Private Agent')
-    .send({ libraryId: biblio.id, bookKey });
-  assert.equal((await check('v1:openlibrary:OL1W')).body.answer, 'found');
-  assert.equal((await check(`v1:isbn:${ISBN_A}`)).body.answer, 'not_found');
-  assert.equal((await check('v1:openlibrary:OL2W')).body.reason, 'timeout');
-  assert.equal((await check('v1:openlibrary:OL1W')).body.answer, 'found');
-  assert.equal((await check('v1:openlibrary:OL1W')).body.reason, 'busy');
-  await settle();
-  assert.deepEqual(counted, [
-    { libraryId: biblio.id, operation: 'book_check', outcome: 'found', reason: '' },
-    { libraryId: biblio.id, operation: 'book_check', outcome: 'not_found', reason: '' },
-    { libraryId: biblio.id, operation: 'book_check', outcome: 'couldnt_check', reason: 'timeout' },
-    { libraryId: biblio.id, operation: 'book_check', outcome: 'found', reason: '' },
-    { libraryId: biblio.id, operation: 'book_check', outcome: 'couldnt_check', reason: 'busy' }]);
-  for (const row of counted) assert.deepEqual(Object.keys(row).sort(), ['libraryId', 'operation', 'outcome', 'reason']);
-  const text = JSON.stringify(counted);
-  for (const value of ['OL1W', 'OL2W', ISBN_A, 'Matilda', 'Mockingjay', 'Wings', '203.0.113.50', 'Private Agent']) assert.ok(!text.includes(value), value);
-  assert.ok(logged.length > 0);
-  // A stored answer is not a check of the catalog today: not counted.
-  const stored = harness({ usageLogEnabled: true });
-  await request(stored.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
-  await stored.settle();
-  await request(stored.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
-  await stored.settle();
-  assert.deepEqual(stored.counted.map(row => row.outcome), ['found']);
-  // Off with the operational log.
-  const off = harness();
-  await request(off.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
-  await off.settle();
-  assert.deepEqual(off.counted, []);
-});

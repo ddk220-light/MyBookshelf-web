@@ -706,8 +706,9 @@ export function createCatalogLookup({
         endRun();
         for (const book of [...pending.values()]) {
           pending.delete(book.bookKey);
-          // The same row rules as a book check: video and music rows never
-          // mark a book, and the first row is a book row with its author.
+          // The same rule and ranking as a book check: any row passing the
+          // title rule marks the book, and the link is the best-ranked row's
+          // (the ISBN row, then the exact title, ...; films and music last).
           const [row] = matchingRows(rows, book, { isbn: validateAndNormalize(book.isbn13 || '') || null });
           if (!row) { unmatched.push(book.bookKey); continue; }
           // The link is the book's record only when the adapter said so.

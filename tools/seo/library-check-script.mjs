@@ -19,6 +19,9 @@
 /** @param {any} win @param {Document} doc */
 export function installLibraryChecks(win, doc) {
   var TIMEOUT_MS = 65000;
+  // The catalog's matching entries shown for a found book, best match first
+  // (the app's own cap: server libraryBookSearch.js MAX_MATCHES).
+  var MAX_MATCHES = 10;
   var NOT_MISSING = ' This does not mean the book is missing.';
   // Reasons a second try would not change (the app offers no Try again for them).
   var LASTING = { blocked: true, unsupported: true, unrecognized: true, configuration: true };
@@ -63,7 +66,7 @@ export function installLibraryChecks(win, doc) {
       if (['record', 'search', 'catalog'].indexOf(data.catalogLinkKind) >= 0) view.catalogLinkKind = data.catalogLinkKind;
     }
     if (answer === 'found' && Array.isArray(data.matches)) {
-      for (var i = 0; i < data.matches.length && view.matches.length < 5; i += 1) {
+      for (var i = 0; i < data.matches.length && view.matches.length < MAX_MATCHES; i += 1) {
         var match = data.matches[i] || {}, title = text(match.title, 300);
         if (title) view.matches.push({ title: title, author: text(match.author, 300), url: webLink(match.url) });
       }

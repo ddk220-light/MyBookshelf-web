@@ -1,6 +1,6 @@
 import { validateAndNormalize } from './isbn.js';
 import { withCatalogSuboperation } from './providers/http.js';
-import { countsAsFind, isBookRow } from './rowFormats.js';
+import { LAST_TIER, formatTier } from './rowFormats.js';
 import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 
 // One library search for everything (owner decision, 20 November 2026:
@@ -19,13 +19,14 @@ import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 // catalogUrl?, catalogLinkKind?, observation? }`, all this library's (a shared
 // catalog the adapter cannot filter to the library counts as the library's).
 //
-// Row rules (owner decision, 23 November 2026): a row whose catalog-given
-// format is video or music never counts as a find (rowFormats.js reads every
-// adapter's labels); audiobooks, e-books and rows with no format count as
-// before. The card lists book rows first, then rows that carry the book's
-// author before rows that do not, each group in the order below.
+// Every row passing the title rule is a find, whatever its format or author
+// (owner decisions, 23 November 2026: "Accuracy is not important, robustness
+// is important"; "Wrongly saying something is found is okay. It's worse to
+// say that something is not there"). The rows are ranked, best match first,
+// and the card lists the first ten (`orderMatches`, MAX_MATCHES). The same
+// rule and order for every library, in India, the US and elsewhere.
 
-export const MAX_MATCHES = 5;
+export const MAX_MATCHES = 10;
 
 // Case, punctuation and Latin diacritics (é -> e) fold away; marks of other
 // scripts stay (राम and रोम are different titles).
@@ -46,9 +47,8 @@ export function mainTitle(title) {
 // A row matches a title when at least 80% of the title's words (its main
 // title, normalised as above, without a leading the/a/an) appear among the
 // row title's words, in any order. Nothing else: no author, ISBN, language or
-// edition rule. "Wing Of Fire" is not "Wings of Fire" (2 of 3 words). The
-// format rule is applied beside it (`matchingRows`): a matching video or music
-// row is not a find.
+// edition or format rule. "Wing Of Fire" is not "Wings of Fire" (2 of 3
+// words).
 export function titleMatches(rowTitle, title) {
   const want = words(mainTitle(title));
   const have = new Set(words(rowTitle));
@@ -80,21 +80,32 @@ export function carriesAuthor(row, authors = []) {
   return [...wanted].some(name => have.has(name));
 }
 
-// Matching rows in display order:
+// Matching rows ranked, best match first (owner decision, 23 November 2026:
+// "If it properly matches, show it in the front, and the lesser matched ones
+// can go down the line, but just can be there"):
 //   1. the row showing the book's ISBN (when the book has one): this edition;
-//   2. book rows (or rows with no format) before e-books, audiobooks and others;
-//   3. within each, rows that carry the book's author before rows that do not;
-//   4. within each, rows whose title is exactly the title, then rows that
-//      start with it, then the rest, each in the catalog's order.
+//   2. rows whose main title (`mainTitle`: before ":" or "/") is exactly the
+//      title, normalised as above ("Atomic habits : tiny changes..." is
+//      exact for "Atomic Habits");
+//   3. rows whose title starts with the title;
+//   4. the other rows passing the title rule;
+//   within each: book rows and rows with no format, then e-books and
+//   audiobooks, then other formats; then rows that carry the book's author;
+//   then the catalog's order. Video and music rows still count and come after
+//   every other row ("show last"), ranked the same way among themselves.
 // The catalog's own order is never trusted for the first row (LAPL lists study
 // guides above the novel, research 23 November 2026).
 export function orderMatches(rows, title, isbn = null, authors = []) {
   const want = titleKey(mainTitle(title));
-  const titleRank = row => {
-    const have = titleKey(row.title);
-    return have === want ? 0 : have.startsWith(`${want} `) ? 1 : 2;
+  const group = row => {
+    if (isbn && isbnsOf(row).includes(isbn)) return 0;
+    if (titleKey(mainTitle(row.title)) === want) return 1;
+    return titleKey(row.title).startsWith(`${want} `) ? 2 : 3;
   };
-  const rank = row => [isbn && isbnsOf(row).includes(isbn) ? 0 : 1, isBookRow(row) ? 0 : 1, carriesAuthor(row, authors) ? 0 : 1, titleRank(row)];
+  const rank = row => {
+    const tier = formatTier(row);
+    return [tier === LAST_TIER ? 1 : 0, group(row), tier, carriesAuthor(row, authors) ? 0 : 1];
+  };
   const compare = (a, b) => {
     for (let i = 0; i < a.rank.length; i += 1) if (a.rank[i] !== b.rank[i]) return a.rank[i] - b.rank[i];
     return a.index - b.index;
@@ -102,9 +113,9 @@ export function orderMatches(rows, title, isbn = null, authors = []) {
   return rows.map((row, index) => ({ row, index, rank: rank(row) })).sort(compare).map(item => item.row);
 }
 
-/** The rows of one search that are a find for this book, in display order: title-matching rows that are not video or music. */
+/** The rows of one search that are a find for this book (every row passing the title rule), ranked by `orderMatches`. */
 export function matchingRows(rows, book, { isbn = null, matches = row => titleMatches(row?.title, book?.title) } = {}) {
-  return orderMatches((Array.isArray(rows) ? rows : []).filter(row => row && countsAsFind(row) && matches(row)), book?.title, isbn, book?.authors || []);
+  return orderMatches((Array.isArray(rows) ? rows : []).filter(row => row && matches(row)), book?.title, isbn, book?.authors || []);
 }
 
 // The record link of a row: only one the adapter called the record.

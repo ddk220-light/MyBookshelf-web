@@ -22,8 +22,6 @@ DO $$ BEGIN
     GRANT INSERT ON library_request_contacts TO catalog_runtime;
     GRANT SELECT, INSERT, UPDATE ON submission_buckets TO catalog_runtime;
     GRANT SELECT, INSERT, UPDATE ON host_request_windows, host_request_slots TO catalog_runtime;
-    -- Daily outcome counts per library (migration 005): an upsert of a count.
-    GRANT SELECT, INSERT, UPDATE (checks) ON library_outcome_days TO catalog_runtime;
     GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO catalog_runtime;
     REVOKE ALL ON usage_daily_totals, catalog_schema_migrations FROM catalog_runtime;
     REVOKE SELECT ON usage_events, problem_reports, library_request_contacts FROM catalog_runtime;
@@ -40,8 +38,6 @@ DO $$ BEGIN
     GRANT UPDATE (contact_name, contact_email) ON problem_reports TO catalog_worker;
     GRANT SELECT, INSERT, UPDATE ON usage_daily_totals TO catalog_worker;
     GRANT SELECT, UPDATE (checks_7d, failures_7d, median_ms_7d, flagged_at, flag_reason, updated_at) ON library_health TO catalog_worker;
-    -- The front-page check (migration 006) runs with the worker role.
-    GRANT SELECT, INSERT, UPDATE ON host_front_page_checks TO catalog_worker;
     REVOKE ALL ON catalog_schema_migrations FROM catalog_worker;
   END IF;
 

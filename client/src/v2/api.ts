@@ -279,13 +279,15 @@ export const CHECK_REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked'
 export type CheckReason = typeof CHECK_REASONS[number];
 /** One of the library's own catalog rows for a found book: title and author as the catalog shows them, and the record's link when there is one. */
 export type CatalogMatch = { title: string; author?: string; url?: string };
+/** At most this many catalog rows are shown for a found book (server libraryBookSearch.js MAX_MATCHES). */
+export const MAX_CATALOG_MATCHES = 10;
 export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; reason?: CheckReason; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog';
-  /** A found answer's matching catalog rows, at most five, the ISBN match first. */
+  /** A found answer's matching catalog rows, at most ten, best match first (the ISBN row, then the exact title, ...). */
   matches?: CatalogMatch[] };
 
 function catalogMatches(input: unknown): CatalogMatch[] {
   if (!Array.isArray(input)) return [];
-  return input.slice(0, 5).flatMap((item): CatalogMatch[] => {
+  return input.slice(0, MAX_CATALOG_MATCHES).flatMap((item): CatalogMatch[] => {
     if (!item || typeof item !== 'object') return [];
     const { title, author, url } = item as Record<string, unknown>;
     if (typeof title !== 'string' || !title.trim()) return [];

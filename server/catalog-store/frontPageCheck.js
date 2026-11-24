@@ -1,45 +1,61 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
-import { readCatalogStoreConfig } from './config.js';
 import { createRobotsPolicy, defaultFetchPolicy } from '../services/providers/robots.js';
 import { USER_AGENT } from '../services/providers/http.js';
 import { catalogDispatcher } from '../services/providers/network.js';
 import hostList from '../data/front-page-hosts.json' with { type: 'json' };
+import resultList from '../data/front-page-results.json' with { type: 'json' };
 
-// The front-page check (owner decision, 23 November 2026: "You can check
-// yourself. You don't need me to check it."; USA plan, Phase 0 item 7).
+// The front-page check (owner decisions, 23 November 2026: "You can check
+// yourself"; "Record it once and then store it in the code. Why do you have
+// to check it every single time?").
 //
-// About 20 million people's catalogs (Koha and Aspen at ByWater, the Polaris
-// sites a literal robots.txt opens) allow the app in robots.txt but block AI
-// agents, so no agent may look for a bot wall there. The app looks for itself,
-// from production: for each host in server/data/front-page-hosts.json its own
-// server asks for the host's front page
-//   - once per host (a stored result is never asked again; delete its row to
-//     ask again), with no search and no query string;
-//   - as MyBookshelf/1.0 with its contact URL, the user agent of every catalog
-//     check, never another;
-//   - only after the host's robots.txt, read for the app's own token (else
-//     `*`) and matched literally, allows the page and every redirect on it;
-//     a redirect to another host is recorded as moved and never followed;
-// and keeps only what came back: the HTTP status, whether a bot wall or
-// challenge was seen (and which), a redirect to another host, the time taken.
-// No page content, header, cookie or address of ours is kept.
-//
-// It runs only from the internal route below (POST or GET
-// /api/internal/front-page-check with the cron secret), with the catalog
-// store's worker role, a few hosts per call, and is not scheduled: someone
-// starts it in production. It is never run from an agent's or developer's
-// machine. A front page that answers is not proof that a search will: the
-// first tap through the app on each host settles that (USA plan, section 10).
+// Many catalogs (Koha and Aspen at ByWater, the Polaris sites a literal
+// robots.txt opens) allow the app in robots.txt but block AI agents, so no
+// agent may look for a bot wall there. The app looks for itself, from
+// production, once per host, and the answer is kept in the code:
+//   - the hosts are server/data/front-page-hosts.json; the answers are
+//     server/data/front-page-results.json, committed. A host with an answer
+//     there is never asked again; once every host has one, nothing runs;
+//   - the daily catalog-maintenance cron (cron.js) runs it, in production
+//     only (VERCEL_ENV=production), for every host without an answer that
+//     fits in the function's time, a few hosts at once, each host's requests
+//     one after another;
+//   - per host: robots.txt first, read for the app's own token (else `*`)
+//     and matched literally; then one GET of `/` as MyBookshelf/1.0 with its
+//     contact URL (the user agent of every catalog check), after the host's
+//     Crawl-delay; a redirect on the same host is followed the same way, one
+//     to another host is recorded as moved and never followed; no search and
+//     no query string;
+//   - each answer is one stderr line, `front-page-check {json}` (production
+//     runtime logs keep stderr): the host, the date, the HTTP status, the wall
+//     signal and the host it moved to. No page content, header, cookie or
+//     address, and nothing about any reader. tools/deployment/
+//     front-page-results.mjs merges pasted lines into the results file.
+// It is never run from an agent's or developer's machine. A front page that
+// answers is not proof that a search will: the first tap through the app on
+// each host settles that.
 
-export const FRONT_PAGE_CHECK_PATH = '/api/internal/front-page-check';
-export const FRONT_PAGE_OUTCOMES = Object.freeze(['open', 'wall', 'refused', 'rate_limited', 'moved', 'not_found', 'server_error', 'unreachable',
-  'robots_disallowed', 'robots_unavailable', 'redirect_loop']);
+export const LOG_PREFIX = 'front-page-check';
+// The wall signal: nothing seen, a challenge or bot-wall page, the front page
+// refused (401 or 403) or rate limited (429), or no answer at all.
+export const WALL_SIGNALS = Object.freeze(['none', 'challenge', '403', '429', 'unreachable']);
+// Why robots.txt stopped the check before the front page, when it did: it
+// does not allow the page for the app; it answered 429 or a server error
+// (RFC 9309: keep off); its Crawl-delay is longer than one run can wait.
+export const ROBOTS_STOPS = Object.freeze(['disallowed', 'unavailable', 'crawl-delay']);
 const HOST = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const PAGE_TIMEOUT_MS = 15_000;
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_REDIRECTS = 3;
-// A same-host redirect is followed after the host's Crawl-delay, up to this long.
-const MAX_HOP_DELAY_MS = 20_000;
+// The longest Crawl-delay waited before a GET; a longer one is respected by
+// not asking (`robots: 'crawl-delay'`).
+const MAX_DELAY_MS = 30_000;
+// One run: every request ends within RUN_MS, and a host is started only while
+// its robots.txt and page can still finish (START_MARGIN_MS). The function may
+// run 120 s (vercel.json), with the maintenance job beside it.
+export const RUN_MS = 90_000;
+const START_MARGIN_MS = 20_000;
+export const CONCURRENCY = 8;
 
 /** The hosts to check: the data file's, validated (lower case host names only). */
 export function frontPageHosts(list = hostList) {
@@ -49,33 +65,66 @@ export function frontPageHosts(list = hostList) {
   return hosts;
 }
 
-// Walls and challenges, by the marks their vendors leave. Each is a short
-// code, the only thing kept about the page. A generic captcha counts only on
-// an error status: a catalog may carry a captcha on a form of its own.
+/** A result as kept, `{ host, date, status, wall, movedTo?, robots? }` and nothing else, or null when it is not one. */
+export function frontPageResult(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const { host, date, status, wall, movedTo, robots } = value;
+  if (typeof host !== 'string' || !HOST.test(host) || typeof date !== 'string' || !DATE.test(date) || Number.isNaN(Date.parse(date))) return null;
+  if (!(status === null || (Number.isInteger(status) && status >= 100 && status <= 599)) || !WALL_SIGNALS.includes(wall)) return null;
+  if (movedTo != null && (typeof movedTo !== 'string' || !HOST.test(movedTo))) return null;
+  if (robots != null && !ROBOTS_STOPS.includes(robots)) return null;
+  return { host, date, status, wall, ...(movedTo ? { movedTo } : {}), ...(robots ? { robots } : {}) };
+}
+
+/** The committed results, validated: a Map of host to result. */
+export function frontPageResults(list = resultList) {
+  if (!Array.isArray(list?.results)) throw new TypeError('front-page-results.json needs a results list');
+  const results = new Map();
+  for (const item of list.results) {
+    const result = frontPageResult(item);
+    if (!result || Object.keys(item).length !== Object.keys(result).length) throw new TypeError(`front-page-results.json has an invalid result: ${JSON.stringify(item)}`);
+    if (results.has(result.host)) throw new TypeError(`front-page-results.json lists ${result.host} twice`);
+    results.set(result.host, result);
+  }
+  return results;
+}
+
+/** Hosts in the list that have no committed result yet, in the list's order. */
+export function hostsWithoutResult(hosts = frontPageHosts(), results = frontPageResults()) {
+  return hosts.filter(host => !results.has(host));
+}
+
+/** The stderr line for one result. */
+export function logLine(result) {
+  return `${LOG_PREFIX} ${JSON.stringify(frontPageResult(result))}`;
+}
+
+// Walls and challenges, by the marks their vendors leave. A generic captcha
+// counts only on an error status: a catalog may carry a captcha on a form of
+// its own.
 const HEADER_SIGNALS = [
-  ['cloudflare-challenge', headers => /challenge/i.test(headers.get('cf-mitigated') || '')],
-  ['aws-waf', headers => /challenge|captcha/i.test(headers.get('x-amzn-waf-action') || '')],
-  ['datadome', headers => Boolean(headers.get('x-datadome') || headers.get('x-dd-b'))],
+  headers => /challenge/i.test(headers.get('cf-mitigated') || ''), // Cloudflare
+  headers => /challenge|captcha/i.test(headers.get('x-amzn-waf-action') || ''), // AWS WAF
+  headers => Boolean(headers.get('x-datadome') || headers.get('x-dd-b')), // DataDome
 ];
 const BODY_SIGNALS = [
-  ['cloudflare-challenge', /<title>\s*Just a moment\.\.\.\s*<\/title>|\/cdn-cgi\/challenge-platform\/|window\._cf_chl_opt|cf-browser-verification/i],
-  ['anubis', /within\.website\/x\/cmd\/anubis|anubis_version|id=["']anubis_|Making sure you(?:&#39;|')re not a bot/i],
-  ['hashcash', /hashcash/i],
-  ['imperva', /Incapsula incident|_Incapsula_Resource|\/_Incapsula_/i],
-  ['aws-waf', /AwsWafIntegration|awswaf\.com|aws-waf-token/i],
-  ['datadome', /captcha-delivery\.com|geo\.captcha-delivery/i],
-  ['perimeterx', /px-captcha|_pxAppId|perimeterx/i],
-  ['sucuri', /Sucuri WebSite Firewall|sucuri\.net\/privacy-policy/i],
-  ['akamai', /Access Denied[\s\S]{0,400}Reference&#32;&#35;|errors\.edgesuite\.net/i],
+  /<title>\s*Just a moment\.\.\.\s*<\/title>|\/cdn-cgi\/challenge-platform\/|window\._cf_chl_opt|cf-browser-verification/i, // Cloudflare
+  /within\.website\/x\/cmd\/anubis|anubis_version|id=["']anubis_|Making sure you(?:&#39;|')re not a bot/i, // Anubis
+  /hashcash/i,
+  /Incapsula incident|_Incapsula_Resource|\/_Incapsula_/i, // Imperva
+  /AwsWafIntegration|awswaf\.com|aws-waf-token/i, // AWS WAF
+  /captcha-delivery\.com|geo\.captcha-delivery/i, // DataDome
+  /px-captcha|_pxAppId|perimeterx/i, // PerimeterX
+  /Sucuri WebSite Firewall|sucuri\.net\/privacy-policy/i, // Sucuri
+  /Access Denied[\s\S]{0,400}Reference&#32;&#35;|errors\.edgesuite\.net/i, // Akamai
 ];
 const GENERIC_CAPTCHA = /g-recaptcha|hcaptcha\.com|h-captcha|challenges\.cloudflare\.com\/turnstile|captcha/i;
 
-/** The wall a response shows, as a short code, or null. */
-export function wallSignal({ status, headers = new Headers(), body = '' }) {
-  for (const [code, test] of HEADER_SIGNALS) if (test(headers)) return code;
-  for (const [code, pattern] of BODY_SIGNALS) if (pattern.test(body)) return code;
-  if (status >= 400 && GENERIC_CAPTCHA.test(body)) return 'captcha';
-  return null;
+/** Whether a response is a challenge or bot-wall page. */
+export function isChallenge({ status, headers = new Headers(), body = '' }) {
+  if (HEADER_SIGNALS.some(test => test(headers))) return true;
+  if (BODY_SIGNALS.some(pattern => pattern.test(body))) return true;
+  return status >= 400 && GENERIC_CAPTCHA.test(body);
 }
 
 async function readSome(response, limit = MAX_BODY_BYTES) {
@@ -97,49 +146,41 @@ async function readSome(response, limit = MAX_BODY_BYTES) {
 }
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, Math.max(0, ms)));
-
-function outcomeFor(status) {
-  if (status === 429) return 'rate_limited';
-  if (status === 401 || status === 403) return 'refused';
-  if (status === 404 || status === 410) return 'not_found';
-  if (status >= 500) return 'server_error';
-  return 'open';
-}
+const wallFor = status => (status === 401 || status === 403 ? '403' : status === 429 ? '429' : 'none');
 
 /**
- * One host's check: robots.txt, then its front page (following same-host
- * redirects the robots.txt allows). Never throws.
+ * One host's check: robots.txt, then its front page, following same-host
+ * redirects robots.txt allows, each GET after the Crawl-delay. Returns the
+ * result to keep, or null when the run's time (`deadlineAt`) would end before
+ * the next request could (the host is asked in a later run). Never throws.
  */
 export async function checkFrontPage(host, { fetchImpl = (...args) => fetch(...args), fetchPolicy = defaultFetchPolicy, now = () => Date.now(), wait = sleep,
-  timeoutMs = PAGE_TIMEOUT_MS } = {}) {
-  const startedAt = now();
-  const result = { host, outcome: 'unreachable', status: null, robotsStatus: null, wall: false, wallSignal: null, movedTo: null, durationMs: 0 };
-  const done = values => Object.assign(result, values, { durationMs: Math.max(0, now() - startedAt) });
-  if (typeof host !== 'string' || !HOST.test(host)) return done({ outcome: 'unreachable' });
-  // robots.txt for this host, read once, for the app's own token.
-  let robotsFailed = false;
+  timeoutMs = PAGE_TIMEOUT_MS, deadlineAt = Infinity } = {}) {
+  if (typeof host !== 'string' || !HOST.test(host)) return null;
+  const date = new Date(now()).toISOString().slice(0, 10);
+  const result = values => frontPageResult({ host, date, status: null, wall: 'none', ...values });
+  let robotsStatus = null;
   const robots = createRobotsPolicy({ now, fetchPolicy: async url => {
-    try {
-      const response = await fetchPolicy(url);
-      result.robotsStatus = Number.isInteger(response?.status) && response.status >= 100 && response.status <= 599 ? response.status : null;
-      return response;
-    } catch (error) { robotsFailed = true; throw error; }
+    robotsStatus = null;
+    const response = await fetchPolicy(url);
+    robotsStatus = Number.isInteger(response?.status) ? response.status : null;
+    return response;
   } });
   let url = `https://${host}/`;
   let redirected = null;
   for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
     let permission;
-    try { permission = await robots.check(url); } catch { return done({ outcome: 'unreachable' }); }
+    try { permission = await robots.check(url); } catch { return result({ status: redirected, wall: 'unreachable' }); }
     if (!permission.allowed) {
       // 429 or a server error on robots.txt means "keep off for a while" (RFC 9309).
-      const unavailable = !robotsFailed && (result.robotsStatus === 429 || result.robotsStatus >= 500);
-      return done({ outcome: unavailable ? 'robots_unavailable' : 'robots_disallowed' });
+      if (robotsStatus === 429 || robotsStatus >= 500) return result({ status: redirected, wall: robotsStatus === 429 ? '429' : 'unreachable', robots: 'unavailable' });
+      return result({ status: redirected, robots: 'disallowed' });
     }
-    if (hop > 0 && permission.delayMs > 0) {
-      // The host's Crawl-delay between our two requests; past the limit, stop here.
-      if (permission.delayMs > MAX_HOP_DELAY_MS) return done({ outcome: 'open', status: redirected });
-      await wait(permission.delayMs);
-    }
+    // Every request to the host after the first (robots.txt) waits its Crawl-delay.
+    const delay = Math.max(0, permission.delayMs || 0);
+    if (delay > MAX_DELAY_MS) return result({ status: redirected, ...(hop === 0 ? { robots: 'crawl-delay' } : {}) });
+    if (now() + delay + timeoutMs > deadlineAt) return null;
+    if (delay > 0) await wait(delay);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     let response, body = '';
@@ -148,127 +189,54 @@ export async function checkFrontPage(host, { fetchImpl = (...args) => fetch(...a
         headers: { 'User-Agent': USER_AGENT, Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.8' } });
       body = await readSome(response);
     } catch {
-      return done({ outcome: 'unreachable' });
+      return result({ status: redirected, wall: 'unreachable' });
     } finally {
       clearTimeout(timer);
     }
     const status = Number(response.status);
+    if (!Number.isInteger(status) || status < 100 || status > 599) return result({ status: redirected, wall: 'unreachable' });
     const headers = response.headers instanceof Headers ? response.headers : new Headers(response.headers || {});
-    const signal = wallSignal({ status, headers, body });
-    if (signal) return done({ outcome: 'wall', status, wall: true, wallSignal: signal });
+    if (isChallenge({ status, headers, body })) return result({ status, wall: 'challenge' });
     if (status >= 300 && status < 400) {
       let next;
-      try { next = new URL(headers.get('location') || '', url); } catch { return done({ outcome: 'open', status }); }
-      if (!['http:', 'https:'].includes(next.protocol)) return done({ outcome: 'open', status });
+      try { next = new URL(headers.get('location') || '', url); } catch { return result({ status }); }
+      if (!['http:', 'https:'].includes(next.protocol)) return result({ status });
       // Never followed to another host: recorded as moved.
-      if (next.hostname.toLowerCase() !== host) return done({ outcome: 'moved', status, movedTo: next.hostname.toLowerCase().slice(0, 253) });
+      const to = next.hostname.toLowerCase();
+      if (to !== host) return result({ status, ...(HOST.test(to) ? { movedTo: to } : {}) });
       next.hash = '';
       url = next.href;
       redirected = status;
       continue;
     }
-    return done({ outcome: outcomeFor(status), status });
+    return result({ status, wall: wallFor(status) });
   }
-  return done({ outcome: 'redirect_loop', status: redirected });
-}
-
-// --- Storage (worker role; migration 006) -----------------------------------
-
-const CLAIM = `INSERT INTO host_front_page_checks AS c (host, outcome) SELECT h, 'pending' FROM unnest($1::text[]) AS t(h)
-  ON CONFLICT (host) DO UPDATE SET checked_at = now()
-    WHERE c.outcome = 'pending' AND c.checked_at < now() - interval '15 minutes'
-  RETURNING host`;
-const SAVE = `UPDATE host_front_page_checks SET checked_at = now(), outcome = $2, status = $3, robots_status = $4, wall = $5, wall_signal = $6,
-  moved_to = $7, duration_ms = $8 WHERE host = $1`;
-
-export function createFrontPageStore(db) {
-  return Object.freeze({
-    // Hosts already checked (or being checked by another run, for 15 minutes).
-    async done() {
-      const { rows } = await db.query(`SELECT host FROM host_front_page_checks WHERE outcome <> 'pending' OR checked_at >= now() - interval '15 minutes'`);
-      return new Set(rows.map(row => row.host));
-    },
-    // Claims hosts for this run; returns those claimed (another run may hold the rest).
-    async claim(hosts) {
-      if (!hosts.length) return [];
-      const { rows } = await db.query(CLAIM, [hosts]);
-      return rows.map(row => row.host);
-    },
-    async save(result) {
-      const small = value => (Number.isInteger(value) && value >= 100 && value <= 599 ? value : null);
-      await db.query(SAVE, [result.host, result.outcome, small(result.status), small(result.robotsStatus), Boolean(result.wall),
-        result.wallSignal ? String(result.wallSignal).slice(0, 40) : null, result.movedTo ? String(result.movedTo).slice(0, 253) : null,
-        Number.isFinite(result.durationMs) ? Math.max(0, Math.round(result.durationMs)) : null]);
-    },
-    async list() {
-      const { rows } = await db.query(`SELECT host, checked_at, outcome, status, robots_status, wall, wall_signal, moved_to, duration_ms
-        FROM host_front_page_checks ORDER BY host`);
-      return rows;
-    },
-  });
+  // More than three redirects on the same host: the last one is kept.
+  return result({ status: redirected });
 }
 
 /**
- * One run: up to `limit` hosts not checked yet, `concurrency` at a time (each
- * host's own requests one after another), within `budgetMs`. Returns what each
- * host showed and how many are left.
+ * One run: every host given (by default those without a committed result),
+ * `concurrency` hosts at once (each host's own requests one after another),
+ * starting a host only while it can still finish within `runMs`. Each
+ * finished host is logged at once, so a run cut short keeps what it
+ * finished. Returns counts only.
  */
-export async function runFrontPageChecks({ store, hosts = frontPageHosts(), limit = 10, concurrency = 4, budgetMs = 90_000, check = checkFrontPage,
-  now = () => Date.now() } = {}) {
-  const startedAt = now();
-  const done = await store.done();
-  const waiting = hosts.filter(host => !done.has(host));
-  const claimed = await store.claim(waiting.slice(0, Math.max(1, Math.min(limit, 20))));
-  const results = [];
-  const queue = [...claimed];
+export async function runFrontPageChecks({ hosts = hostsWithoutResult(), check = checkFrontPage, concurrency = CONCURRENCY, runMs = RUN_MS,
+  startMarginMs = START_MARGIN_MS, now = () => Date.now(), log = line => process.stderr.write(`${line}\n`) } = {}) {
+  const deadlineAt = now() + runMs;
+  const queue = [...hosts];
+  let checked = 0;
   async function worker() {
-    while (queue.length) {
-      // A host not started before the budget runs out stays claimed for 15
-      // minutes, then the next run takes it.
-      if (now() - startedAt > budgetMs) return;
+    while (queue.length && now() + startMarginMs <= deadlineAt) {
       const host = queue.shift();
-      const result = await check(host);
-      results.push(result);
-      try { await store.save(result); } catch { /* the next run asks it again after the claim lapses */ }
+      let result;
+      try { result = frontPageResult(await check(host, { deadlineAt })); } catch { result = null; }
+      if (!result) continue;
+      checked += 1;
+      try { log(logLine(result)); } catch { /* a log failure never stops the run */ }
     }
   }
-  await Promise.all(Array.from({ length: Math.max(1, Math.min(concurrency, claimed.length)) }, worker));
-  return { checked: results.sort((a, b) => a.host.localeCompare(b.host)), remaining: Math.max(0, waiting.length - results.length), total: hosts.length };
-}
-
-// --- The internal route -------------------------------------------------------
-
-const unavailable = res => res.status(503).json({ error: { code: 'FRONT_PAGE_CHECK_UNAVAILABLE', message: 'The front-page check is unavailable.' } });
-
-export function createFrontPageCheckMiddleware({ env = process.env, connect = null, run = runFrontPageChecks } = {}) {
-  let db = null;
-  const middleware = async (req, res, next) => {
-    if (req.path !== FRONT_PAGE_CHECK_PATH) return next();
-    res.set({ 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' });
-    const config = readCatalogStoreConfig(env);
-    const provided = req.get('Authorization') || '';
-    if (typeof config.cronSecret !== 'string' || config.cronSecret.length < 32
-      || !timingSafeEqual(createHash('sha256').update(provided).digest(), createHash('sha256').update(`Bearer ${config.cronSecret}`).digest())) {
-      return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'This endpoint is private.' } });
-    }
-    if (!['GET', 'POST'].includes(req.method)) return res.status(405).end();
-    // Without the store a host could be asked again: the check needs it.
-    if (!config.workerDatabaseUrl) return unavailable(res);
-    const limit = Math.max(1, Math.min(20, Number.parseInt(String(req.query?.limit ?? '10'), 10) || 10));
-    try {
-      const { createCatalogDatabase } = await import('./pool.js');
-      db ||= connect ? connect(config.workerDatabaseUrl) : createCatalogDatabase(config.workerDatabaseUrl, { max: 2, statementTimeoutMs: 10_000 });
-      const role = (await db.query(`SELECT rolsuper, rolbypassrls, pg_has_role(current_user, c.relowner, 'USAGE') AS owns
-        FROM pg_roles r CROSS JOIN pg_class c WHERE rolname = current_user AND c.oid = 'host_front_page_checks'::regclass`)).rows[0];
-      if (!role || role.rolsuper || role.rolbypassrls || role.owns) throw new Error('Privileged worker role.');
-      const result = await run({ store: createFrontPageStore(db), limit });
-      // Hosts and what came back only: no page, header or address.
-      return res.json({ checked: result.checked.map(({ host, outcome, status, robotsStatus, wall, wallSignal, movedTo, durationMs }) =>
-        ({ host, outcome, status, robotsStatus, wall, wallSignal, movedTo, durationMs })), remaining: result.remaining, total: result.total });
-    } catch {
-      return unavailable(res);
-    }
-  };
-  middleware.close = async () => { await db?.end?.(); db = null; };
-  return middleware;
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(concurrency, queue.length)) }, worker));
+  return { checked, remaining: hosts.length - checked };
 }

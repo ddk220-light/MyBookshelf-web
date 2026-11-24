@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FORMAT_LABELS, countsAsFind, formatKind, isBookRow, rowFormatKind } from './rowFormats.js';
+import { FORMAT_LABELS, LAST_TIER, formatKind, formatTier, rowFormatKind } from './rowFormats.js';
 
 test('every adapter label in the table has one of the kinds', () => {
   for (const [family, labels] of Object.entries(FORMAT_LABELS)) {
@@ -29,13 +29,11 @@ test('labels not in the table are read by their words; no label is no format', (
   for (const none of [undefined, null, '', '0', ' - ', 42]) assert.equal(formatKind(none), null, String(none));
 });
 
-test('only video and music rows are not a find; rows with no format stay with the books', () => {
-  assert.equal(countsAsFind({ format: 'DVD' }), false);
-  assert.equal(countsAsFind({ format: 'MUSIC_CD' }), false);
-  for (const format of ['BK', 'EBOOK', 'EAUDIOBOOK', 'Playaway', 'Magazine', undefined]) assert.equal(countsAsFind({ format }), true, String(format));
-  assert.equal(isBookRow({}), true);
-  assert.equal(isBookRow({ format: 'Large Print' }), true);
-  assert.equal(isBookRow({ format: 'eBook' }), false);
+test('a format only orders the card: books and rows with no format, then e-books and audiobooks, then others, films and music last', () => {
+  for (const format of ['BK', 'Large Print', 'Text book', undefined, '0']) assert.equal(formatTier({ format }), 0, String(format));
+  for (const format of ['EBOOK', 'eBook', 'EAUDIOBOOK', 'Book on CD', 'Playaway']) assert.equal(formatTier({ format }), 1, format);
+  for (const format of ['Magazine', 'Kit', 'VIDEO_GAME']) assert.equal(formatTier({ format }), 2, format);
+  for (const format of ['DVD', 'Blu-ray', 'eVideo', 'MUSIC_CD', 'Score']) assert.equal(formatTier({ format }), LAST_TIER, format);
   // An adapter may say the kind itself.
   assert.equal(rowFormatKind({ formatKind: 'video', format: 'Book' }), 'video');
   assert.equal(rowFormatKind({ formatKind: 'nonsense', format: 'Book' }), 'book');

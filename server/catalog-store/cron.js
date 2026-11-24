@@ -6,12 +6,38 @@ import { createCatalogPolicy } from './policy.js';
 // Vercel Cron with `Authorization: Bearer <CRON_SECRET>`. Runs with the worker
 // role (CATALOG_WORKER_DATABASE_URL); never with the runtime or owner role.
 // Returns counts only: no text, book keys or database details.
+//
+// In production (VERCEL_ENV=production) the same call also runs the
+// front-page check (frontPageCheck.js) beside the maintenance, for the hosts
+// without a committed result, within the function's time. It needs no
+// database; its results go to the runtime log only. Once
+// server/data/front-page-results.json covers every host it does nothing.
 export const CATALOG_MAINTENANCE_PATH = '/api/internal/catalog-maintenance';
 
 const unavailable = res => res.status(503).json({ error: { code: 'MAINTENANCE_UNAVAILABLE', message: 'Catalog maintenance is unavailable.' } });
 
-export function createCatalogMaintenanceMiddleware({ env = process.env, policy = createCatalogPolicy(), connect = null } = {}) {
+async function defaultFrontPage() {
+  const { hostsWithoutResult, runFrontPageChecks } = await import('./frontPageCheck.js');
+  const hosts = hostsWithoutResult();
+  return hosts.length ? runFrontPageChecks({ hosts }) : { checked: 0, remaining: 0 };
+}
+
+export function createCatalogMaintenanceMiddleware({ env = process.env, policy = createCatalogPolicy(), connect = null, frontPage = defaultFrontPage } = {}) {
   let db = null;
+  const maintain = async config => {
+    if (!config.workerDatabaseUrl) return null;
+    try {
+      const [{ createCatalogDatabase }, { runCatalogMaintenance }] = await Promise.all([import('./pool.js'), import('./maintenance.js')]);
+      db ||= connect ? connect(config.workerDatabaseUrl) : createCatalogDatabase(config.workerDatabaseUrl, { max: 1, statementTimeoutMs: 30_000 });
+      const role = (await db.query(`SELECT rolsuper, rolbypassrls, pg_has_role(current_user, c.relowner, 'USAGE') AS owns
+        FROM pg_roles r CROSS JOIN pg_class c WHERE rolname = current_user AND c.oid = 'holdings_answers'::regclass`)).rows[0];
+      // The job must not run as the owner: the worker role only deletes and rolls up.
+      if (!role || role.rolsuper || role.rolbypassrls || role.owns) throw new Error('Privileged worker role.');
+      return await runCatalogMaintenance(db, { policy });
+    } catch {
+      return null;
+    }
+  };
   const middleware = async (req, res, next) => {
     if (req.path !== CATALOG_MAINTENANCE_PATH) return next();
     res.set({ 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' });
@@ -22,18 +48,11 @@ export function createCatalogMaintenanceMiddleware({ env = process.env, policy =
       return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'This endpoint is private.' } });
     }
     if (req.method !== 'GET') return res.status(405).end();
-    if (!config.workerDatabaseUrl) return unavailable(res);
-    try {
-      const [{ createCatalogDatabase }, { runCatalogMaintenance }] = await Promise.all([import('./pool.js'), import('./maintenance.js')]);
-      db ||= connect ? connect(config.workerDatabaseUrl) : createCatalogDatabase(config.workerDatabaseUrl, { max: 1, statementTimeoutMs: 30_000 });
-      const role = (await db.query(`SELECT rolsuper, rolbypassrls, pg_has_role(current_user, c.relowner, 'USAGE') AS owns
-        FROM pg_roles r CROSS JOIN pg_class c WHERE rolname = current_user AND c.oid = 'holdings_answers'::regclass`)).rows[0];
-      // The job must not run as the owner: the worker role only deletes and rolls up.
-      if (!role || role.rolsuper || role.rolbypassrls || role.owns) throw new Error('Privileged worker role.');
-      return res.json(await runCatalogMaintenance(db, { policy }));
-    } catch {
-      return unavailable(res);
-    }
+    // Both run to their end before the answer: the function may stop once it is sent.
+    const [maintained, checked] = await Promise.all([maintain(config),
+      env.VERCEL_ENV === 'production' ? Promise.resolve().then(frontPage).catch(() => null) : null]);
+    if (!maintained) return unavailable(res);
+    return res.json({ ...maintained, ...(checked ? { frontPage: { checked: checked.checked, remaining: checked.remaining } } : {}) });
   };
   middleware.close = async () => { await db?.end?.(); db = null; };
   return middleware;

@@ -4,9 +4,9 @@ import { validateAndNormalize } from '../services/isbn.js';
 import { identitiesFor, askedIdentity, storedAnswer } from '../services/catalog-lookup/record.js';
 import { safeCatalogUrl as onCatalogOrigin } from '../services/catalog-lookup/observation.js';
 import { REASONS } from '../services/catalog-lookup/outcome.js';
+import { MAX_MATCHES } from '../services/libraryBookSearch.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../catalog-store/requests.js';
 import { storesAvailability } from '../catalog-store/policy.js';
-import { countedOutcome } from '../catalog-store/outcomeCounts.js';
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
 // Holdings and submission routes (plan 3.5, 5.7). Still cookie-free: they
@@ -126,12 +126,6 @@ const safeCatalogUrl = value => {
 export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS,
   checkReplyMs = CHECK_REPLY_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
-  // The day's outcome count for this library (catalog-store/outcomeCounts.js):
-  // the library, the operation, found / not found / couldn't check and its
-  // reason. Never a book, text or anything about the reader.
-  const count = (libraryId, answer, reason) => {
-    try { store.outcomes?.record({ libraryId, operation: 'book_check', ...countedOutcome(answer, reason) }); } catch { /* Counts never alter a response. */ }
-  };
   // The book check's request budget (catalog-store/checkBudget.js): 'ok',
   // 'library' or 'client'. A missing or failing budget lets the check run.
   const budgetFor = async (libraryId, address) => {
@@ -214,10 +208,10 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         ? onCatalogOrigin(found.catalogUrl, library, entry) : undefined;
       const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
       const reason = answerReason(answer, found);
-      // The catalog's own rows for a found book (up to five, the ISBN match
-      // first): title and author as the catalog shows them, and the record's
-      // link only when it is on the library's catalog address.
-      const matches = answer === 'found' && Array.isArray(found?.matches) ? found.matches.slice(0, 5).flatMap(match => {
+      // The catalog's own rows for a found book (up to ten, best match first,
+      // libraryBookSearch.js): title and author as the catalog shows them, and
+      // the record's link only when it is on the library's catalog address.
+      const matches = answer === 'found' && Array.isArray(found?.matches) ? found.matches.slice(0, MAX_MATCHES).flatMap(match => {
         const title = typeof match?.title === 'string' ? match.title.trim().slice(0, 300) : '';
         if (!title) return [];
         const author = typeof match.author === 'string' ? match.author.trim().slice(0, 300) : '';
@@ -227,8 +221,6 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}),
         ...(matches.length ? { matches } : {}) });
       usage({ kind: 'book_check', libraryId, ...(keeps(libraryId) ? { bookKey } : {}), outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
-      // A stored answer is not a check of the catalog today: not counted.
-      if (source !== 'stored') count(libraryId, answer, reason);
     };
     const stored = await lookup.storedFor({ library: entry, book });
     if (stored) {

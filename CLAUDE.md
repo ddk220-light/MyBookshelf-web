@@ -14,4 +14,6 @@ server/data/catalog-policies.json), nothing is stored or cached for it: every
 check is one live request. Indian libraries are offered only
 when `server/data/india-catalogs-listed.json` lists them, US libraries only
 when `server/data/us-catalogs-listed.json` lists them and does not remove them.
-A catalog row whose format is video or music is never a find.
+A catalog row with at least 80% of the title's words is a find, whatever its
+format; the card lists up to 10, best match first (ISBN, exact main title,
+title start, other), books before e-books and audiobooks, films and music last.

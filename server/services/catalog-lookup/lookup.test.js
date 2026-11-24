@@ -282,7 +282,8 @@ test('Koha: one keyword search page (1 request) marks every book whose title mat
   assert.equal(calls.length, 1);
   assert.equal(new URL(calls[0]).searchParams.get('idx'), 'kw');
   assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome]), [['kalam', 'found'], ['sutherland', 'found']]);
-  assert.equal(items.find(item => item.bookKey === 'sutherland').catalogUrl, 'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=97054');
+  // "Wings of Fire: The dark secret" has the exact main title and comes first in the catalog.
+  assert.equal(items.find(item => item.bookKey === 'sutherland').catalogUrl, 'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=479740');
   assert.deepEqual(items.at(-1), { done: true, notAttempted: [], unmatched: ['other'], failed: [] });
 });
 
@@ -317,7 +318,7 @@ test('VuFind, LIBMAN and BiblioCommons: one search request marks by title', asyn
   assert.deepEqual([calls.length, items[0].bookKey, items[0].outcome], [1, 'k', 'found']);
 });
 
-test('marks follow the book check\'s row rules: a film or soundtrack never marks a book, and the mark links the print book by its author', async () => {
+test('marks follow the book check\'s rule and ranking: any matching row marks a book, films and soundtracks too, and the mark links the best-ranked row', async () => {
   global.fetch = async url => response(url, { catalogSearch: { pagination: { count: 4 }, results: ['S1', 'S2', 'S3', 'S4'].map(representative => ({ representative })) },
     entities: { bibs: {
       S1: { briefInfo: { title: 'Killers of the Flower Moon', format: 'DVD' } },
@@ -327,8 +328,11 @@ test('marks follow the book check\'s row rules: a film or soundtrack never marks
   const bc = { id: 'bc:smcl', platform: 'bc', slug: 'smcl', capabilities: ['availability'], catalogUrl: 'https://smcl.bibliocommons.com' };
   const items = await collect(harness().lookup.markResults({ library: bc, query: 'killers of the flower moon',
     books: [{ bookKey: 'k', title: 'Killers of the Flower Moon', authors: ['David Grann'] }, { bookKey: 'film', title: 'Original Motion Picture Soundtrack' }] }));
-  assert.deepEqual(items.filter(item => item.outcome === 'found').map(item => [item.bookKey, item.catalogUrl]), [['k', 'https://smcl.bibliocommons.com/v2/record/S4']]);
-  assert.deepEqual(items.at(-1).unmatched, ['film']);
+  // The book: the print row by its author before the study guide, and before the film titled exactly the same (films last).
+  // The soundtrack's words match the second book's title: found too ("wrongly saying something is found is okay").
+  assert.deepEqual(items.filter(item => item.outcome === 'found').map(item => [item.bookKey, item.catalogUrl]),
+    [['k', 'https://smcl.bibliocommons.com/v2/record/S4'], ['film', 'https://smcl.bibliocommons.com/v2/record/S2']]);
+  assert.deepEqual(items.at(-1).unmatched, []);
 });
 
 // San Mateo, 23 November 2026 (a 14.1 s tap): a BiblioCommons check sends

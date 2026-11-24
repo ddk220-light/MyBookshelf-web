@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { publicApi, PublicApiError } from './api';
+import { MAX_CATALOG_MATCHES, publicApi, PublicApiError } from './api';
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
@@ -42,7 +42,12 @@ describe('public API adapter', () => {
       { title: '' }, { author: 'No title' }, 'text', { title: 'c' }, { title: 'd' }, { title: 'e' }];
     reply({ answer: 'found', matches: rows });
     expect((await publicApi.holdingsCheck('koha:a', 'v1:isbn:9788173711466')).matches).toEqual([
-      { title: 'Wings of fire', author: 'Kalam', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire 7' }]);
+      { title: 'Wings of fire', author: 'Kalam', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire 7' }, { title: 'c' }, { title: 'd' }, { title: 'e' }]);
+    // At most ten rows, in the server's order (best match first).
+    reply({ answer: 'found', matches: Array.from({ length: 12 }, (_, index) => ({ title: `Row ${index + 1}` })) });
+    expect((await publicApi.holdingsCheck('koha:a', 'v1:isbn:9788173711466')).matches?.map(match => match.title))
+      .toEqual(Array.from({ length: MAX_CATALOG_MATCHES }, (_, index) => `Row ${index + 1}`));
+    expect(MAX_CATALOG_MATCHES).toBe(10);
     reply({ answer: 'not_found', matches: rows });
     expect((await publicApi.holdingsCheck('koha:a', 'v1:isbn:9788173711466')).matches).toBeUndefined();
     const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 202 }));
