@@ -1,20 +1,35 @@
 // US library pages (owner decisions, 23 November 2026), built by
-// tools/seo/build-pages.mjs: one page per offered US BiblioCommons library
-// (shared/seo-us-libraries.json, written by tools/seo/us-pages.mjs), with the
+// tools/seo/build-pages.mjs: one page per offered US library of a catalog
+// family with pages (PAGE_PLATFORMS: BiblioCommons, TLC, Koha, Aspen Discovery, Polaris PowerPAC, Apollo,
+// Evergreen (the Georgia PINES systems);
+// shared/seo-us-libraries.json, written by tools/seo/us-pages.mjs), with the
 // directory's facts and ten popular US books (shared/us-book-pool.json) that a
 // reader can check at that library, live, on a tap (/library-check.js,
-// tools/seo/library-check-script.mjs). Nothing is checked in advance:
-// BiblioCommons' terms forbid automated collection, and its availability is
-// never stored (server/data/catalog-policies.json). The books are popular
-// books to check, never books known to be there: the pages make no found
-// claim, and no structured data lists them. California was first; every
-// state follows the same rule.
+// tools/seo/library-check-script.mjs). Nothing is checked in advance, on any
+// US page (USA plan, section 9): BiblioCommons' terms forbid automated
+// collection and TLC's, ByWater's and Aspen's are unread, so none of their availability
+// is ever stored (server/data/catalog-policies.json); of the Polaris libraries
+// only Denver, Fairfax and Riverside allow storing, and Apollo (Biblionix) does; their pages check on a tap too. Georgia PINES's terms are unread, so it is live-only. The books are popular books to check,
+// never books known to be there: the pages make no found claim, and no
+// structured data lists them. California was first; every state follows the
+// same rule.
 import { coverUrl, libraryBookPath, placeOf, localityOf, fit, shelfTitle, DESCRIPTION_MAX } from './shelf-pages.mjs';
 
 // The books on each page: the first ten of the US list.
 export const CHECK_BOOKS = 10;
-// The catalog family the pages cover: BiblioCommons.
-export const PAGE_PLATFORM = 'bc';
+// The catalog families the pages cover: BiblioCommons, TLC (LS2 PAC,
+// CARL.X CARL•Connect Discovery; USA plan step 3), Koha (the US Koha
+// libraries, mostly at ByWater; step 4), Aspen Discovery (step 5), Polaris
+// PowerPAC (step 6), Apollo (Biblionix; step 7) and Evergreen (the Georgia PINES member systems; step 8).
+// Each answers one live search per tap (Polaris's is
+// PowerPAC's own chain of plain requests, Apollo's its two, PINES's its search and the found records). "Check all 10" is offered only where the
+// catalog sets no Crawl-delay (USA plan section 9): ByWater's
+// Cloudflare-managed robots.txt sets none, nor does Biblionix's; Aspen's own file sets 20 s
+// (Greenville, Metro OKC: `crawlDelaySeconds` on the entry) and gapines.org's 1 s (every PINES system), so those pages
+// check one book per tap. A library on a front-page host gets its page only
+// once it is offered, which waits on its host's front-page result
+// (services/directory.js).
+export const PAGE_PLATFORMS = Object.freeze(['bc', 'tlc', 'koha', 'aspen', 'polaris', 'apollo', 'evergreen']);
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const WORK = /^v1:openlibrary:OL\d+W$/;
@@ -41,7 +56,7 @@ export function withCity(library, correction) {
 
 /**
  * The pages: one per library in `pages.libraries` (shared/seo-us-libraries.json)
- * that is in the directory, a US BiblioCommons library in the state the file
+ * that is in the directory, a US library of a family with pages in the state the file
  * records, and checkable; a reviewed guide keeps its own slug and text and
  * gains the section. `pool` is the US list; `cities` the city corrections.
  * A page's date (`lastmod`, the date its content last changed) is the newest
@@ -63,7 +78,7 @@ export function checkPublication({ entries, toPublic, manifest, pages, pool, rem
     ids.add(id);
     const entry = byId.get(id);
     if (!entry) continue;
-    if (entry.country !== 'US' || entry.platform !== PAGE_PLATFORM) throw Error('Not a US BiblioCommons library: ' + id);
+    if (entry.country !== 'US' || !PAGE_PLATFORMS.includes(entry.platform)) throw Error('Not a US library of a family with pages: ' + id);
     if (!state || entry.region !== state) throw Error(`Not a ${state || 'listed'} library: ${id} (run node tools/seo/us-pages.mjs)`);
     if (!DATE.test(on || '')) throw Error('A US page needs the date it changed (on): ' + id);
     const guide = guides.get(id) || null;
@@ -75,7 +90,8 @@ export function checkPublication({ entries, toPublic, manifest, pages, pool, rem
     if (correction && !DATE.test(correction.on || '')) throw Error('A city correction needs its date (on): ' + id);
     const library = withCity(toPublic(entry), correction);
     if (!library?.capabilities?.publicAvailability || !library.selectionPath) continue;
-    libraries.push({ id, slug, path: '/libraries/' + slug, guide, library, books, on, cityOn: correction?.on || null });
+    libraries.push({ id, slug, path: '/libraries/' + slug, guide, library, books, on, cityOn: correction?.on || null,
+      checkAll: !(Number(entry.crawlDelaySeconds) > 0) });
   }
   for (const row of libraries) {
     row.related = sameStatePages(row, libraries);
@@ -111,7 +127,8 @@ export function checkDescription(library) {
  * in the app with this library chosen, where the check runs. The answer
  * goes in the row's answer box, empty until a tap. `stored`: whether the
  * catalog's answers may be kept (catalog-store/policy.js); when not, the
- * section says no answer is kept.
+ * section says no answer is kept. A catalog with a Crawl-delay
+ * (`row.checkAll` false) gets no "Check all" button.
  */
 export function checkSection(row, { escape, stored = false }) {
   const l = row.library;
@@ -119,7 +136,7 @@ export function checkSection(row, { escape, stored = false }) {
     const title = escape(book.title);
     return `<li class="check-book" data-book-key="${escape(book.bookKey)}" data-title="${title}"><img class="cover" src="${escape(coverUrl(book.coverId))}" alt="" width="72" height="108" loading="lazy" decoding="async"><div class="check-body"><p class="shelf-title">${title}</p><p class="shelf-author">${escape(book.author)}</p><div class="check-actions"><button type="button" class="button button-secondary" data-check hidden>Check at ${escape(l.name)}<span class="sr-only">: ${title}</span></button><a href="${escape(libraryBookPath(l.selectionPath, book.bookKey))}" rel="nofollow">Check in the app<span class="sr-only">: ${title}</span> →</a></div><div class="check-answer" data-check-answer aria-live="polite"></div></div></li>`;
   }).join('');
-  return `<section class="check-section" id="popular-books" aria-labelledby="check-heading" data-library-check data-library-id="${escape(row.id)}"><h2 id="check-heading">Popular books: check this library’s catalog</h2><p>${countName(row.books.length)} books that are popular in US public libraries. They are books to check, not books known to be in ${escape(l.name)}. When you tap “Check”, MyBookshelf searches the library’s own catalog for that book once, right then. Nothing is checked before you tap${stored ? '' : ', and no answer is kept'}.</p><div class="check-all"><button type="button" class="button" data-check-all hidden>Check all ${row.books.length}</button><span class="note" data-check-progress></span></div><ul class="check-list">${items}</ul><p class="note">The check looks for the book’s title in the catalog, so a find can be another edition. A catalog listing is not a copy count, a due date or a shelf location. If the catalog doesn’t answer, MyBookshelf says it couldn’t check, never that the book isn’t there. Covers from Open Library.</p></section>`;
+  return `<section class="check-section" id="popular-books" aria-labelledby="check-heading" data-library-check data-library-id="${escape(row.id)}"><h2 id="check-heading">Popular books: check this library’s catalog</h2><p>${countName(row.books.length)} books that are popular in US public libraries. They are books to check, not books known to be in ${escape(l.name)}. When you tap “Check”, MyBookshelf searches the library’s own catalog for that book once, right then. Nothing is checked before you tap${stored ? '' : ', and no answer is kept'}.</p>${row.checkAll === false ? '' : `<div class="check-all"><button type="button" class="button" data-check-all hidden>Check all ${row.books.length}</button><span class="note" data-check-progress></span></div>`}<ul class="check-list">${items}</ul><p class="note">The check looks for the book’s title in the catalog, so a find can be another edition. A catalog listing is not a copy count, a due date or a shelf location. If the catalog doesn’t answer, MyBookshelf says it couldn’t check, never that the book isn’t there. Covers from Open Library.</p></section>`;
 }
 
 /** Other pages in the same state, for a page's "More libraries" links (by name, at most eight). */

@@ -9,7 +9,6 @@ import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic,
 import { checkAvailability as checkKoha, parseBiblioNumber } from './koha.js';
 import { checkAvailability as checkChamo, parseChamoRecord, parseChamoSearch } from './chamo.js';
 import { checkAvailability as checkLibsys, clearLibsysCache, cookiesFrom, parseLibsysAvailability } from './libsys.js';
-import { aspenSearchUrl, checkAvailability as checkAspen } from './aspen.js';
 import { checkAvailability as checkCalil, parseCalilAvailability } from './calil.js';
 import { checkAvailability as checkVega, parseVegaAvailability } from './vega.js';
 import { cachedTask, clearHttpCache, request } from './http.js';
@@ -123,9 +122,18 @@ test('provider factory requires availability and selects supported platforms', (
   assert.equal(getProvider(null), null);
   assert.equal(getProvider({ platform: 'koha', capabilities: ['catalogSearch'] }), null);
   assert.equal(getProvider({ platform: 'unknown', capabilities: ['availability'] }), null);
-  for (const platform of ['bc', 'bibliocommons', 'koha', 'chamo', 'libsys', 'vega', 'aspen', 'calil']) {
+  for (const platform of ['bc', 'bibliocommons', 'koha', 'chamo', 'libsys', 'vega', 'calil']) {
     assert.equal(typeof getProvider(catalogOnly(platform)).checkAvailability, 'function');
   }
+  // Aspen Discovery, Polaris PowerPAC and Apollo answer the one library search (providers/aspen.js, polaris.js, apollo.js and their tests).
+  assert.equal(typeof getProvider(catalogOnly('aspen')).search, 'function');
+  assert.equal(typeof getProvider(catalogOnly('polaris')).search, 'function');
+  assert.equal(typeof getProvider(catalogOnly('apollo')).search, 'function');
+  // Evergreen (Georgia PINES) answers the one library search by title, and keeps its ISBN check for an exact edition (USA plan step 8).
+  const evergreen = getProvider(catalogOnly('evergreen'));
+  assert.equal(typeof evergreen.search, 'function');
+  assert.equal(typeof evergreen.checkAvailability, 'function');
+  assert.equal(evergreen.searchBy, undefined);
 });
 
 test('Vega maps an exact ISBN to branch-level public availability', async () => {
@@ -173,15 +181,6 @@ test('Vega uses server-configured origins and rejects unproven responses', async
   await assert.rejects(
     checkVega(catalogOnly('vega', { id: 'vega:broken', baseUrl: 'http://not-secure.example', vegaCustomerDomain: 'x', vegaHostDomain: 'y' }), '9780593135204'),
     { code: 'CATALOG_CONFIGURATION_REQUIRED' },
-  );
-});
-
-test('Aspen reports a provider block without claiming a missing book', async () => {
-  assert.equal(aspenSearchUrl('https://search.cpl.org', '9780593135204'), 'https://search.cpl.org/Search/Results?lookfor=9780593135204&searchIndex=ISBN');
-  global.fetch = async (url) => response('challenge', { status: 403, url });
-  await assert.rejects(
-    checkAspen(catalogOnly('aspen', { id: 'aspen:cleveland', baseUrl: 'https://search.cpl.org' }), '9780593135204'),
-    { code: 'CATALOG_PROVIDER_BLOCKED' },
   );
 });
 
@@ -559,7 +558,7 @@ test('library-search wiring (20 November 2026): every catalog gives one search(t
   const { getLibraryById } = await import('../directory.js');
   const { getProvider } = await import('./index.js');
   const of = id => { const entry = getLibraryById(id); assert.ok(entry, id); return getProvider(entry); };
-  for (const id of ['koha:iim-calcutta-mchv', 'indcat:indcat-andh-530003', 'egranthalaya:publiclibraries-hkmslib', 'libman:520']) {
+  for (const id of ['koha:iim-calcutta-mchv', 'indcat:indcat-andh-530003', 'egranthalaya:publiclibraries-hkmslib', 'libman:520', 'evergreen:athens-regional-ga', 'evergreen:gapines']) {
     const provider = of(id);
     assert.equal(typeof provider.search, 'function', id);
     assert.equal(provider.searchBy, undefined, id);

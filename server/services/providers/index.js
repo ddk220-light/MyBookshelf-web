@@ -14,6 +14,9 @@ import * as libman from './libman.js';
 import * as vufind from './vufind.js';
 import * as discoveryAcademic from './discoveryAcademic.js';
 import * as discoveryCommunity from './discoveryCommunity.js';
+import * as tlc from './tlc.js';
+import * as polaris from './polaris.js';
+import * as apollo from './apollo.js';
 import { createHash } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { normalizeAvailability } from './contract.js';
@@ -39,10 +42,10 @@ function executeRoute(route, method, task) {
 // adapter's own detail, in one named constant there (Koha SEARCH_INDEX,
 // e-Granthalaya SEARCH_FIELD, IndCat SEARCH_FIELD, VuFind SEARCH_TYPE,
 // LIBMAN SEARCH_CRITERIA, discoveryAcademic SEARCH_FIELD, discoveryCommunity
-// the family table). Where the catalog's search can be limited to this
+// the family table, TLC SEARCH_FIELD, Aspen SEARCH_INDEX, Polaris SEARCH_TYPE, Apollo SEARCH_TYPE, Evergreen SEARCH_CLASS). Where the catalog's search can be limited to this
 // library in the same request (Koha branch limit, e-Granthalaya member,
 // IndCat institution, LIBMAN tenant, VuFind institution/building, the
-// community catalogs' branch) the adapter does it; a shared catalog that
+// community catalogs' branch, a TLC member's branch filter, a PINES system's site) the adapter does it; a shared catalog that
 // cannot be limited (the unscoped DHE Goa Koha, the Sindhi archive) counts its
 // rows as this library's.
 //
@@ -50,7 +53,7 @@ function executeRoute(route, method, task) {
 // ISBN's digits: that is "couldn't check", not "not found".
 //
 // The exception: catalogs that can only be asked by ISBN (chamo, libsys,
-// vega, aspen, calil, evergreen, the IIT Hyderabad Koha API) declare
+// vega, calil, the IIT Hyderabad Koha API) declare
 // `searchBy: 'isbn'` and are handed the book's ISBN; their `search(isbn)` is
 // the ISBN check as rows: one row when this library holds a record for it,
 // none when the catalog recognizably lists none, otherwise a failure.
@@ -94,6 +97,10 @@ function primaryProvider(library) {
       // The gateway's keyword search (any field), every row with its format.
       return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author),
         search: term => bibliocommons.searchResultRows(library.slug, term), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
+    case 'tlc':
+      // TLC LS2 PAC / CARL•Connect Discovery: one any-field JSON search, every
+      // row with its format (providers/tlc.js).
+      return { search: term => tlc.librarySearch(library, term) };
     case 'koha': {
       // The IIT Hyderabad API answers by ISBN only.
       if (library.publicCatalogApi === 'iith-opac-v1') return withIsbnSearch({ checkAvailability: isbn => iithKoha.checkPublicAvailability(library, isbn) });
@@ -111,11 +118,26 @@ function primaryProvider(library) {
     case 'vega':
       return withIsbnSearch({ checkAvailability: (isbn) => vega.checkAvailability(library, isbn) });
     case 'aspen':
-      return withIsbnSearch({ checkAvailability: (isbn) => aspen.checkAvailability(library, isbn) });
+      // Aspen Discovery: one keyword search page, a row per grouped work and
+      // format (providers/aspen.js).
+      return { search: term => aspen.librarySearch(library, term) };
+    case 'polaris':
+      // Polaris PowerPAC: one keyword search (PowerPAC's own chain of plain
+      // GETs in one anonymous session), every row with its format (providers/polaris.js).
+      return { search: term => polaris.librarySearch(library, term) };
+    case 'apollo':
+      // Apollo (Biblionix): one keyword search (Apollo's own two plain
+      // requests, search_setup and perform_search), every row with its
+      // format (providers/apollo.js).
+      return { search: term => apollo.librarySearch(library, term) };
     case 'calil':
       return withIsbnSearch({ checkAvailability: (isbn) => calil.checkAvailability(library, isbn), checkMany: isbns => calil.checkMany(library, isbns) });
     case 'evergreen':
-      return withIsbnSearch({ checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn) });
+      // Evergreen (Georgia PINES): one keyword search through the OpenSRF
+      // gateway, limited to the member system, and the found records' brief
+      // details (providers/evergreen.js); an exact edition is the ISBN
+      // lookup with the system's copy counts.
+      return { checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn), search: term => evergreen.librarySearch(library, term) };
     case 'egranthalaya':
       return { checkAvailability: (isbn) => egranthalaya.checkAvailability(library, isbn), searchCatalog: query => egranthalaya.searchCatalog(library, query), resolveCatalogRecord: id => egranthalaya.resolveCatalogRecord(library, id),
         search: term => egranthalaya.librarySearch(library, term) };
@@ -246,5 +268,5 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
 
 export function getProvider(library) { return providerWithAlternates(library); }
 
-export { bibliocommons, koha, chamo, libsys, vega, aspen, calil, evergreen, egranthalaya };
+export { bibliocommons, koha, chamo, libsys, vega, aspen, calil, evergreen, egranthalaya, tlc };
 export { normalizeAvailability } from './contract.js';

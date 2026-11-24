@@ -33,7 +33,8 @@ export const FORMAT_LABELS = Object.freeze({
     MAG: 'other', KIT: 'other', MAP: 'other', BOARD_GAME: 'other', EQUIPMENT: 'other',
   }),
   // TLC LS2 PAC / CARL.X `resources[].format` (research, 23 November 2026:
-  // LAPL and Frederick, 1,665 rows).
+  // LAPL and Frederick, 1,665 rows; the adapter's live checks of 24 November
+  // 2026, providers/tlc.js, saw no other label).
   tlc: Object.freeze({
     Book: 'book', 'Large Print': 'book',
     eBook: 'ebook',
@@ -41,10 +42,92 @@ export const FORMAT_LABELS = Object.freeze({
     DVD: 'video', 'Video Recording': 'video', eVideo: 'video',
     'Music CD': 'music', eMusic: 'music', Score: 'music',
   }),
-  // Polaris PowerPAC result rows (research, Denver and Fairfax).
-  polaris: Object.freeze({ Book: 'book', 'Large Print': 'book', Ebook: 'ebook', Eaudiobook: 'audiobook', Playaway: 'audiobook' }),
-  // Apollo (Biblionix): an empty format is a print book.
-  apollo: Object.freeze({ 'large print': 'book', 'sound recording': 'audiobook', videorecording: 'video', eBook: 'ebook' }),
+  // Koha's material types (providers/koha.js `materialType`): the label its
+  // MARC21 XSLT shows on a search row or record page, from the record's
+  // leader. "Text" covers print books and e-books alike; "Sound" is a
+  // spoken (non-musical) recording, so an audiobook; "Music" a musical one;
+  // "Visual material" (older releases) and "Film" are mostly DVDs. Read for
+  // the US Koha libraries at ByWater (USA plan step 4) and for the Indian
+  // Koha catalogs that show the line (Madurai, Dharwad).
+  koha: Object.freeze({
+    Text: 'book', Book: 'book',
+    Sound: 'audiobook',
+    'Visual material': 'video', Film: 'video',
+    Music: 'music', Score: 'music',
+    'Computer file': 'other', Kit: 'other', Map: 'other', 'Mixed materials': 'other', 'Continuing resource': 'other', Article: 'other',
+    Set: 'other', Picture: 'other', Object: 'other',
+  }),
+  // Aspen Discovery formats (providers/aspen.js: a related manifestation's
+  // data-format). Seen at Greenville (research item 7 and the adapter's live
+  // checks, 24 November 2026): Book, Large Print, Audiobook on CD, Playaway,
+  // Online Content (a web or e-content edition of the work: with the e-books),
+  // DVD and Music CD. The rest are Aspen's own format names that the word
+  // patterns below would misread ("Playaway View" is a video player,
+  // "Book Club Kit" a kit, "eComic" and "Kindle" e-books).
+  aspen: Object.freeze({
+    Book: 'book', 'Large Print': 'book', 'Board Book': 'book', 'Graphic Novel': 'book',
+    'Online Content': 'ebook', eBook: 'ebook', Kindle: 'ebook', eComic: 'ebook',
+    'Audiobook on CD': 'audiobook', Playaway: 'audiobook', eAudiobook: 'audiobook',
+    DVD: 'video', 'Blu-ray': 'video', eVideo: 'video', 'Playaway View': 'video',
+    'Music CD': 'music', eMusic: 'music', 'Musical Score': 'music',
+    'Book Club Kit': 'other', eMagazine: 'other', Magazine: 'other', 'Video Game': 'other',
+  }),
+  // Polaris PowerPAC result rows (providers/polaris.js: the row's format icon
+  // label). Seen at Denver and Fairfax (research item 4 and the adapter's live
+  // checks, 24 November 2026): Book, Large Print, Ebook, Eaudiobook, Audio
+  // Book on CD, Playaway, Read-along, Electronic Resources (with the e-books),
+  // Kit (a book group kit). The rest are Polaris's own
+  // format (TOM) names (research item 4: the PAC's CQL access points, version
+  // 7.0) and the limits the sites offer, where the word patterns below would
+  // misread them: "Book + DVD" is a book, "Nonmusical sound recording" an
+  // audiobook, "Projected medium" a video, "Printed music" music. ("Book +
+  // CD" reads as BiblioCommons' BOOK_CD, an audiobook: one label, one kind.)
+  polaris: Object.freeze({
+    Book: 'book', 'Large Print': 'book', Braille: 'book', 'Book + Cassette': 'book', 'Book + DVD': 'book', 'Read-along': 'book',
+    ReadAlongs: 'book',
+    Ebook: 'ebook', Ebooks: 'ebook', 'Electronic resource': 'ebook', 'Electronic resources': 'ebook',
+    Eaudiobook: 'audiobook', 'Audio eBook': 'audiobook', 'Audio book': 'audiobook', 'Audio book on CD': 'audiobook', 'Audio book on cassette': 'audiobook',
+    Playaway: 'audiobook', 'Nonmusical sound recording': 'audiobook',
+    'Blu-Ray Disc': 'video', 'Blu-Ray + DVD': 'video', Videorecording: 'video', Videotape: 'video', 'Motion picture': 'video', 'Streaming video': 'video',
+    'Projected medium': 'video', 'Visual materials': 'video',
+    'Musical sound recording': 'music', 'Printed music': 'music', 'Manuscript music': 'music', 'Printed or manuscript music': 'music',
+    'Streaming music': 'music', Vinyl: 'music',
+    Abstract: 'other', Atlas: 'other', 'Cartographic material': 'other', 'Digital media collection': 'other', Emagazine: 'other', Globe: 'other',
+    'Manuscript material': 'other', Microform: 'other', Newspaper: 'other', Periodical: 'other', Serial: 'other', 'Three-dimensional object': 'other',
+    'Two-dimensional nonprojected graphic': 'other', 'Framed art': 'other',
+  }),
+  // Apollo (Biblionix) rows (providers/apollo.js: the downloadable kind `ms`
+  // when there is one, else the medium `m`; an empty medium is a print book,
+  // so the row has no format and sits with the books). Seen in research item
+  // 8 and the adapter's live checks (Clear Lake IA, Lawton OK, 23 and 24
+  // November 2026): large print, sound recording, videorecording, eBook,
+  // Audiobook; and the catalogs' own medium lists: board book, graphic novel,
+  // Vox (a picture book with its own audio player, a read-along), kit,
+  // music recording, periodical(s), Playaway, puzzle, Tablet, LoT (library of
+  // things), electronic resource, Magazine. A "sound recording" is spoken
+  // (Clear Lake lists "music recording" beside it).
+  apollo: Object.freeze({
+    'large print': 'book', 'board book': 'book', 'graphic novel': 'book', Vox: 'book',
+    eBook: 'ebook', 'electronic resource': 'ebook',
+    'sound recording': 'audiobook', Audiobook: 'audiobook', Playaway: 'audiobook',
+    videorecording: 'video',
+    'music recording': 'music',
+    kit: 'other', periodical: 'other', periodicals: 'other', puzzle: 'other', Tablet: 'other', LoT: 'other', Magazine: 'other',
+  }),
+  // Evergreen (Georgia PINES) rows (providers/evergreen.js: the record's
+  // MODS type of resource, from its MARC leader, in the brief record the
+  // gateway gives). Seen in the live checks of 24 November 2026: text (print
+  // and large print books alike) and sound recording-nonmusical (a book on
+  // CD); the rest are MODS's other values. A text whose physical description
+  // is an online resource is set as an e-book by the adapter.
+  evergreen: Object.freeze({
+    text: 'book',
+    'sound recording-nonmusical': 'audiobook', 'sound recording': 'audiobook',
+    'moving image': 'video',
+    'sound recording-musical': 'music', 'notated music': 'music',
+    cartographic: 'other', 'still image': 'other', 'three dimensional object': 'other', 'software, multimedia': 'other',
+    'mixed material': 'other', kit: 'other',
+  }),
   // Indian catalogs' free-text material types (LIBMAN DOCUMENTTYPE,
   // e-Granthalaya Format/Medium, IndCat leader, discovery TypeofMaterial).
   india: Object.freeze({ 'Text book': 'book', TEXTBOOK: 'book', Reference: 'book', Book: 'book', 'Book (reference use only)': 'book',
@@ -59,14 +142,24 @@ export const LAST_TIER = 3;
 
 const labelKey = value => String(value).normalize('NFKD').replace(/\p{M}+/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
-const TABLE = new Map();
-for (const labels of Object.values(FORMAT_LABELS)) {
-  for (const [label, kind] of Object.entries(labels)) {
-    const key = labelKey(label);
-    if (TABLE.has(key) && TABLE.get(key) !== kind) throw new Error(`Format label ${label} has two kinds`);
-    TABLE.set(key, kind);
+function tableOf(families) {
+  const table = new Map();
+  for (const labels of families.map(family => FORMAT_LABELS[family])) {
+    for (const [label, kind] of Object.entries(labels)) {
+      const key = labelKey(label);
+      if (table.has(key) && table.get(key) !== kind) throw new Error(`Format label ${label} has two kinds`);
+      table.set(key, kind);
+    }
   }
+  return table;
 }
+// One table for every library, in every country (owner, 24 November 2026:
+// "anything we apply should apply to all libraries"). A label two catalogs
+// could read differently is read the way that ranks books first: "Text",
+// "Braille", "Read-along" and "Book + DVD" are books; "Book Club Kit" is a
+// kit, "Visual material" a film, after the books. A format only orders the
+// card: it never decides whether a row is a find.
+const TABLE = tableOf(Object.keys(FORMAT_LABELS));
 
 // Word patterns for labels the table does not list, tried in this order (a
 // "Music CD" is music before it is a CD; a "Music download" is music before

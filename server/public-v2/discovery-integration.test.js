@@ -27,11 +27,23 @@ test('every imported inline library has search, durable reopening, and availabil
   // (LBSNAA was removed by hand on 19 November 2026: robots.txt).
   // The finder counts 6,701 of the 6,704 Indian entries (three have no finder record).
   assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4138);
-  // The 15 US entries in server/data/us-catalogs-listed.json `removed` are
-  // not offered either (23 November 2026).
-  assert.equal(createDiscoveryService().search({ country: 'US' }).total, 217);
-  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4138 - 15);
-  assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086);
+  // The 16 US entries in server/data/us-catalogs-listed.json `removed` are
+  // not offered either (23 November 2026; gapines, split into its member
+  // systems, 24 November 2026), nor the 293 waiting on their identity (TLC 8,
+  // Koha 23, Aspen 178, Polaris 84), nor the 428 connected ones whose hosts'
+  // front-page results are not in (7 TLC, 29 Koha, 357 Aspen, CLEVNET and
+  // MAIN among them since the coordinator's decision of 24 November 2026, 33
+  // Polaris and 2 Apollo). Offered: the 212 legacy entries, the 36 TLC
+  // entries confirmed by a published page, Greenville (Aspen), 214 Polaris
+  // entries (Denver, Fairfax, Miami-Dade, Livingston Parish, Carroll County,
+  // Riverside and SHARE's 208 members), 8 Apollo entries (Clear Lake, Lawton,
+  // and the six whose catalog page an agent read on 24 November 2026) and the
+  // 51 Georgia PINES systems. The directory has 51 TLC, 52 US Koha, 532
+  // Aspen, 331 Polaris, 10 Apollo and 51 Evergreen entries from
+  // server/data/us-catalogs.json.
+  assert.equal(createDiscoveryService().search({ country: 'US' }).total, 212 + 36 + 1 + 214 + 8 + 51);
+  assert.equal(createDiscoveryService().search({}).total, 7086 + 51 + 52 + 532 + 331 + 10 + 51 - 6701 + 4138 - 16 - 293 - 428);
+  assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086 + 51 + 52 + 532 + 331 + 10 + 51);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });
 

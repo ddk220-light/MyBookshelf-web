@@ -1,4 +1,5 @@
 import { cachedTask, catalogOperation, enqueueTask, getText, peekCachedTask } from './http.js';
+import { createRefusalLatch } from './refusalLatch.js';
 import { firstIsbn } from './catalogMarkup.js';
 import { cleanAuthor, cleanTitle } from './catalogText.js';
 import { validateAndNormalize } from '../isbn.js';
@@ -12,7 +13,9 @@ const MAX_RESPONSE_BYTES = 4 * 1024 * 1024;
 const SEARCH_ROW_TTL_MS = 30 * 60_000;
 let emptyRecordRetryMs = 2_000;
 const BLOCKED_STATUSES = new Set([401, 403, 429]);
-const refusedOrigins = new Set();
+// A refusal turns the shared origin off on this instance for
+// REFUSAL_LATCH_MS (providers/refusalLatch.js), then the next check asks again.
+const refusedOrigins = createRefusalLatch();
 const AVAILABLE = new Set(['available']);
 const UNAVAILABLE = new Set(['issued', 'on loan', 'checked out', 'not available', 'lost', 'missing', 'withdrawn']);
 
@@ -382,7 +385,7 @@ function configuration(library) {
 
 function blocked() {
   if (refusedOrigins.has(ORIGIN)) {
-    throw providerError('CATALOG_PROVIDER_BLOCKED', 'e-Granthalaya access was refused; this origin is disabled');
+    throw providerError('CATALOG_PROVIDER_BLOCKED', 'e-Granthalaya access was refused; this origin is paused for a while');
   }
 }
 
@@ -753,8 +756,9 @@ function isbnQueries(isbn) {
     (isbn.startsWith('978') ? hyphenated.slice(4, -2) : hyphenated)].filter(Boolean))];
 }
 
-// Refusals disable this shared origin until process restart/operator action.
-// Exposed for isolated provider tests only, never through an HTTP endpoint.
+// Refusals pause this shared origin for REFUSAL_LATCH_MS (15 minutes) on
+// this instance. Exposed for isolated provider tests only, never through an
+// HTTP endpoint.
 export function clearEgranthalayaRefusals() {
   refusedOrigins.clear();
 }

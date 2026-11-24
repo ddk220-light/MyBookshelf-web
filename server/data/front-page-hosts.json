@@ -1,6 +1,6 @@
 {
- "about": "Catalog hosts for the front-page check (catalog-store/frontPageCheck.js; owner decision, 23 November 2026: \"You can check yourself\"). flagged: hosts whose robots.txt allows every agent (*), and so the app, but blocks AI agents, so no agent may look for a bot wall (mostly Koha and Aspen at ByWater). polaris-literal: Polaris PowerPAC hosts whose robots.txt disallows only the capital-P /Polaris/search/ path, which a case-sensitive reading (RFC 9309, owner decision of 23 November 2026) does not apply to the lowercase /polaris/ catalog. From the US national catalog survey and the open research of 23 November 2026; families and systems as that survey found them. The app's own server asks each host for its front page once, as MyBookshelf/1.0, after its robots.txt allows it, with no search.",
- "updatedOn": "2026-11-23",
+ "about": "Catalog hosts for the front-page check (catalog-store/frontPageCheck.js; owner decision, 23 November 2026: \"You can check yourself\"). flagged: hosts whose robots.txt allows every agent (*), and so the app, but blocks AI agents, so no agent may look for a bot wall (mostly Koha and Aspen at ByWater). polaris-literal: Polaris PowerPAC hosts whose robots.txt disallows only the capital-P /Polaris/search/ path, which a case-sensitive reading (RFC 9309, owner decision of 23 November 2026) does not apply to the lowercase /polaris/ catalog. From the US national catalog survey and the open research of 23 November 2026; families and systems as that survey found them. The app's own server asks each host for its front page once, as MyBookshelf/1.0, after its robots.txt allows it, with no search. Added 24 November 2026 (USA plan step 4, Koha): every catalog host the US Koha entries in server/data/us-catalogs.json use, including Koha hosts in ByWater's zone known only from DNS leads (robots.txt not read; ByWater's Cloudflare-managed file is assumed) and the Aspen Discovery fronts of entries whose Koha host is not known, so each has its result when its identity is settled. A connected entry on one of these hosts is offered only once its result shows the host open (server/services/directory.js). unseen: hosts whose robots.txt allows Claude agents too, or was not read, but which no agent was cleared to contact (Metro Library System's Grove-hosted Aspen Discovery; the TLC hosts connected by the coordinator's DNS-lead decision of 24 November 2026), so a wall is unknown. Added 24 November 2026 (USA plan step 5, Aspen Discovery): every host a connected or waiting US Aspen entry uses (Greenville's excepted: agents may look there and saw no wall), and the TLC DNS-lead hosts. Added 24 November 2026 (USA plan step 6, Polaris PowerPAC): every host a connected or waiting US Polaris entry uses where no agent looked for a wall (polaris-literal for the vendor template; unseen for Henderson, Longview and New Orleans's candidate hosts, which have no robots.txt but no agent was cleared to contact); the hosts whose robots.txt also blocks the lowercase /polaris/ (Onondaga, Valley Library Consortium, San Bernardino County) are left out, as class D, and Richland's catalog is listed by its own name (catalog.richlandlibrary.com). wall-seen: hosts whose catalog showed a bot wall to a research agent (Nashville, Orange County FL, SWAN) or, at the app's launch, to the app's own requests (CLEVNET, MAIN); the app's own check decides (coordinator decision, 24 November 2026). Added 24 November 2026 (USA plan step 7, Apollo): the <name>.biblionix.com hosts of the connected and waiting Apollo entries that no agent was cleared to contact (unseen: Rolling Hills, Killeen); Clear Lake's and Lawton's are not here (agents may look there and saw no wall), nor, from 24 November 2026, Brownsville's, Horseshoe Bend's (Idaho), Anderson County's, Gilford's, Lamar County's and Orange City's (an agent read each catalog page once and saw no wall). Georgia PINES (gapines.org, USA plan step 8) is not here either: the app checks it through the OpenSRF gateway, which an agent read without a wall, and the app has used since October 2026. tools/directory/apollo-hosts.mjs adds the host of every later Apollo entry here unless an agent saw it without a wall. memberLists: shared catalogs whose members are only estimated or unknown, read once for the catalog's own member or location list (frontPageCheck.js). catalogLinks: waiting libraries whose homepage URL is in the evidence, read once for their outgoing catalog links and title. skipped: the waiting ones not covered, and why.",
+ "updatedOn": "2026-11-24",
  "hosts": [
   {
    "host": "anoka.aspendiscovery.org",
@@ -31,6 +31,13 @@
    "system": "Black Hills Library Consortium incl. Rapid City PL"
   },
   {
+   "host": "brockton.ocln.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "MA",
+   "system": "Brockton Public Library"
+  },
+  {
    "host": "brooks.aspendiscovery.org",
    "family": "aspen",
    "why": "flagged",
@@ -45,6 +52,13 @@
    "system": "Brownell Library (Essex Junction)"
   },
   {
+   "host": "butte.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Butte County Library (a DNS lead; robots.txt not read)"
+  },
+  {
    "host": "cadl.aspendiscovery.org",
    "family": "aspen",
    "why": "flagged",
@@ -57,6 +71,13 @@
    "why": "flagged",
    "state": "MA",
    "system": "Cambridge Public Library"
+  },
+  {
+   "host": "carrollton.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "TX",
+   "system": "Carrollton Public Library (a DNS lead; robots.txt not read)"
   },
   {
    "host": "carsoncity.aspendiscovery.org",
@@ -178,6 +199,13 @@
    "system": "Flagstaff City-Coconino County PL"
   },
   {
+   "host": "catalog.hcpl.bywatersolutions.com",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Hernando County Public Library System (Aspen Discovery front) (robots.txt not read)"
+  },
+  {
    "host": "catalog.hmcpl.org",
    "family": "aspen",
    "why": "flagged",
@@ -199,6 +227,13 @@
    "system": "VOKAL (Vermont; outside the Midwest, re-classified on request)"
   },
   {
+   "host": "catalog.lionlibraries.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CT",
+   "system": "LION (Libraries Online)"
+  },
+  {
    "host": "catalog.minlib.net",
    "family": "aspen",
    "why": "flagged",
@@ -211,6 +246,13 @@
    "why": "flagged",
    "state": "AZ",
    "system": "Mohave County LD"
+  },
+  {
+   "host": "catalog.mylakelibrary.org",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Lake County Library System (robots.txt not read)"
   },
   {
    "host": "catalog.oremlibrary.org",
@@ -332,6 +374,13 @@
    "system": "Chesapeake PL"
   },
   {
+   "host": "citrus.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Citrus County Library System (a DNS lead; robots.txt not read)"
+  },
+  {
    "host": "ckls.bywatersolutions.com",
    "family": "koha",
    "why": "flagged",
@@ -358,6 +407,13 @@
    "why": "flagged",
    "state": "ID",
    "system": "Community Library Network (Kootenai/Shoshone)"
+  },
+  {
+   "host": "corona.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Corona Public Library (a DNS lead; robots.txt not read)"
   },
   {
    "host": "corpustx.bywatersolutions.com",
@@ -402,8 +458,15 @@
    "system": "Dothan Houston County Library System"
   },
   {
+   "host": "discover.aclib.us",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Alachua County Library District (robots.txt not read)"
+  },
+  {
    "host": "discover.cuyahogalibrary.org",
-   "family": "koha",
+   "family": "aspen",
    "why": "flagged",
    "state": "OH",
    "system": "Cuyahoga County PL"
@@ -437,6 +500,13 @@
    "system": "MAIN Library Alliance (Morris; SCLSNJ joined Nov 2025)"
   },
   {
+   "host": "discover.merrimacklibrary.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "NH",
+   "system": "Merrimack Public Library (robots.txt not read)"
+  },
+  {
    "host": "discover.salinapubliclibrary.org",
    "family": "koha",
    "why": "flagged",
@@ -449,6 +519,20 @@
    "why": "flagged",
    "state": "MN",
    "system": "East Central Regional Library"
+  },
+  {
+   "host": "dubuque.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "IA",
+   "system": "Carnegie-Stout Public Library (a DNS lead; robots.txt not read)"
+  },
+  {
+   "host": "edcl.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CA",
+   "system": "El Dorado County Library (Aspen Discovery front) (robots.txt not read)"
   },
   {
    "host": "emcfl.bywatersolutions.com",
@@ -507,6 +591,27 @@
    "system": "Gail Borden PL (Elgin)"
   },
   {
+   "host": "heartland.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Heartland Library Cooperative (a DNS lead; robots.txt not read)"
+  },
+  {
+   "host": "helenhall.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "TX",
+   "system": "Helen Hall Library (a DNS lead; robots.txt not read)"
+  },
+  {
+   "host": "humboldt.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Humboldt County Library (robots.txt not read)"
+  },
+  {
    "host": "hunterdon.aspendiscovery.org",
    "family": "aspen",
    "why": "flagged",
@@ -542,6 +647,13 @@
    "system": "Kellogg-Hubbard Library (Montpelier)"
   },
   {
+   "host": "lakeworthbeach.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Lake Worth Beach Public Library (Aspen Discovery front) (robots.txt not read)"
+  },
+  {
    "host": "lcei.bywatersolutions.com",
    "family": "koha",
    "why": "flagged",
@@ -570,6 +682,13 @@
    "system": "Rochester Public Library"
   },
   {
+   "host": "librarycat.marionfl.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Marion County Public Library System (Aspen Discovery front) (robots.txt not read)"
+  },
+  {
    "host": "librarycatalog.dover.nh.gov",
    "family": "aspen",
    "why": "flagged",
@@ -596,6 +715,20 @@
    "why": "flagged",
    "state": "ID",
    "system": "Marshall PL (Pocatello)"
+  },
+  {
+   "host": "mckinney.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "TX",
+   "system": "McKinney Public Library System (a DNS lead; robots.txt not read)"
+  },
+  {
+   "host": "mclib.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "KY",
+   "system": "McCracken County Public Library (robots.txt not read)"
   },
   {
    "host": "mcpl.aspendiscovery.org",
@@ -640,6 +773,13 @@
    "system": "Nevada Library Cooperative (16 members, 38 locations: Carson City, Elko-Lander-Eureka, Churchill,..."
   },
   {
+   "host": "okaloosa.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Okaloosa County Public Library Cooperative (a DNS lead; robots.txt not read)"
+  },
+  {
    "host": "opac.westchesterlibraries.org",
    "family": "aspen",
    "why": "flagged",
@@ -654,6 +794,13 @@
    "system": "Orem PL"
   },
   {
+   "host": "panhandle.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "Panhandle Public Library Cooperative System (a DNS lead; robots.txt not read)"
+  },
+  {
    "host": "pioneer.bywatersolutions.com",
    "family": "koha",
    "why": "flagged",
@@ -661,11 +808,25 @@
    "system": "Pioneer Consortium (20+ small Nebraska libraries)"
   },
   {
+   "host": "pomona.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Pomona Public Library (robots.txt not read)"
+  },
+  {
    "host": "rapidcity.aspendiscovery.org",
    "family": "aspen",
    "why": "flagged",
    "state": "SD",
    "system": "Black Hills Library Consortium incl. Rapid City PL"
+  },
+  {
+   "host": "roseville.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Roseville Public Library (a DNS lead; robots.txt not read)"
   },
   {
    "host": "rutland.aspendiscovery.org",
@@ -680,6 +841,13 @@
    "why": "flagged",
    "state": "KS",
    "system": "Salina PL"
+  },
+  {
+   "host": "salinas.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Salinas Public Library (a DNS lead; robots.txt not read)"
   },
   {
    "host": "search.cpl.org",
@@ -710,11 +878,25 @@
    "system": "Mentor PL"
   },
   {
+   "host": "search.owwl.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "NY",
+   "system": "OWWL Library System (robots.txt not read)"
+  },
+  {
    "host": "search.shakerlibrary.org",
    "family": "aspen",
    "why": "flagged",
    "state": "OH",
    "system": "Shaker Heights PL"
+  },
+  {
+   "host": "seflin.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "SEFLIN shared Koha catalog (Boynton Beach, Delray Beach, Lake Park, Palm Springs) (a DNS lead; robots.txt not read)"
   },
   {
    "host": "sekls.bywatersolutions.com",
@@ -724,6 +906,20 @@
    "system": "SEKnFind (SE Kansas Library System)"
   },
   {
+   "host": "shasta.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Shasta Public Libraries (a DNS lead; robots.txt not read)"
+  },
+  {
+   "host": "sjcpls.bywatersolutions.com",
+   "family": "koha",
+   "why": "flagged",
+   "state": "FL",
+   "system": "St. Johns County Public Library System (a DNS lead; robots.txt not read)"
+  },
+  {
    "host": "southburlington.kohavt.org",
    "family": "koha",
    "why": "flagged",
@@ -731,11 +927,25 @@
    "system": "South Burlington Public Library"
   },
   {
+   "host": "suttercounty.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Sutter County Library (robots.txt not read)"
+  },
+  {
    "host": "thrall.aspendiscovery.org",
    "family": "aspen",
    "why": "flagged",
    "state": "NY",
    "system": "Ramapo Catskill Library System (47 libs)"
+  },
+  {
+   "host": "tyler.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "TX",
+   "system": "Tyler Public Library (robots.txt not read)"
   },
   {
    "host": "warwicklibrary.oslri.net",
@@ -757,6 +967,104 @@
    "why": "flagged",
    "state": "WI",
    "system": "V-Cat / Wisconsin Valley LS (~25 libraries)"
+  },
+  {
+   "host": "yolo.aspendiscovery.org",
+   "family": "aspen",
+   "why": "flagged",
+   "state": "CA",
+   "system": "Yolo County Library (robots.txt not read)"
+  },
+  {
+   "host": "alamance.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "NC",
+   "system": "Alamance County Public Libraries (a DNS lead)"
+  },
+  {
+   "host": "ascension.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "LA",
+   "system": "Ascension Parish Library (a DNS lead)"
+  },
+  {
+   "host": "bcslibrary.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "TX",
+   "system": "Bryan+College Station Public Library System (a DNS lead)"
+  },
+  {
+   "host": "catalog.hendersonlibraries.com",
+   "family": "polaris",
+   "why": "unseen",
+   "state": "NV",
+   "system": "Henderson Libraries"
+  },
+  {
+   "host": "catalog.longviewtexas.gov",
+   "family": "polaris",
+   "why": "unseen",
+   "state": "TX",
+   "system": "Longview Public Library"
+  },
+  {
+   "host": "catalog.metrolibrary.org",
+   "family": "aspen",
+   "why": "unseen",
+   "state": "OK",
+   "system": "Metropolitan Library System"
+  },
+  {
+   "host": "catalog.nolalibrary.org",
+   "family": "polaris",
+   "why": "unseen",
+   "state": "LA",
+   "system": "New Orleans Public Library (one of three candidate hosts)"
+  },
+  {
+   "host": "catawba.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "NC",
+   "system": "Catawba County Library (a DNS lead)"
+  },
+  {
+   "host": "muncie.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "IN",
+   "system": "Muncie-Center Township Public Library (a DNS lead)"
+  },
+  {
+   "host": "neworleans.polarislibrary.com",
+   "family": "polaris",
+   "why": "unseen",
+   "state": "LA",
+   "system": "New Orleans Public Library"
+  },
+  {
+   "host": "sequoyah.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "GA",
+   "system": "Sequoyah Regional Library System (a DNS lead)"
+  },
+  {
+   "host": "waco.tlcdelivers.com",
+   "family": "tlc",
+   "why": "unseen",
+   "state": "TX",
+   "system": "Waco-McLennan County Library (a DNS lead)"
+  },
+  {
+   "host": "alexandria.polarislibrary.com",
+   "family": "polaris",
+   "why": "polaris-literal",
+   "state": "VA",
+   "system": "Alexandria Library"
   },
   {
    "host": "catalog.bcpl.lib.md.us",
@@ -822,18 +1130,25 @@
    "system": "Mid-Columbia Libraries"
   },
   {
-   "host": "catalog.onlib.org",
-   "family": "polaris",
-   "why": "polaris-literal",
-   "state": "NY",
-   "system": "Onondaga County Public Libraries"
-  },
-  {
    "host": "catalog.ontarioca.gov",
    "family": "polaris",
    "why": "polaris-literal",
    "state": "CA",
    "system": "Ontario City Library"
+  },
+  {
+   "host": "catalog.richlandlibrary.com",
+   "family": "polaris",
+   "why": "polaris-literal",
+   "state": "SC",
+   "system": "Richland Library"
+  },
+  {
+   "host": "catalog.rockwallcountytexas.com",
+   "family": "polaris",
+   "why": "polaris-literal",
+   "state": "TX",
+   "system": "Rockwall County Library"
   },
   {
    "host": "catalog.troymi.gov",
@@ -906,13 +1221,6 @@
    "system": "Howard County Library System"
   },
   {
-   "host": "rlcpac.richlandlibrary.com",
-   "family": "polaris",
-   "why": "polaris-literal",
-   "state": "SC",
-   "system": "Richland Library"
-  },
-  {
    "host": "rvl.polarislibrary.com",
    "family": "polaris",
    "why": "polaris-literal",
@@ -920,18 +1228,11 @@
    "system": "Roanoke Valley Libraries (Roanoke City, Roanoke Co., Salem, Botetourt)"
   },
   {
-   "host": "sbclib.polarislibrary.com",
+   "host": "sarasota.polarislibrary.com",
    "family": "polaris",
    "why": "polaris-literal",
-   "state": "CA",
-   "system": "San Bernardino County Library"
-  },
-  {
-   "host": "vlc.polarislibrary.com",
-   "family": "polaris",
-   "why": "polaris-literal",
-   "state": "MI",
-   "system": "Valley Library Consortium (Saginaw, Bay and others)"
+   "state": "FL",
+   "system": "Sarasota County Libraries"
   },
   {
    "host": "wrls.polarislibrary.com",
@@ -939,6 +1240,321 @@
    "why": "polaris-literal",
    "state": "WI",
    "system": "Winding Rivers LS (La Crosse, ~28 libraries)"
+  },
+  {
+   "host": "catalog.library.nashville.gov",
+   "family": "aspen",
+   "why": "wall-seen",
+   "state": "TN",
+   "system": "Nashville Public Library"
+  },
+  {
+   "host": "catalog.ocls.org",
+   "family": "aspen",
+   "why": "wall-seen",
+   "state": "FL",
+   "system": "Orange County Library System"
+  },
+  {
+   "host": "catalog.swanlibraries.net",
+   "family": "aspen",
+   "why": "wall-seen",
+   "state": "IL",
+   "system": "SWAN (System Wide Automated Network)"
+  },
+  {
+   "host": "rollinghills.biblionix.com",
+   "family": "apollo",
+   "why": "unseen",
+   "state": "MO",
+   "system": "Rolling Hills Consolidated Library"
+  },
+  {
+   "host": "killeen.biblionix.com",
+   "family": "apollo",
+   "why": "unseen",
+   "state": "TX",
+   "system": "Killeen Public Library"
   }
- ]
+ ],
+ "memberLists": [
+  {
+   "id": "sals-mvls",
+   "catalog": "Southern Adirondack Library System and Mohawk Valley Library System (shared PowerPAC)",
+   "family": "polaris",
+   "url": "https://pac.sals.edu/polaris/",
+   "state": "NY",
+   "source": "survey row NE-NY-shared: Polaris PowerPAC pac.sals.edu; research item 11 read pac.sals.edu/polaris/ (302 to its search page); 49 waiting members, a county-set estimate",
+   "sharedCatalog": "Southern Adirondack Library System and Mohawk Valley Library System"
+  },
+  {
+   "id": "flls",
+   "catalog": "Finger Lakes Library System",
+   "family": "polaris",
+   "url": "https://catalog.flls.org/polaris/",
+   "state": "NY",
+   "source": "survey row NE-NY-shared: Polaris PowerPAC catalog.flls.org; 32 waiting members, a county-set estimate",
+   "sharedCatalog": "Finger Lakes Library System"
+  },
+  {
+   "id": "owwl",
+   "catalog": "OWWL Library System",
+   "family": "aspen",
+   "url": "https://search.owwl.org/Search/Advanced",
+   "state": "NY",
+   "source": "survey row NE: Aspen Discovery search.owwl.org, the sole public catalog since January 2024; 42 waiting members, an estimate",
+   "sharedCatalog": "OWWL Library System"
+  },
+  {
+   "id": "westchester",
+   "catalog": "Westchester Library System",
+   "family": "aspen",
+   "url": "https://opac.westchesterlibraries.org/Search/Advanced",
+   "state": "NY",
+   "source": "survey row NE-NY: Aspen Discovery opac.westchesterlibraries.org; 37 waiting members, an estimate",
+   "sharedCatalog": "Westchester Library System"
+  },
+  {
+   "id": "vcat",
+   "catalog": "V-Cat (Wisconsin Valley Library Service)",
+   "family": "aspen",
+   "url": "https://catalog.wvls.org/Search/Advanced",
+   "state": "WI",
+   "source": "survey row MW-WI: Aspen Discovery catalog.wvls.org; 25 waiting members, an estimate",
+   "sharedCatalog": "V-Cat (Wisconsin Valley Library Service)"
+  },
+  {
+   "id": "osl",
+   "catalog": "Ocean State Libraries (OSL)",
+   "family": "aspen",
+   "url": "https://catalog.oslri.net/Search/Advanced",
+   "state": "RI",
+   "source": "survey row NE-RI-shared: Aspen Discovery catalog.oslri.net; 7 waiting members named from general knowledge",
+   "sharedCatalog": "Ocean State Libraries (OSL)"
+  },
+  {
+   "id": "lion",
+   "catalog": "LION (Libraries Online)",
+   "family": "unknown",
+   "url": "https://catalog.lionlibraries.org/",
+   "state": "CT",
+   "source": "survey row NE-CT-shared: catalog.lionlibraries.org, family not confirmed (the survey's \"Sierra\" was a script name); 28 waiting members",
+   "sharedCatalog": "LION (Libraries Online)"
+  },
+  {
+   "id": "clams",
+   "catalog": "CLAMS (Cape Libraries Automated Materials Sharing)",
+   "family": "unknown",
+   "url": "https://library.clamsnet.org/",
+   "state": "MA",
+   "source": "survey row NE-MA-shared: library.clamsnet.org, family not confirmed (likely Aspen); 33 waiting members",
+   "sharedCatalog": "CLAMS (Cape Libraries Automated Materials Sharing)"
+  },
+  {
+   "id": "coastline",
+   "catalog": "Coastline Library Network",
+   "family": "koha",
+   "url": "https://coastline.bywatersolutions.com/",
+   "state": "OR",
+   "source": "survey row W: Koha (ByWater since 2014) coastline.bywatersolutions.com, a DNS lead; 13 waiting members, research item 11's county set (the survey states 17)",
+   "sharedCatalog": "Coastline Library Network"
+  },
+  {
+   "id": "seflin",
+   "catalog": "SEFLIN (Southeast Florida Library Information Network) shared Koha catalog",
+   "family": "koha",
+   "url": "https://seflin.bywatersolutions.com/",
+   "state": "FL",
+   "source": "research item 11: seflin.bywatersolutions.com, a DNS lead; ByWater's news names Boynton Beach, Delray Beach, Lake Park and Palm Springs (4 waiting)",
+   "sharedCatalog": "SEFLIN (Southeast Florida Library Information Network) shared Koha catalog"
+  },
+  {
+   "id": "nekls",
+   "catalog": "NEKLS Next Search Catalog",
+   "family": "koha",
+   "url": "https://nextkansas.org/",
+   "state": "KS",
+   "source": "survey row MW-KS: Koha (ByWater) nextkansas.org, about 45 libraries; no member list, not in the directory"
+  },
+  {
+   "id": "ckls",
+   "catalog": "CKLS Pathfinder Central",
+   "family": "koha",
+   "url": "https://ckls.bywatersolutions.com/",
+   "state": "KS",
+   "source": "survey row MW-KS: Koha (ByWater) ckls.bywatersolutions.com, 54 members; no member list, not in the directory"
+  },
+  {
+   "id": "seknfind",
+   "catalog": "SEKnFind (Southeast Kansas Library System)",
+   "family": "koha",
+   "url": "https://sekls.bywatersolutions.com/",
+   "state": "KS",
+   "source": "survey row MW-KS: Koha (ByWater) sekls.bywatersolutions.com; no member list, not in the directory"
+  },
+  {
+   "id": "pioneer-ne",
+   "catalog": "Pioneer Consortium (Nebraska)",
+   "family": "koha",
+   "url": "https://pioneer.bywatersolutions.com/",
+   "state": "NE",
+   "source": "survey row MW-NE: Koha (ByWater) pioneer.bywatersolutions.com, 20+ small libraries; no member list, not in the directory"
+  },
+  {
+   "id": "catamount",
+   "catalog": "Catamount Library Network",
+   "family": "koha",
+   "url": "https://catamount.bywatersolutions.com/",
+   "state": "VT",
+   "source": "survey row NE: Koha (ByWater) catamount.bywatersolutions.com, about 23 libraries; no member list, not in the directory"
+  },
+  {
+   "id": "lcei",
+   "catalog": "LCEI (Library Consortium of Eastern Idaho)",
+   "family": "koha",
+   "url": "https://lcei.bywatersolutions.com/",
+   "state": "ID",
+   "source": "survey row W: Koha (ByWater) lcei.bywatersolutions.com, 33 libraries; no member list, not in the directory"
+  },
+  {
+   "id": "aspencat",
+   "catalog": "AspenCat (CLiC union catalog)",
+   "family": "aspen",
+   "url": "https://catalog.aspencat.info/Search/Advanced",
+   "state": "CO",
+   "source": "survey row WEST: Aspen catalog.aspencat.info (its Koha OPAC host not identified), about 160 small libraries; no member list, not in the directory"
+  },
+  {
+   "id": "gmilcs",
+   "catalog": "GMILCS",
+   "family": "aspen",
+   "url": "https://gmilcs.aspendiscovery.org/Search/Advanced",
+   "state": "NH",
+   "source": "survey row NE: Polaris ILS with Aspen Discovery (ByWater, August 2023) at gmilcs.aspendiscovery.org (discover.gmilcs.org leads there), 13 New Hampshire libraries; no member list, not in the directory"
+  }
+ ],
+ "catalogLinks": [
+  {
+   "libraryId": "polaris:dekalb-county-ga",
+   "url": "https://dekalblibrary.org/",
+   "catalogHost": "dekalb.polarislibrary.com",
+   "source": "the library's homepage, read by a research agent (regions/requests.jsonl: home page: GA DeKalb County PL, 23 November 2026)"
+  },
+  {
+   "libraryId": "tlc:grand-island",
+   "url": "https://www.gilibrary.org/",
+   "catalogHost": "gilibrary.tlcdelivers.com",
+   "source": "the library's homepage, read by a research agent (national/midwest/requests.jsonl: library homepage, NE: Grand Island PL, 23 November 2026)"
+  },
+  {
+   "libraryId": "koha:community-library-network-id",
+   "url": "https://communitylibrary.net/",
+   "catalogHost": "communitylibrary.bywatersolutions.com",
+   "source": "the library's homepage, read by a research agent (national/west/requests.jsonl: homepage, Community Library Network, ID, 23 November 2026)"
+  },
+  {
+   "libraryId": "koha:monterey-county-ca",
+   "url": "https://www.emcfl.org/",
+   "catalogHost": "emcfl.bywatersolutions.com",
+   "source": "the library's homepage, read by a research agent (national/west/requests.jsonl: homepage, Monterey County Free Libraries, 23 November 2026; it answered 301, followed within the site)"
+  },
+  {
+   "libraryId": "aspen:anne-arundel-md",
+   "url": "https://aacpl.net/",
+   "catalogHost": "catalog.aacpl.net",
+   "source": "the library's own domain, aacpl.net, named in the evidence (regions/systems.tsv: the catalog on the library's own domain)"
+  },
+  {
+   "libraryId": "polaris:alexandria-va",
+   "url": "https://alexlibraryva.org/",
+   "catalogHost": "alexandria.polarislibrary.com",
+   "source": "the library's own site, alexlibraryva.org, named in the evidence (open/11-unsurveyed/systems.tsv: websearch: alexlibraryva.org catalog-upgrade)"
+  },
+  {
+   "libraryId": "polaris:new-orleans-la",
+   "url": "https://nolalibrary.org/",
+   "catalogHost": "neworleans.polarislibrary.com",
+   "source": "the library's own domain, nolalibrary.org, named in the evidence (research item 5: the library's own catalog.nolalibrary.org and polaris.nolalibrary.org)"
+  }
+ ],
+ "skipped": {
+  "about": "Waiting libraries and consortia the member-list and catalog-link reads do not cover, and why (pre-release review, 24 November 2026). A homepage URL that is not in the evidence is never guessed.",
+  "memberLists": [
+   {
+    "catalog": "Rock River Library Cooperative (TLC)",
+    "reason": "its catalog is rockriver.tlcdelivers.com on port 8480; the evidence does not say whether it is http or https, so its /branch/branchLimits is not read"
+   },
+   {
+    "catalog": "Hidalgo County Library System (TLC, 13 libraries)",
+    "reason": "no catalog host in the evidence (TLC-hosted, not identified)"
+   }
+  ],
+  "catalogLinks": [
+   {
+    "libraryId": "aspen:el-dorado-county-ca",
+    "reason": "no homepage URL in the evidence (a DNS lead and a ByWater news search result)"
+   },
+   {
+    "libraryId": "aspen:humboldt-county-ca",
+    "reason": "no homepage URL in the evidence (a DNS lead only)"
+   },
+   {
+    "libraryId": "aspen:montgomery-county-md",
+    "reason": "no homepage URL in the evidence (the host only)"
+   },
+   {
+    "libraryId": "aspen:pomona-ca",
+    "reason": "no homepage URL in the evidence (a DNS lead only)"
+   },
+   {
+    "libraryId": "aspen:tyler-tx",
+    "reason": "no homepage URL in the evidence (a DNS lead and a web search)"
+   },
+   {
+    "libraryId": "koha:butte-county-ca",
+    "reason": "no homepage URL in the evidence (a DNS lead; the homepage a research agent read, buttepubliclibrary.info, is Butte-Silver Bow's in Montana, another library)"
+   },
+   {
+    "libraryId": "koha:carrollton-tx",
+    "reason": "no homepage URL in the evidence (DNS leads and a web search)"
+   },
+   {
+    "libraryId": "koha:heartland-fl",
+    "reason": "no homepage URL in the evidence (a DNS lead and a ByWater news search result)"
+   },
+   {
+    "libraryId": "koha:roseville-ca",
+    "reason": "no homepage URL in the evidence (DNS leads only)"
+   },
+   {
+    "libraryId": "tlc:ardmore",
+    "reason": "no homepage URL in the evidence (a list of LS2 PAC sites)"
+   },
+   {
+    "libraryId": "tlc:cvlga",
+    "reason": "no homepage URL in the evidence (a TLC press release snippet and a DNS lead)"
+   },
+   {
+    "libraryId": "tlc:new-braunfels",
+    "reason": "no homepage URL in the evidence (a libraries.org snippet and a DNS lead)"
+   },
+   {
+    "libraryId": "tlc:putnam-fl",
+    "reason": "no homepage URL in the evidence (library.putnam-fl.gov is its patron login, not a homepage)"
+   },
+   {
+    "libraryId": "tlc:rowan",
+    "reason": "no homepage URL in the evidence (a DNS lead only)"
+   },
+   {
+    "libraryId": "tlc:san-bernardino",
+    "reason": "no homepage URL in the evidence (the homepages a research agent read are San Bernardino County Library's, another library)"
+   },
+   {
+    "libraryId": "tlc:union-nc",
+    "reason": "no homepage URL in the evidence (a libraries.org snippet and a DNS lead)"
+   }
+  ],
+  "membersCoveredByMemberLists": "the waiting members of CLAMS, LION, OSL, OWWL, Westchester, V-Cat, SALS/MVLS, FLLS, Coastline and SEFLIN have no homepage URLs in the evidence; their catalogs' own member lists (memberLists) settle them"
+ }
 }

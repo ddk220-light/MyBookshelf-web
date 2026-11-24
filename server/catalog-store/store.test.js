@@ -14,6 +14,7 @@ import { createPgAnswerStore } from './holdings.js';
 import { ANSWER_RULE_VERSION, ANSWER_TTL_MS } from '../services/catalog-lookup/record.js';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { withCatalogOperation, request as httpRequest } from '../services/providers/http.js';
+import { getLibraryById } from '../services/directory.js';
 
 const SECRET = 'a synthetic cron secret that is long enough for tests';
 
@@ -256,9 +257,31 @@ test('the policy file is reviewed data: opt-outs need a reason and a date', () =
   assert.deepEqual(policy.optedOut(), ['bc:example']);
   assert.throws(() => parseCatalogPolicies({ schemaVersion: 1, libraries: { 'bc:x': { storeAnswers: false } } }), /reason/);
   assert.throws(() => parseCatalogPolicies({ schemaVersion: 2, libraries: {} }));
-  // The shipped file parses: no library opt-outs, and BiblioCommons stores nothing.
-  assert.deepEqual(createCatalogPolicy().optedOut(), []);
-  assert.deepEqual(createCatalogPolicy().noStorePlatforms(), ['bc']);
+  // The shipped file parses: BiblioCommons and TLC store nothing, and the TLC
+  // libraries whose own terms nobody has read (or Brevard's, closed to
+  // agents) are opted out on their own, so they stay live-only if TLC's
+  // terms later allow storing (24 November 2026). So is every US Koha
+  // library (ByWater's terms and the libraries' own are unread, 24 November
+  // 2026); the Indian Koha libraries are not affected. Aspen Discovery is
+  // live-only as a platform (its terms unread, 24 November 2026). Polaris
+  // libraries are live-only one by one, Miami-Dade among them, except
+  // Denver, Fairfax and Riverside, whose terms were read (24 November 2026).
+  // Apollo (Biblionix) may store: its vendor's public pages were read
+  // (coordinator decision, 24 November 2026), recorded as a platform rule
+  // that stores, so it is in no purge list. Evergreen (Georgia PINES) is
+  // live-only as a platform (its terms unread, 24 November 2026).
+  const optedOut = createCatalogPolicy().optedOut();
+  const usKoha = id => id.startsWith('koha:') && getLibraryById(id)?.country === 'US';
+  assert.ok(optedOut.length > 10 && optedOut.every(id => id.startsWith('tlc:') || id.startsWith('polaris:') || usKoha(id)), optedOut.join());
+  assert.ok(optedOut.filter(usKoha).length >= 50);
+  assert.equal(optedOut.some(id => id.startsWith('aspen:')), false);
+  assert.ok(optedOut.filter(id => id.startsWith('polaris:')).length > 300 && optedOut.includes('polaris:miami-dade-fl'));
+  for (const read of ['polaris:denver-co', 'polaris:fairfax-county-va', 'polaris:riverside-ca']) assert.ok(!optedOut.includes(read), read);
+  assert.ok(optedOut.includes('tlc:brevard'));
+  for (const read of ['tlc:lapl', 'tlc:fcpl', 'tlc:loudoun', 'tlc:volusia', 'tlc:lexington-ky', 'tlc:mcls-rochester']) assert.ok(!optedOut.includes(read), read);
+  assert.deepEqual(createCatalogPolicy().noStorePlatforms(), ['aspen', 'bc', 'evergreen', 'tlc']);
+  assert.equal(optedOut.some(id => id.startsWith('evergreen:')), false);
+  assert.equal(optedOut.some(id => id.startsWith('apollo:')), false);
 });
 
 test('a catalog system can forbid storing availability: every library of it, with the terms cited (23 November 2026)', async () => {
@@ -290,8 +313,32 @@ test('a catalog system can forbid storing availability: every library of it, wit
   const libraries = getAllLibraries();
   assert.ok(libraries.length > 1000);
   for (const entry of libraries) assert.equal(platformOfLibrary(entry.id), entry.platform, entry.id);
-  assert.ok(libraries.filter(entry => entry.platform === 'bc').every(entry => !storesAvailability(entry.id)));
-  assert.ok(libraries.filter(entry => entry.platform !== 'bc').every(entry => storesAvailability(entry.id)));
+  assert.ok(libraries.filter(entry => ['aspen', 'bc', 'evergreen', 'tlc'].includes(entry.platform)).every(entry => !storesAvailability(entry.id)));
+  // Koha in the United States is live-only library by library (its terms unread), and Polaris but for the three
+  // whose terms were read (Denver, Fairfax, Riverside); every other library may store.
+  const usKoha = entry => entry.platform === 'koha' && entry.country === 'US';
+  assert.ok(libraries.filter(usKoha).length > 0 && libraries.filter(usKoha).every(entry => !storesAvailability(entry.id)));
+  const read = ['polaris:denver-co', 'polaris:fairfax-county-va', 'polaris:riverside-ca'];
+  const polaris = libraries.filter(entry => entry.platform === 'polaris');
+  assert.ok(polaris.length > 300 && polaris.every(entry => storesAvailability(entry.id) === read.includes(entry.id)));
+  assert.ok(libraries.filter(entry => !['aspen', 'bc', 'evergreen', 'tlc', 'polaris'].includes(entry.platform) && !usKoha(entry)).every(entry => storesAvailability(entry.id)));
+  // Aspen Discovery: live-only while its terms are unread.
+  assert.equal(file.platforms.aspen.storeAnswers, false);
+  assert.match(file.platforms.aspen.reason, /live-only/);
+  // Apollo: stores, citing the vendor's public pages that were read (none forbids it).
+  assert.equal(file.platforms.apollo.storeAnswers, true);
+  assert.equal(file.platforms.apollo.sourceUrl, 'https://www.biblionix.com/copyright-notice/');
+  assert.ok(file.platforms.apollo.pagesRead.length >= 4 && file.platforms.apollo.pagesRead.every(url => url.startsWith('https://www.biblionix.com/')));
+  assert.ok(libraries.filter(entry => entry.platform === 'apollo').length >= 6 && libraries.filter(entry => entry.platform === 'apollo').every(entry => storesAvailability(entry.id)));
+  // Evergreen (Georgia PINES): live-only while its terms are unread, the network-wide gapines entry and every member system alike.
+  assert.equal(file.platforms.evergreen.storeAnswers, false);
+  assert.equal(file.platforms.evergreen.sourceUrl, 'https://gapines.org/');
+  assert.match(file.platforms.evergreen.reason, /live-only/);
+  assert.ok(libraries.filter(entry => entry.platform === 'evergreen').length >= 52 && !storesAvailability('evergreen:gapines'));
+  // TLC: live-only while its terms are unread, citing the page every TLC catalog links.
+  assert.equal(file.platforms.tlc.storeAnswers, false);
+  assert.equal(file.platforms.tlc.sourceUrl, 'https://tlcdelivers.com/privacy-policy-ls2pac');
+  assert.match(file.platforms.tlc.reason, /live-only/);
 });
 
 test('the daily job deletes every stored answer of a no-store catalog system, by the library ID prefix', async () => {
@@ -305,9 +352,11 @@ test('the daily job deletes every stored answer of a no-store catalog system, by
   assert.equal(result.purgedAnswers, 3);
   const purge = ran.find(([text]) => /split_part\(library_id, ':', 1\) = ANY/.test(text));
   assert.ok(purge && purge[0].startsWith('DELETE FROM holdings_answers'));
-  assert.deepEqual(purge[1], [['bc']]);
-  // No library opt-out in the shipped file: no per-library purge.
-  assert.ok(!ran.some(([text]) => /WHERE library_id = ANY/.test(text)));
+  assert.deepEqual(purge[1], [['aspen', 'bc', 'evergreen', 'tlc']]);
+  // The libraries opted out on their own (TLC libraries whose terms are unread) are purged by ID.
+  const own = ran.find(([text]) => /WHERE library_id = ANY/.test(text));
+  assert.ok(own && own[0].startsWith('DELETE FROM holdings_answers'));
+  assert.deepEqual(own[1], [createCatalogPolicy().optedOut()]);
 });
 
 test('the host gate spaces requests across readers and caps them per minute', async () => {

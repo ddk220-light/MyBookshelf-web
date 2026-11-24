@@ -83,3 +83,19 @@ test('link resolution is anonymous, bounded and does not log raw names', async (
   assert.ok(telemetry.events().every(event => event.operation === 'directory_resolve'));
   assert.equal(JSON.stringify(telemetry.events()).includes('anna'), false);
 });
+
+test('an existing library keeps its /select/ link when a new library of the same name joins the directory', () => {
+  // The historical link keeps the plain name for the library that had it; the newcomer gets a hashed one.
+  const entries = [{ id: 'bc:old', name: 'Belleville Public Library', city: 'Belleville' }, { id: 'polaris:new', name: 'Belleville Public Library', city: 'Belleville' }];
+  const index = createLibraryLinkIndex(entries, { 'belleville-public-library': 'bc:old' });
+  assert.equal(index.pathFor('bc:old'), '/select/belleville-public-library');
+  assert.match(index.pathFor('polaris:new'), /^\/select\/belleville-public-library-belleville--[0-9a-f]{16}$/);
+  assert.equal(index.resolve('belleville-public-library'), 'bc:old');
+  // Without that link both are hashed, and the plain name selects neither.
+  const plain = createLibraryLinkIndex(entries);
+  assert.ok(entries.every(entry => /--[0-9a-f]{16}$/.test(plain.pathFor(entry.id))));
+  assert.equal(plain.resolve('belleville-public-library'), null);
+  // The released libraries that new US libraries share a name with (24 November 2026).
+  for (const [id, slug] of [['bc:belleville', 'belleville-public-library'], ['bc:bellingham', 'bellingham-public-library'], ['bc:cambridgepl', 'cambridge-public-library'],
+    ['bc:markham', 'markham-public-library'], ['bc:princetonlibrary', 'princeton-public-library']]) assert.equal(libraryLinks.pathFor(id), `/select/${slug}`, id);
+});

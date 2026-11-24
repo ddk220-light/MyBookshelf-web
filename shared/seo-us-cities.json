@@ -1,5 +1,5 @@
 {
-  "about": "The city each US library page shows (tools/seo/check-pages.mjs) where it differs from the directory's: a branch's town, a county, a township name, a missing or a wrong city. Every value is the city of the library system's own administrative entity in the IMLS Public Libraries Survey FY2024 (the administrative entity file, joined to the directory by FSCSKEY), copied with that record; a city is never taken from a library's name. Only a library that is one system with its own record in the federal list has one: a consortium's shared catalog, or a member library without a record of its own, keeps the directory's city, except where the federal list shows that city is no place of the catalog (city null: the page shows the state only). A city that differs only in capitals, accents or St./Saint is not listed. replaces: the directory's city when the value was copied (a test checks it still is). on: the date the page changed. Pages only: the app's directory, its search and its /select/ links are unchanged.",
+  "about": "The city each US library page shows (tools/seo/check-pages.mjs) where it differs from the directory's: a branch's town, a county, a township name, a missing or a wrong city. Every value is the city of the library system's own administrative entity in the IMLS Public Libraries Survey FY2024 (the administrative entity file, joined to the directory by FSCSKEY), copied with that record; a city is never taken from a library's name. Only a library that is one system with its own record in the federal list has one: a consortium's shared catalog, or a member library without a record of its own, keeps the directory's city, except where the federal list shows that city is no place of the catalog (city null: the page shows the state only). A city that differs only in capitals, accents or St./Saint is not listed, except a town whose name has capitals inside it (LaFayette, LaGrange): the IMLS file writes every town in capitals, so the directory's title case loses them, and the page takes them from the library system's own published spelling of the town at its IMLS address (evidence.published), never from a guess. replaces: the directory's city when the value was copied (a test checks it still is). on: the date the page changed. Pages only: the app's directory, its search and its /select/ links are unchanged.",
   "source": {
     "name": "Institute of Museum and Library Services, Public Libraries Survey, Fiscal Year 2024 (PLS_FY24_AE_pud24i.csv)",
     "url": "https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls",
@@ -472,6 +472,28 @@
         "fscsKey": "WA0057",
         "name": "WHATCOM COUNTY LIBRARY SYSTEM",
         "address": "5205 NORTHWEST DRIVE, BELLINGHAM, WA 98226"
+      }
+    },
+    "evergreen:cherokee-regional-ga": {
+      "city": "LaFayette",
+      "replaces": "Lafayette",
+      "on": "2026-11-24",
+      "evidence": {
+        "fscsKey": "GA0049",
+        "name": "CHEROKEE REGIONAL LIBRARY SYSTEM",
+        "address": "305 SOUTH DUKE STREET, LAFAYETTE, GA 30728",
+        "published": "the system's own name for its library at that address (IMLS outlet GA0049-002, LAFAYETTE-WALKER COUNTY PUBLIC LIBRARY, 305 SOUTH DUKE STREET, LAFAYETTE): \"LaFayette-Walker County Library\", org 217 in Georgia PINES's org tree (server/test/fixtures/evergreen/pines-org-tree.json, read 24 November 2026)"
+      }
+    },
+    "evergreen:troup-harris-regional-ga": {
+      "city": "LaGrange",
+      "replaces": "Lagrange",
+      "on": "2026-11-24",
+      "evidence": {
+        "fscsKey": "GA0048",
+        "name": "TROUP-HARRIS REGIONAL LIBRARY",
+        "address": "115 ALFORD STREET, LAGRANGE, GA 30240",
+        "published": "the system's own name for its library at that address (IMLS outlet GA0048-002, LAGRANGE MEMORIAL LIBRARY, 115 ALFORD STREET, LAGRANGE): \"LaGrange Memorial Library\", org 326 in Georgia PINES's org tree (server/test/fixtures/evergreen/pines-org-tree.json, read 24 November 2026)"
       }
     }
   }

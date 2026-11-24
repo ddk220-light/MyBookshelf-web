@@ -53,7 +53,7 @@ test('only one result-marking run per host at a time', () => {
 });
 
 test('every platform in the directory has a descriptor: a bounded book deadline with no request cap, and capped result marking', () => {
-  for (const id of ['egranthalaya', 'libman', 'indcat', 'koha', 'bc', 'vufind', 'discovery-community', 'discovery-academic', 'calil', 'vega', 'evergreen', 'chamo', 'libsys', 'aspen', 'vpl']) {
+  for (const id of ['egranthalaya', 'libman', 'indcat', 'koha', 'bc', 'tlc', 'vufind', 'discovery-community', 'discovery-academic', 'calil', 'vega', 'evergreen', 'chamo', 'libsys', 'aspen', 'polaris', 'apollo', 'vpl']) {
     const platform = platformFor({ platform: id });
     assert.ok(platform, id);
     // A reader's own check is bounded by time and the shared host pacing,
@@ -70,7 +70,7 @@ test('every platform in the directory has a descriptor: a bounded book deadline 
   }
   assert.equal(platformFor({ platform: 'bibliocommons' }).id, 'bc');
   assert.equal(platformFor({ platform: 'catalog' }), null);
-  assert.equal(Object.keys(PLATFORMS).length, 15);
+  assert.equal(Object.keys(PLATFORMS).length, 18);
 });
 
 test('shared hosts share one key; every library has the 45 s book deadline (CHAMO 60 s)', () => {
@@ -90,7 +90,7 @@ test('shared hosts share one key; every library has the 45 s book deadline (CHAM
 test('CATALOG_LOOKUP_V2 takes a comma list of platforms or all; unset keeps the old path', () => {
   assert.deepEqual([...lookupV2Platforms({})], []);
   assert.deepEqual([...lookupV2Platforms({ CATALOG_LOOKUP_V2: 'koha, bibliocommons,unknown' })].sort(), ['bc', 'koha']);
-  assert.equal(lookupV2Platforms({ CATALOG_LOOKUP_V2: 'all' }).size, 15);
+  assert.equal(lookupV2Platforms({ CATALOG_LOOKUP_V2: 'all' }).size, 18);
   assert.equal(lookupV2Enabled({ platform: 'koha' }, { CATALOG_LOOKUP_V2: 'koha' }), true);
   assert.equal(lookupV2Enabled({ platform: 'egranthalaya' }, { CATALOG_LOOKUP_V2: 'koha' }), false);
   assert.equal(lookupV2Enabled({ platform: 'catalog' }, { CATALOG_LOOKUP_V2: 'all' }), false);

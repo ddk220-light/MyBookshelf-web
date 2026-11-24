@@ -17,7 +17,12 @@ export function createLibraryLinkIndex(entries, aliases = {}) {
       // Double hyphens reserve a namespace that normalized names cannot occupy.
       // Never pick the first directory result when more than one name matches.
       const suffix = createHash('sha256').update(entry.id).digest('hex').slice(0, 16);
-      let slug = group.length === 1 ? base : `${base}${place ? `-${place}` : ''}--${suffix}`;
+      // A library whose plain name a historical link keeps for it (the name it
+      // had before another library of that name joined the directory) keeps
+      // that name as its link: an existing library's /select/ link never
+      // changes when a new one shares its name.
+      const kept = group.length > 1 && aliases[base] === entry.id;
+      let slug = group.length === 1 || kept ? base : `${base}${place ? `-${place}` : ''}--${suffix}`;
       if (aliases[slug] && aliases[slug] !== entry.id) slug = `${slug}--${suffix}`;
       if (bySlug.has(slug)) throw new Error('Library selection link collision');
       bySlug.set(slug, entry.id);

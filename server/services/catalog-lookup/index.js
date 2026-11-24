@@ -12,6 +12,7 @@ import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
 import { reviewedPolicy, storesAvailability } from '../../catalog-store/policy.js';
+import { pacingHostOf } from '../directory.js';
 
 // The catalog lookup layer (plan section 5). Two entry points:
 //
@@ -103,6 +104,11 @@ export function createCatalogLookup({
   // The catalog policy (catalog-store/policy.js; the server passes the
   // store's): whether a library's search rows may be kept in the rows cache.
   policyFor = reviewedPolicy.policyFor,
+  // The host whose pace a request host shares: a shared catalog's main host
+  // for its members' other host names (services/directory.js), else itself.
+  // The host gate and the per-instance concurrency limit count by it; the
+  // circuit and the health record keep each host name.
+  paceHost = pacingHostOf,
 } = {}) {
   const rowsCache = new Map();
   const robotsCheck = robots ? url => robots.check(url) : null;
@@ -121,7 +127,8 @@ export function createCatalogLookup({
 
   function settings(entry) {
     const platform = platformFor(entry, platforms);
-    return { platform, host: hostFor(entry), platformName: platform?.id || String(entry?.platform || 'unknown') };
+    const host = hostFor(entry);
+    return { platform, host, paced: paceHost(host), platformName: platform?.id || String(entry?.platform || 'unknown') };
   }
 
   // The gate for one operation on this platform: every request waits for its
@@ -129,7 +136,7 @@ export function createCatalogLookup({
   // the robots Crawl-delay; plus the platform's per-minute cap).
   function gateFor(platform, operationDeadline = Infinity) {
     if (!hostGate) return null;
-    return (requestHost, { spacingMs = 0, deadlineAt, signal } = {}) => hostGate.reserve(requestHost,
+    return (requestHost, { spacingMs = 0, deadlineAt, signal } = {}) => hostGate.reserve(paceHost(requestHost),
       { spacingMs: Math.max(spacingMs || 0, platform?.minIntervalMs || 0), perMinute: platform?.perMinute || 0,
         deadlineAt: Math.min(deadlineAt ?? Infinity, operationDeadline), signal });
   }
@@ -163,7 +170,7 @@ export function createCatalogLookup({
       } catch { return couldntCheck('unrecognized'); }
     }
     async function execute(route, task) {
-      const { platform, host, platformName } = settings(route.entry);
+      const { platform, host, paced, platformName } = settings(route.entry);
       const policy = platform?.[kind];
       // A reader's book check has no request cap on any route (its deadline
       // and the host pacing bound it); result marking keeps its cap.
@@ -193,12 +200,12 @@ export function createCatalogLookup({
       let release;
       try {
         if (kind === 'results') {
-          if (tryOnce || !(release = guard.tryStartMarking(host))) throw coded('This catalog is busy', 'CATALOG_HOST_BUSY');
+          if (tryOnce || !(release = guard.tryStartMarking(paced))) throw coded('This catalog is busy', 'CATALOG_HOST_BUSY');
         } else {
           // Only a check a reader is waiting for makes a reader-less one give
           // way; a check nobody waits for never does, and never cancels itself.
-          if (!flight || flight.readers > 0) yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency, flight);
-          release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: routeDeadline, signal: parentSignal });
+          if (!flight || flight.readers > 0) yieldForReader(paced, tryOnce ? 1 : platform.hostConcurrency, flight);
+          release = await guard.acquire(paced, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: routeDeadline, signal: parentSignal });
         }
       } catch (error) {
         // Waiting for our own slot is not a failed catalog request.
@@ -424,8 +431,9 @@ export function createCatalogLookup({
       }
       catch (error) { routeError = error; }
     }
-    const { platform, host, platformName } = settings(policyEntry);
-    flight.host = host;
+    const { platform, host, paced, platformName } = settings(policyEntry);
+    // The flight's host is the one its concurrency slot counts by.
+    flight.host = paced;
     let routes;
     const view = publicView(entry, library);
     const finish = checked => {
@@ -466,8 +474,8 @@ export function createCatalogLookup({
     const tryOnce = !routed && guard.circuitOpen(host);
     const limit = tryOnce ? 1 : platform.hostConcurrency;
     let release;
-    if (!routed) yieldForReader(host, limit);
-    try { release = routed ? () => {} : await guard.acquire(host, limit, { deadlineAt: answerBy, signal }); }
+    if (!routed) yieldForReader(paced, limit);
+    try { release = routed ? () => {} : await guard.acquire(paced, limit, { deadlineAt: answerBy, signal }); }
     catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
     const work = (async () => {
       try {
@@ -606,7 +614,7 @@ export function createCatalogLookup({
   async function* markResults({ library: entry, publicLibrary, query, books = [], signal, deadlineAt }) {
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
-    const { platform, host, platformName } = settings(entry);
+    const { platform, host, paced, platformName } = settings(entry);
     const list = books.filter(book => book?.bookKey).slice(0, MAX_RESULT_BOOKS);
     const pending = new Map(list.map(book => [book.bookKey, book]));
     const unmatched = [];
@@ -645,7 +653,7 @@ export function createCatalogLookup({
       yield doneItem();
       return;
     }
-    const finishMarking = routed ? () => {} : guard.tryStartMarking(host);
+    const finishMarking = routed ? () => {} : guard.tryStartMarking(paced);
     if (!finishMarking) {
       yield doneItem();
       return;
@@ -826,13 +834,13 @@ export function createCatalogLookup({
     const provider = providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
     const policyEntry = routed && recordId ? provider.catalogRouteForRecord(recordId).entry : entry;
-    const { platform, host } = settings(policyEntry);
+    const { platform, host, paced } = settings(policyEntry);
     if (!platform || !host) throw coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED');
     const deadline = now() + bookDeadlineMs(policyEntry, platform);
     const routes = routed ? routeSession({ entry, deadline, signal, health: false }) : null;
     const tryOnce = !routed && guard.circuitOpen(host);
-    if (!routed) yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency);
-    const release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
+    if (!routed) yieldForReader(paced, tryOnce ? 1 : platform.hostConcurrency);
+    const release = routed ? () => {} : await guard.acquire(paced, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
     const controller = new AbortController();
     const forwardAbort = () => controller.abort();
     signal?.addEventListener?.('abort', forwardAbort, { once: true });

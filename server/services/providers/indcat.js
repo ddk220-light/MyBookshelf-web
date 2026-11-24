@@ -2,11 +2,14 @@ import { cachedTask, enqueueTask, getText, peekCachedTask } from './http.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import ISBN from 'isbn3';
+import { createRefusalLatch } from './refusalLatch.js';
 
 const ORIGIN = 'https://indcat.inflibnet.ac.in';
 const PATH = '/index.php/search/checkuniv';
 const CODE = /^[A-Z0-9_]{1,64}$/;
-let refused = false;
+// A refusal turns IndCat off on this instance for REFUSAL_LATCH_MS
+// (providers/refusalLatch.js); then the next check asks again.
+const refusals = createRefusalLatch();
 
 function config(library) {
   if (library.baseUrl !== ORIGIN || !CODE.test(library.indcatInstitutionCode || '')) throw catalogError('IndCat institution is not configured');
@@ -135,11 +138,11 @@ export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, 
 }
 
 async function read(url, options = {}) {
-  if (refused) throw catalogError('Catalog access was refused', 'CATALOG_PROVIDER_BLOCKED');
+  if (refusals.has(ORIGIN)) throw catalogError('Catalog access was refused', 'CATALOG_PROVIDER_BLOCKED');
   // Use the shared reader's one bounded retry for idempotent GET failures.
   // Anonymous search POSTs are not replayed, and refusals are never retried.
   const response = await getText(url, { maxResponseBytes: 2 * 1024 * 1024, redirect: 'manual', ...options });
-  if ([401, 403, 429].includes(response.status)) { refused = true; throw catalogError('Catalog access was refused', 'CATALOG_PROVIDER_BLOCKED'); }
+  if ([401, 403, 429].includes(response.status)) { refusals.add(ORIGIN); throw catalogError('Catalog access was refused', 'CATALOG_PROVIDER_BLOCKED'); }
   if (!response.ok || response.url !== url) throw catalogError('Catalog request failed', 'CATALOG_UNAVAILABLE');
   return response;
 }
@@ -279,4 +282,9 @@ export async function librarySearch(library, term) {
   const code = config(library);
   const { records } = await search(library, String(term || '').slice(0, 160));
   return records.map(record => ({ ...record, catalogUrl: recordUrl(code, record.recordId), catalogLinkKind: 'record' }));
+}
+
+// Exposed for isolated provider tests only, never through an HTTP endpoint.
+export function clearIndcatRefusals() {
+  refusals.clear();
 }

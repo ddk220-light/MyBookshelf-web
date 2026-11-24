@@ -7,6 +7,14 @@ import ISBN from 'isbn3';
 import { kohaCatalogOrigin } from './kohaOrigin.js';
 import { firstIsbn } from './catalogMarkup.js';
 import { cleanTitle, cleanAuthor, cleanPublisher, cleanPublishedDate, cleanEdition, cleanFormat, cleanCallNumber } from './catalogText.js';
+import { storesAvailability } from '../../catalog-store/policy.js';
+
+// Adapter caches keep nothing for a library whose catalog's terms forbid
+// storing availability, or that nobody has read (server/data/catalog-policies.json;
+// the US Koha libraries at ByWater are live-only while ByWater's terms are
+// unread): every check is then a live request. Two readers asking at once
+// still share the request in flight.
+const keeps = library => storesAvailability(library?.id);
 
 export function parseBiblioNumber(response) {
   const location = response.headers?.get?.('location') || response.url || '';
@@ -52,7 +60,7 @@ export async function checkAvailability(library, isbn) {
       const branchFor = (item) => names.get(item.home_library_id || item.homebranch || item.holdingbranch)
         || item?.branchname || item?.home_library_id || item?.homebranch || null;
       return normalizeAvailability({ status: availableItems.length ? 'available' : 'checked_out', branch: branchFor(availableItems[0] || items[0]), copies: items.length, availableCopies: availableItems.length, heldCopies: 0, callNumber: items[0]?.callnumber || items[0]?.itemcallnumber || null, url: detailUrl, metadataId: number });
-    }, { deadlineAt, shouldCache: (value) => value.status !== 'unknown' });
+    }, { deadlineAt, shouldCache: (value) => value.status !== 'unknown' && keeps(library) });
   } catch (err) {
     console.error('Koha availability check failed:', err.message);
     return unknown();
@@ -304,7 +312,7 @@ export async function searchCatalog(library, query) {
     }
     if (!owned.length) throw publicError('CATALOG_UNRECOGNIZED', 'The first catalog results did not confirm this library’s holdings');
     return owned;
-  }, { deadlineAt });
+  }, { deadlineAt, shouldCache: () => keeps(library) });
 }
 
 export async function resolveCatalogRecord(library, recordId, options = {}) {
@@ -340,7 +348,7 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
     return { recordId, title, authors, isbn, catalogUrl: url.toString(), catalogLinkKind: 'record', observation: {
       ...observation, outcome: observation.outcome === 'unknown' && observation.totalCopies > 0 ? 'in_catalog' : observation.outcome,
       matchKind: 'verified_work', catalogUrl: url.toString(), catalogLinkKind: 'record' } };
-  }, { deadlineAt });
+  }, { deadlineAt, shouldCache: () => keeps(library) });
 }
 
 function detailUrl(href, searchUrl) {
@@ -623,7 +631,7 @@ async function checkPilotAvailability(library, value) {
       }
       if (records.length === 1) return { ...records[0].result, catalogUrl: recordUrls[0].toString(), catalogLinkKind: 'record' };
       return { ...combineRecords(records), catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
-    }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
+    }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' && keeps(library) });
   } catch (error) {
     throw requestFailure(error);
   }
@@ -673,7 +681,7 @@ export async function checkPublicAvailability(library, value) {
       const result = partial ? partialRecords(records.map(row => row.result), library) : records.length === 1 ? records[0].result : combineRecords(records);
       return recordUrls.length === 1 ? { ...result, catalogUrl: recordUrls[0].toString(), catalogLinkKind: 'record' }
         : { ...result, catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
-    }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
+    }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' && keeps(library) });
   } catch (error) {
     throw requestFailure(error);
   }
@@ -721,6 +729,28 @@ function catalogPublication(markup) {
   return result;
 }
 
+// The record's material type as the catalog shows it, Koha's MARC21 XSLT
+// label ("Text", "Sound", "Music", "Score", "Visual material", "Computer
+// file", "Kit", "Map", ...): a search row's `results_material_type`, or a
+// record page's `results_summary type`. Passed through untouched as the row's
+// format, which only orders the card (server/services/rowFormats.js, family
+// `koha`): a film or music record ranks after the books. Undefined when the
+// catalog shows none, or more than one (many Koha sites hide it).
+function materialType(markup) {
+  const spans = [...String(markup || '').matchAll(/<span\b([^>]*)>/gi)];
+  const classes = tag => (attrs(tag[1]).class || '').split(/\s+/);
+  let found = spans.filter(tag => classes(tag).includes('results_material_type'));
+  if (!found.length) found = spans.filter(tag => classes(tag).includes('results_summary') && classes(tag).includes('type'));
+  if (found.length !== 1) return undefined;
+  const inside = contents(markup, found[0], 'span');
+  if (inside === null) return undefined;
+  const withoutLabel = inside.replace(/<span\b([^>]*)>[\s\S]*?<\/span\s*>/gi, (tag, attributes) =>
+    (attrs(attributes).class || '').split(/\s+/).includes('label') ? '' : tag);
+  const image = withoutLabel.match(/<img\b([^>]*)>/i);
+  const value = (text(withoutLabel).replace(/^[\s;:,]+|[\s;:,]+$/g, '') || (image ? attrs(image[1]).alt || '' : '')).replace(/\s+/g, ' ').trim();
+  return value && value.length <= 60 ? value : undefined;
+}
+
 export function parseKohaCatalogRecord(html, recordId, scope = {}) {
   if (!/^[1-9]\d{0,11}$/.test(recordId)) return null;
   const markup = markupOnly(html);
@@ -762,6 +792,8 @@ function catalogSearchIsbn(markup, recordId, title) {
   return unique.length === 1 ? unique[0] : null;
 }
 
+// Each row carries the catalog's material type as its format where the
+// catalog shows one, for every Koha catalog (US and Indian alike).
 export function parseKohaCatalogSearch(html, searchUrl, limit = 40) {
   const markup = markupOnly(html);
   const bodies = [...markup.matchAll(/<body\b([^>]*)>/gi)];
@@ -783,9 +815,11 @@ export function parseKohaCatalogSearch(html, searchUrl, limit = 40) {
     const title = catalogTitle(contents(body, titles[0], 'a'));
     if (!title || url.searchParams.get('biblionumber') !== recordId || records.some((record) => record.recordId === recordId)) return null;
     const isbn13 = catalogSearchIsbn(markup, recordId, title);
+    const format = materialType(body);
     // The row's own record address (the title link, rebuilt on this catalog's
     // origin by detailUrl), so a result mark can link to the record.
-    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}), catalogUrl: url.toString(), catalogLinkKind: 'record' });
+    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}), ...(format ? { format } : {}),
+      catalogUrl: url.toString(), catalogLinkKind: 'record' });
   }
   if (!records.length || records.length > Number(count[1])) return null;
   const offset = Number(searchUrl.searchParams.get('offset') || 0);
@@ -804,7 +838,7 @@ async function readCatalogRecord(library, recordId, deadlineAt = catalogDeadline
     const record = parseKohaCatalogRecord(response.text, recordId, scope);
     if (!record) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove this catalog record identity');
     return { ...record, availability: { ...record.availability, catalogUrl: url.toString(), catalogLinkKind: 'record' } };
-  }, { deadlineAt, shouldCache: (record) => record.availability.outcome !== 'unknown' || record.availability.loanRestriction === 'not_for_loan' });
+  }, { deadlineAt, shouldCache: (record) => keeps(library) && (record.availability.outcome !== 'unknown' || record.availability.loanRestriction === 'not_for_loan') });
 }
 
 export async function searchPublicCatalog(library, query, { offset = 0 } = {}) {
@@ -813,7 +847,7 @@ export async function searchPublicCatalog(library, query, { offset = 0 } = {}) {
   const scope = branchScope(library);
   const deadlineAt = catalogDeadline(library);
   return cachedTask(`koha:search:${base.origin}:${library.kohaBranchCode || ''}:${scope.libraryName || ''}:${Boolean(library.kohaTitleSearchFirst)}:${offset}:${query.trim()}`,
-    () => searchPilotCatalog(library, query, base, deadlineAt, offset), { deadlineAt });
+    () => searchPilotCatalog(library, query, base, deadlineAt, offset), { deadlineAt, shouldCache: () => keeps(library) });
 }
 
 async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
@@ -845,7 +879,9 @@ async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
 // only. Limited to the branch where the directory names one (scopeSearch),
 // except the unscoped shared catalogs, whose rows count as this library's. A
 // search Koha answers with a single record redirects to it: that record page
-// is the search's one row.
+// is the search's one row. Each row carries its material type as its format
+// where the catalog shows one, in every country. The adapter keeps no copy of the rows (the
+// lookup layer's shared rows cache is off for live-only libraries).
 const SEARCH_INDEX = 'kw';
 export async function librarySearch(library, term) {
   const deadlineAt = catalogDeadline(library);
@@ -862,7 +898,8 @@ export async function librarySearch(library, term) {
   const page = markupOnly((await readRecordPage(record, deadlineAt)).text);
   const title = recordTitle(page);
   if (!title) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not show this catalog record');
-  return [{ recordId, title, authors: catalogAuthors(page), catalogUrl: record.toString(), catalogLinkKind: 'record' }];
+  const format = materialType(page);
+  return [{ recordId, title, authors: catalogAuthors(page), ...(format ? { format } : {}), catalogUrl: record.toString(), catalogLinkKind: 'record' }];
 }
 
 export async function resolvePublicCatalogRecord(library, recordId) {

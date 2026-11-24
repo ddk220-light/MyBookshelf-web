@@ -17,11 +17,14 @@ export function isReviewedPublicHttpOrigin(libraryId, value) {
   }
 }
 
+// The adapters that read a reviewed HTTP origin (koha.js, tlc.js).
+const HTTP_PLATFORMS = new Set(['koha', 'tlc']);
+
 export function publicCatalogOrigin(library) {
   try {
     const url = new URL(library?.baseUrl);
     if (url.username || url.password || url.pathname !== '/' || url.search || url.hash) return null;
-    return url.protocol === 'https:' || (library.platform === 'koha' && isReviewedPublicHttpOrigin(library.id, url)) ? url : null;
+    return url.protocol === 'https:' || (HTTP_PLATFORMS.has(library.platform) && isReviewedPublicHttpOrigin(library.id, url)) ? url : null;
   } catch {
     return null;
   }

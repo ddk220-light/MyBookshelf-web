@@ -4,8 +4,11 @@ import express from 'express';
 import request from 'supertest';
 import hostList from '../data/front-page-hosts.json' with { type: 'json' };
 import resultList from '../data/front-page-results.json' with { type: 'json' };
-import { LOG_PREFIX, WALL_SIGNALS, checkFrontPage, frontPageHosts, frontPageResult, frontPageResults, hostsWithoutResult, isChallenge, logLine,
-  runFrontPageChecks } from './frontPageCheck.js';
+import { CATALOG_LINK_PREFIX, LOG_PREFIX, MEMBER_LIST_PREFIX, WALL_SIGNALS, catalogLinkItems, catalogLinkLines, checkCatalogLink, checkFrontPage, checkMemberList,
+  frontPageHosts, frontPageResult, frontPageResults, hostsWithoutResult, isChallenge, linkFamily, logLine, memberListItems, memberListLines, memberOptions,
+  pendingFrontPageWork, runFrontPageChecks } from './frontPageCheck.js';
+import usListed from '../data/us-catalogs-listed.json' with { type: 'json' };
+import { getAllLibraries } from '../services/directory.js';
 import { CATALOG_MAINTENANCE_PATH, createCatalogMaintenanceMiddleware } from './cron.js';
 
 // Fake responses only: no request in these tests reaches a network.
@@ -32,11 +35,27 @@ test('the host list and the committed results: valid, unique hosts; every result
   const hosts = frontPageHosts();
   assert.equal(hosts.length, hostList.hosts.length);
   assert.ok(hosts.length >= 100);
-  assert.deepEqual([...new Set(hostList.hosts.map(item => item.why))].sort(), ['flagged', 'polaris-literal']);
+  // flagged: robots.txt allows the app but blocks AI agents; unseen: no agent was cleared to look (Metro OKC's Grove-hosted
+  // Aspen, the TLC DNS leads connected on 24 November 2026, the Polaris hosts with no robots.txt of USA plan step 6, the
+  // Apollo hosts of step 7 that no agent contacted);
+  // polaris-literal: the capital-P Polaris rule; wall-seen: a wall seen by a research agent (Nashville, Orange County FL, SWAN;
+  // coordinator decision, 24 November 2026: the app's own check decides).
+  assert.deepEqual([...new Set(hostList.hosts.map(item => item.why))].sort(), ['flagged', 'polaris-literal', 'unseen', 'wall-seen']);
   for (const item of hostList.hosts) {
-    assert.ok(['koha', 'aspen', 'polaris'].includes(item.family), item.host);
-    assert.equal(item.why === 'polaris-literal', item.family === 'polaris', item.host);
+    assert.ok(['koha', 'aspen', 'polaris', 'tlc', 'apollo'].includes(item.family), item.host);
+    if (item.why === 'polaris-literal') assert.equal(item.family, 'polaris', item.host);
+    if (item.family === 'polaris') assert.ok(['polaris-literal', 'unseen'].includes(item.why), item.host);
+    if (item.family === 'tlc' || item.family === 'apollo') assert.equal(item.why, 'unseen', item.host);
+    if (item.why === 'wall-seen') assert.equal(item.family, 'aspen', item.host);
   }
+  // A Polaris host whose robots.txt blocks the lowercase /polaris/ too is class D, never on the list (research item 2).
+  for (const host of ['catalog.onlib.org', 'vlc.polarislibrary.com', 'sbclib.polarislibrary.com']) assert.ok(!hosts.includes(host), host);
+  // The Apollo catalogs agents saw without a wall need no check (Clear Lake and Lawton; the six whose catalog page an agent
+  // read on 24 November 2026); the others are here (USA plan step 7). Georgia PINES's gateway, which an agent read
+  // without a wall, is not here either (step 8).
+  for (const host of ['cllibrary.biblionix.com', 'lawton.biblionix.com', 'brownsville.biblionix.com', 'horseshoebend.biblionix.com', 'anderson.biblionix.com',
+    'gilford.biblionix.com', 'lamar.biblionix.com', 'orangecity.biblionix.com', 'gapines.org']) assert.ok(!hosts.includes(host), host);
+  for (const host of ['rollinghills.biblionix.com', 'killeen.biblionix.com']) assert.ok(hosts.includes(host), host);
   assert.throws(() => frontPageHosts({ hosts: [{ host: 'Bad Host' }] }), /valid host/);
   assert.throws(() => frontPageHosts({ hosts: [{ host: 'a.example.org' }, { host: 'a.example.org' }] }), /twice/);
   const results = frontPageResults();
@@ -212,4 +231,155 @@ test('the daily catalog job runs the front-page check in production only, beside
   // Without the secret nothing runs.
   assert.equal((await call({ VERCEL_ENV: 'production' }, frontPage, 'Bearer wrong')).status, 403);
   assert.equal(runs, 2);
+});
+
+// --- member-list and catalog-link (owner approval, 24 November 2026) ---------
+
+test('the member-list and catalog-link items: valid, and every waiting US library is covered or listed as skipped with a reason', () => {
+  const members = memberListItems();
+  const links = catalogLinkItems();
+  assert.ok(members.length >= 18 && links.length >= 5);
+  // The catalogs the coordinator named, each read or skipped with its reason.
+  const named = ['sals-mvls', 'flls', 'owwl', 'westchester', 'vcat', 'coastline', 'seflin', 'osl', 'lion', 'clams', 'nekls', 'ckls', 'seknfind', 'pioneer-ne',
+    'catamount', 'lcei', 'aspencat', 'gmilcs'];
+  for (const id of named) assert.ok(members.some(item => item.id === id), id);
+  assert.deepEqual(hostList.skipped.memberLists.map(item => item.catalog.split(' ')[0]).sort(), ['Hidalgo', 'Rock']);
+  for (const item of members) assert.ok(new URL(item.url).search === '' && item.source.length > 20, item.id);
+  // Every waiting library: a member list of its shared catalog, a homepage read, or skipped with a reason.
+  const read = new Set(members.map(item => item.sharedCatalog).filter(Boolean));
+  const homes = new Set(links.map(item => item.libraryId));
+  const skipped = new Set(hostList.skipped.catalogLinks.map(item => item.libraryId));
+  const byId = new Map(getAllLibraries().map(entry => [entry.id, entry]));
+  for (const { id } of usListed.waiting) {
+    const entry = byId.get(id);
+    assert.ok(entry, id);
+    assert.equal([entry.sharedCatalog && read.has(entry.sharedCatalog), homes.has(id), skipped.has(id)].filter(Boolean).length, 1, id);
+  }
+  for (const item of [...links, ...hostList.skipped.catalogLinks]) assert.ok(usListed.waiting.some(waiting => waiting.id === item.libraryId), item.libraryId);
+  for (const item of links) assert.equal(item.catalogHost, new URL(byId.get(item.libraryId).baseUrl || byId.get(item.libraryId).catalogUrl).hostname, item.libraryId);
+  // Nothing has a result yet: all of it is pending.
+  const pending = pendingFrontPageWork();
+  assert.deepEqual([pending.memberLists.length, pending.catalogLinks.length], [members.length, links.length]);
+  assert.throws(() => memberListItems({ memberLists: [{ id: 'x', catalog: 'X', family: 'aspen', url: 'http://x.example.org/', state: 'NY', source: 's' }] }), /invalid/);
+  assert.throws(() => catalogLinkItems({ catalogLinks: [{ libraryId: 'koha:x', url: 'https://x.example.org/#a', source: 's' }] }), /invalid/);
+});
+
+const kohaFront = `<html><head><title>Northeast Kansas Library System catalog</title><link href="/opac-tmpl/bootstrap/css/opac.css"></head><body>
+<label for="select_library">Library:</label><select name="limit" id="select_library"><option value="">All libraries</option>
+<option value="branch:ATCH">Atchison Public Library</option><option value="branch:BALD">Baldwin City Library</option>
+<option value="branch:EUD">Eudora Public Library &amp; Annex</option></select>
+<select name="idx" id="masthead_search"><option value="kw">Keyword</option><option value="ti">Title</option></select></body></html>`;
+
+test('a member list: robots.txt first, then one GET of the catalog\'s page as MyBookshelf/1.0, no search; the selector\'s names and codes', async () => {
+  const fake = site({ robots: { status: 200, text: 'User-agent: *\nAllow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n' }, pages: { '/': page(200, kohaFront) } });
+  const item = { id: 'nekls', catalog: 'NEKLS', family: 'koha', url: 'https://nextkansas.org/', state: 'KS', source: 'test' };
+  const result = await checkMemberList(item, fake);
+  assert.deepEqual(fake.asked.map(([kind, url]) => [kind, url]), [['robots', 'https://nextkansas.org/robots.txt'], ['page', 'https://nextkansas.org/']]);
+  assert.match(fake.asked[1][2].headers['User-Agent'], /^MyBookshelf\/1\.0 /);
+  assert.deepEqual(result, { id: 'nekls', host: 'nextkansas.org', date: '2026-11-24', status: 200, wall: 'none', title: 'Northeast Kansas Library System catalog',
+    marks: ['koha'], selects: [{ name: 'limit', label: 'Library:' }],
+    options: [[0, '', 'All libraries'], [0, 'branch:ATCH', 'Atchison Public Library'], [0, 'branch:BALD', 'Baldwin City Library'], [0, 'branch:EUD', 'Eudora Public Library & Annex']] });
+  // Aspen's owning-library select and Polaris's organisation dropdown.
+  const aspen = memberOptions('<select name="filter[]" id="owning_library" aria-label="Owning Library"><option value="owning_library:&quot;Batavia&quot;">Batavia</option><option value="owning_library:&quot;Geneseo&quot;">Geneseo</option></select>');
+  assert.deepEqual(aspen.options.map(option => option[2]), ['Batavia', 'Geneseo']);
+  const polaris = memberOptions('<select id="ddlOrganization" name="ctl00$Search$ddlOrganization"><option value="3">Ballston Spa Public Library</option><option value="4">Bancroft Public Library</option></select>');
+  assert.deepEqual(polaris.options, [[0, '3', 'Ballston Spa Public Library'], [0, '4', 'Bancroft Public Library']]);
+  // A select that lists no libraries is not taken.
+  assert.deepEqual(memberOptions('<select name="sort"><option>Relevance</option><option>Title</option></select>'), { selects: [], options: [] });
+  // A robots.txt that disallows the page: no page, nothing read.
+  const refused = site({ robots: { status: 200, text: 'User-agent: *\nDisallow: /\n' } });
+  assert.deepEqual(await checkMemberList(item, refused), { id: 'nekls', host: 'nextkansas.org', date: '2026-11-24', status: null, wall: 'none', robots: 'disallowed',
+    title: '', marks: [], selects: [], options: [] });
+  assert.deepEqual(pagesAsked(refused), []);
+  // A wall: recorded, no options.
+  const walled = site({ pages: { '/': page(403, '<html><title>Just a moment...</title></html>', { 'cf-mitigated': 'challenge' }) } });
+  assert.deepEqual([(await checkMemberList(item, walled)).wall, (await checkMemberList(item, walled)).options], ['challenge', []]);
+});
+
+test('a TLC member list: GET /branch/branchLimits as JSON with the site\'s configuration, where robots.txt allows it', async () => {
+  const json = JSON.stringify([{ branchId: 12, name: 'Main Library' }, { branchId: 14, name: 'Weslaco Public Library', children: [{ id: 'X1', displayName: 'Bookmobile' }] }]);
+  const fake = site({ pages: { '/branch/branchLimits': page(200, json) } });
+  const result = await checkMemberList({ id: 'tlc-x', catalog: 'X', family: 'tlc', url: 'https://x.tlcdelivers.com/branch/branchLimits', state: 'TX', source: 's', tlcConfig: 'default' }, fake);
+  assert.deepEqual(result.options, [[0, '12', 'Main Library'], [0, '14', 'Weslaco Public Library'], [0, 'X1', 'Bookmobile']]);
+  const [, , options] = fake.asked.find(([kind]) => kind === 'page');
+  assert.deepEqual([options.headers.Accept, options.headers['Ls2pac-config-type'], options.headers['Ls2pac-config-name']], ['application/json', 'pac', 'default']);
+  const blocked = site({ robots: { status: 200, text: 'User-agent: *\nDisallow: /branch/\n' } });
+  assert.equal((await checkMemberList({ id: 'tlc-x', catalog: 'X', family: 'tlc', url: 'https://x.tlcdelivers.com/branch/branchLimits', state: 'TX', source: 's' }, blocked)).robots, 'disallowed');
+  assert.deepEqual(pagesAsked(blocked), []);
+});
+
+const homepage = `<html><head><title>DeKalb County Public Library | Home</title></head><body>
+<a href="https://dekalb.polarislibrary.com/polaris/search/searchresults.aspx?ctx=1&term=">Catalog</a>
+<a href="https://dekalb.polarislibrary.com/polaris/">Catalog again</a>
+<form action="https://catalog.aacpl.net/Search/Results"><input name="lookfor"></form>
+<a href="https://x.bibliocommons.com/v2/search?query=a">BC</a><a href="https://y.bywatersolutions.com/cgi-bin/koha/opac-search.pl">Koha</a>
+<a href="https://z.tlcdelivers.com/">TLC</a><a href="https://k.biblionix.com/catalog/">Apollo</a><a href="https://gapines.org/eg/opac/home">PINES</a>
+<a href="https://na2.iiivega.com/">Vega</a><a href="https://x.ent.sirsi.net/client/en_US/default">Sirsi</a><a href="https://catalog.example.org/">Own catalog</a>
+<a href="/events">Events</a><a href="https://www.facebook.com/dekalb">Facebook</a><a href="mailto:a@b.org">Mail</a></body></html>`;
+
+test('a catalog link: robots.txt, then the homepage once; its catalog links by family and its title', async () => {
+  const fake = site({ pages: { '/': page(200, homepage) } });
+  const item = { libraryId: 'polaris:dekalb-county-ga', url: 'https://dekalblibrary.org/', catalogHost: 'catalog.example.org', source: 's' };
+  const result = await checkCatalogLink(item, fake);
+  assert.deepEqual(fake.asked.map(([kind, url]) => [kind, url]), [['robots', 'https://dekalblibrary.org/robots.txt'], ['page', 'https://dekalblibrary.org/']]);
+  assert.equal(result.title, 'DeKalb County Public Library | Home');
+  assert.deepEqual(result.links, [
+    ['https://dekalb.polarislibrary.com/polaris/search/searchresults.aspx', 'polaris'], ['https://dekalb.polarislibrary.com/polaris/', 'polaris'],
+    ['https://catalog.aacpl.net/Search/Results', 'aspen'], ['https://x.bibliocommons.com/v2/search', 'bibliocommons'],
+    ['https://y.bywatersolutions.com/cgi-bin/koha/opac-search.pl', 'koha'], ['https://z.tlcdelivers.com/', 'tlc'], ['https://k.biblionix.com/catalog/', 'apollo'],
+    ['https://gapines.org/eg/opac/home', 'evergreen'], ['https://na2.iiivega.com/', 'vega'], ['https://x.ent.sirsi.net/client/en_US/default', 'sirsi'],
+    ['https://catalog.example.org/', 'catalog-host']]);
+  assert.deepEqual(Object.keys(result).sort(), ['date', 'host', 'libraryId', 'links', 'status', 'title', 'wall']);
+  // A redirect within the site (aacpl.net to www.aacpl.net) is followed, its robots.txt read first; one to another site is recorded as moved.
+  const asked = [];
+  const sameSite = { now: () => DAY, fetchPolicy: async url => { asked.push(['robots', url]); return { status: 404, text: '' }; },
+    fetchImpl: async url => { asked.push(['page', url]); return new URL(url).hostname === 'aacpl.net' ? page(301, '', { location: 'https://www.aacpl.net/' }) : page(200, homepage); } };
+  const moved = await checkCatalogLink({ libraryId: 'aspen:anne-arundel-md', url: 'https://aacpl.net/', source: 's' }, sameSite);
+  assert.deepEqual(asked, [['robots', 'https://aacpl.net/robots.txt'], ['page', 'https://aacpl.net/'], ['robots', 'https://www.aacpl.net/robots.txt'], ['page', 'https://www.aacpl.net/']]);
+  assert.equal(moved.status, 200);
+  const away = site({ pages: { '/': page(302, '', { location: 'https://city.example.gov/library' }) } });
+  assert.deepEqual(await checkCatalogLink(item, away), { libraryId: item.libraryId, host: 'dekalblibrary.org', date: '2026-11-24', status: 302, wall: 'none',
+    movedTo: 'city.example.gov', title: '', links: [] });
+  assert.equal(linkFamily('https://catalog.groveforlibraries.com/x'), 'aspen');
+  assert.equal(linkFamily('https://www.example.org/library'), null);
+});
+
+test('long reads are logged in parts under the line limit, and a run keeps each host\'s reads in order, one at a time', async () => {
+  const options = Array.from({ length: 400 }, (_, index) => [0, `branch:B${index}`, `Member Library Number ${index} of the Consortium`]);
+  const lines = memberListLines({ id: 'owwl', host: 'search.owwl.org', date: '2026-11-24', status: 200, wall: 'none', title: 'OWWL', marks: ['aspen'],
+    selects: [{ name: 'filter[]', label: 'Owning Library' }], options });
+  assert.ok(lines.length > 3);
+  for (const line of lines) {
+    assert.ok(line.startsWith(`${MEMBER_LIST_PREFIX} {`) && Buffer.byteLength(line) < 3_200, String(Buffer.byteLength(line)));
+  }
+  const parts = lines.map(line => JSON.parse(line.slice(MEMBER_LIST_PREFIX.length + 1)));
+  assert.deepEqual(parts.flatMap(part => part.options), options);
+  assert.deepEqual(parts.map(part => [part.part, part.parts]), parts.map((_, index) => [index + 1, parts.length]));
+  assert.deepEqual(parts[1].selects, []);
+  assert.ok(catalogLinkLines({ libraryId: 'tlc:x', host: 'a.example.org', date: '2026-11-24', status: 200, wall: 'none', title: 't', links: [] })[0]
+    .startsWith(`${CATALOG_LINK_PREFIX} {"libraryId":"tlc:x"`));
+  // The run: per host one read at a time, the wall check first; every kind logged.
+  const order = [];
+  let running = new Map();
+  const busy = async (host, label) => {
+    if (running.get(host)) assert.fail(`two reads at once on ${host}`);
+    running.set(host, true); order.push(label);
+    await new Promise(resolve => setTimeout(resolve, 2));
+    running.set(host, false);
+  };
+  const logged = [];
+  const result = await runFrontPageChecks({
+    hosts: ['search.owwl.org', 'b.example.org'],
+    memberLists: [{ id: 'owwl', url: 'https://search.owwl.org/Search/Advanced' }],
+    catalogLinks: [{ libraryId: 'tlc:x', url: 'https://search.owwl.org/' }, { libraryId: 'tlc:y', url: 'https://c.example.org/' }],
+    check: async host => { await busy(host, `wall ${host}`); return on(host, { status: 200, wall: 'none' }); },
+    checkMembers: async item => { await busy('search.owwl.org', `members ${item.id}`); return { id: item.id, host: 'search.owwl.org', date: '2026-11-24', status: 200, wall: 'none', title: '', marks: [], selects: [], options: [] }; },
+    checkLinks: async item => { await busy(new URL(item.url).hostname, `links ${item.libraryId}`); return item.libraryId === 'tlc:y' ? null : { libraryId: item.libraryId, host: 'search.owwl.org', date: '2026-11-24', status: 200, wall: 'none', title: '', links: [] }; },
+    concurrency: 3, log: line => logged.push(line) });
+  assert.deepEqual(result, { checked: 4, remaining: 1 });
+  const owwl = order.filter(label => /owwl|tlc:x/.test(label));
+  assert.deepEqual(owwl, ['wall search.owwl.org', 'members owwl', 'links tlc:x']);
+  assert.equal(logged.filter(line => line.startsWith(`${MEMBER_LIST_PREFIX} `)).length, 1);
+  assert.equal(logged.filter(line => line.startsWith(`${CATALOG_LINK_PREFIX} `)).length, 1);
+  assert.equal(logged.filter(line => line.startsWith(`${LOG_PREFIX} `)).length, 2);
 });

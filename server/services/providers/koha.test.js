@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { checkPublicAvailability, keywordQuery, librarySearch, parseKohaPublicRecord, searchCatalog, resolveCatalogRecord, scopeSearch } from './koha.js';
 import { clearHttpCache, withCatalogOperation } from './http.js';
+import { formatTier, LAST_TIER } from '../rowFormats.js';
+import { orderMatches } from '../libraryBookSearch.js';
+import { storesAvailability } from '../../catalog-store/policy.js';
+import { getLibraryById } from '../directory.js';
 
 const ISBN = '9780262033848';
 const ORIGIN = 'https://library.cutn.ac.in';
@@ -913,3 +917,71 @@ test('keyword searches drop English articles that some Koha indexes never match'
   assert.equal(calls[0].searchParams.get('q'), 'discovery of India');
 });
 
+
+// US Koha (USA plan step 4, 24 November 2026). No agent may contact the US
+// Koha hosts (ByWater's Cloudflare-managed robots.txt turns Claude agents
+// away), so these tests use the saved Indian Koha pages, which carry the same
+// Koha markup: the material type line and the record page.
+test('Koha rows carry the catalog\'s material type as their format, which only orders the card: a film after the book', async () => {
+  const entry = { id: 'koha:x', platform: 'koha', baseUrl: ORIGIN, country: 'US' };
+  const search = captured('madurai-title-search');
+  global.fetch = async (url) => response(url, search);
+  const rows = await librarySearch(entry, 'history');
+  assert.deepEqual(rows.map(row => row.format), ['Text', 'Text']);
+  const film = search.replace('<img alt="Text" class="materialtype mt_icon_BK" src="/opac-tmpl/lib/famfamfam/BK.png"/> Text</span>',
+    '<img alt="Visual material" class="materialtype mt_icon_VM" src="/opac-tmpl/lib/famfamfam/VM.png"/> Visual material</span>');
+  assert.notEqual(film, search);
+  global.fetch = async (url) => response(url, film);
+  const [first, second] = await librarySearch(entry, 'history');
+  assert.deepEqual([first.format, second.format], ['Visual material', 'Text']);
+  assert.deepEqual([formatTier(first), formatTier(second)], [LAST_TIER, 0]);
+  // Both rows still count; ranked, the book comes first.
+  const ranked = orderMatches([{ ...first, title: 'History' }, { ...second, title: 'History' }], 'History');
+  assert.deepEqual(ranked.map(row => row.recordId), [second.recordId, first.recordId]);
+  // A catalog that shows no material type gives no format (the row ranks with the books).
+  global.fetch = async (url) => response(url, captured('ernakulam-wings-search'));
+  assert.ok((await librarySearch(entry, 'Wings of Fire')).every(row => !('format' in row)));
+  // A single hit redirects to its record page, whose material type is the row's format.
+  const record = captured('uas-dharwad-record');
+  global.fetch = async (url) => isSearch(url) ? response(url, '', 302, { location: '/cgi-bin/koha/opac-detail.pl?biblionumber=42715' }) : response(url, record);
+  const [one] = await librarySearch({ id: 'koha:uas-dharwad', platform: 'koha', baseUrl: 'https://opac.uasd.edu', country: 'US' }, 'Indian livestock census');
+  assert.deepEqual([one.recordId, one.format], ['42715', 'Text']);
+  // An Indian Koha catalog's rows carry it too: one rule for every library.
+  const [indian] = await librarySearch({ id: 'koha:uas-dharwad', platform: 'koha', baseUrl: 'https://opac.uasd.edu', country: 'IN' }, 'Indian livestock census');
+  assert.deepEqual([indian.recordId, indian.format], ['42715', 'Text']);
+  global.fetch = async (url) => response(url, search);
+  assert.deepEqual((await librarySearch({ ...entry, country: 'IN' }, 'history')).map(row => row.format), ['Text', 'Text']);
+});
+
+test('a live-only Koha library (the US ones at ByWater) keeps no adapter cache: every check is a live request', async () => {
+  const liveOnly = { ...library, id: 'koha:fargo-nd' };
+  assert.equal(getLibraryById('koha:fargo-nd')?.country, 'US');
+  assert.equal(storesAvailability(liveOnly.id), false);
+  assert.equal(storesAvailability(library.id), true);
+  const html = '<h1 class="title">Wings of Fire</h1>' + fixture;
+  for (const [entry, requests] of [[library, 1], [liveOnly, 2]]) {
+    clearHttpCache();
+    let calls = 0;
+    global.fetch = async url => { calls += 1; return response(url, html); };
+    await resolveCatalogRecord(entry, '22365');
+    await resolveCatalogRecord(entry, '22365');
+    assert.equal(calls, requests, entry.id);
+  }
+  // An ISBN check that finds nothing: kept for the open library, asked again for the live-only one.
+  const checks = async (entry) => {
+    clearHttpCache();
+    const counts = [];
+    let calls = 0;
+    global.fetch = async url => { calls += 1; return response(url, emptySearch(url)); };
+    for (let round = 0; round < 2; round += 1) {
+      assert.equal((await checkPublicAvailability(entry, ISBN)).outcome, 'not_found', entry.id);
+      counts.push(calls);
+    }
+    return counts;
+  };
+  const open = await checks(library);
+  const live = await checks(liveOnly);
+  assert.ok(open[0] > 0);
+  assert.deepEqual(open, [open[0], open[0]]);
+  assert.deepEqual(live, [open[0], 2 * open[0]]);
+});

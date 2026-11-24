@@ -5,6 +5,9 @@ import presentationReviews from '../../data/library-presentation-reviews.json' w
 import indiaAllowlist from '../data/india-catalogs-listed.json' with { type: 'json' };
 import indiaRegions from '../data/india-library-regions.json' with { type: 'json' };
 import usAllowlist from '../data/us-catalogs-listed.json' with { type: 'json' };
+import usCatalogs from '../data/us-catalogs.json' with { type: 'json' };
+import frontPageHostList from '../data/front-page-hosts.json' with { type: 'json' };
+import frontPageResultList from '../data/front-page-results.json' with { type: 'json' };
 const NEARBY_CUTOFF_KM = 80.5;
 
 function canonicalPlatform(platform) {
@@ -16,6 +19,12 @@ function normalize(entry) {
 }
 
 const merged = new Map(libraries.map(normalize).map(row => [row.id, row]));
+// US entries added by the USA plan's connector steps (TLC first), with their
+// IMLS identity and catalog evidence; never replacing an existing ID.
+for (const row of usCatalogs.libraries.map(normalize)) {
+  if (merged.has(row.id)) throw new Error(`Duplicate US directory entry: ${row.id}`);
+  merged.set(row.id, row);
+}
 for (const row of researched.libraries.map(normalize)) merged.set(row.id, row);
 for (const row of discovered.libraries.map(normalize)) merged.set(row.id, row);
 for (const { libraryId, entry } of discovered.alternates) {
@@ -76,14 +85,69 @@ const byId = new Map(entries.map((entry) => [entry.id, entry]));
 //  - United States: offered only when server/data/us-catalogs-listed.json
 //    lists it and it is not in that file's `removed` list (the 232 entries
 //    from before the list stay as legacy until there is a reason to remove
-//    one; a new entry is listed once verified).
+//    one; a new entry is listed once verified, or once connected: an entry
+//    of a connected catalog family, server/data/us-catalogs.json, whose
+//    adapter passes its fixture tests; `waiting` entries are not offered).
+//    A connected entry on a front-page host waits for that host's result
+//    (below).
 //  - Every other country: not affected.
 const indiaListed = new Set(indiaAllowlist.libraryIds);
 const usListed = new Set(usAllowlist.libraryIds);
 const usRemoved = new Set((usAllowlist.removed || []).map(item => item.id));
 const usVerified = new Set(usAllowlist.verified || []);
+const usConnected = new Set(usAllowlist.connected || []);
+const usWaiting = new Set((usAllowlist.waiting || []).map(item => item.id));
+
+// The front-page gate (US build brief, 23 November 2026). A host in
+// server/data/front-page-hosts.json allows every agent (*), and so the app,
+// but blocks AI agents, so no agent could look for a bot wall there (most
+// Koha and Aspen catalogs at ByWater), or no agent was cleared to look
+// (`unseen`: Metro OKC's Aspen, the TLC DNS leads connected on 24 November
+// 2026). A connected entry whose catalog host is
+// one of them is offered only once the app's own front-page check
+// (catalog-store/frontPageCheck.js, its results committed in
+// server/data/front-page-results.json) found the host open: no wall, robots.txt
+// allowing the app, not moved to another host, and a 2xx front page. Until
+// then its listing is 'front-page': in the list, resolvable, not offered.
+// Legacy and verified entries are not gated.
+const frontPageHostSet = new Set((frontPageHostList.hosts || []).map(item => item.host));
+/** Whether a committed front-page result shows its host open (see above). */
+export function frontPageOpen(result) {
+  return Boolean(result) && result.wall === 'none' && !result.robots && !result.movedTo
+    && Number.isInteger(result.status) && result.status >= 200 && result.status < 300;
+}
+/** The host the library's checks go to: its adapter's baseUrl, else its catalog link. */
+export function catalogHostOf(entry) {
+  try { return new URL(entry?.baseUrl || entry?.catalogUrl).hostname.toLowerCase() || null; } catch { return null; }
+}
+/** A US listing reader over a set of front-page results (the committed ones by default). */
+export function createUsListing({ results = frontPageResultList.results || [], hosts = frontPageHostSet } = {}) {
+  const open = new Set(results.filter(frontPageOpen).map(result => result.host));
+  const awaitsFrontPage = entry => {
+    const host = catalogHostOf(entry);
+    return Boolean(host) && hosts.has(host) && !open.has(host);
+  };
+  return function listing(entry) {
+    if (!entry) return null;
+    if (entry.country !== 'US') return 'outside-us';
+    if (usRemoved.has(entry.id)) return 'removed';
+    if (!usListed.has(entry.id)) return usWaiting.has(entry.id) ? 'waiting' : 'not-listed';
+    if (usVerified.has(entry.id)) return 'verified';
+    if (!usConnected.has(entry.id)) return 'legacy';
+    return awaitsFrontPage(entry) ? 'front-page' : 'connected';
+  };
+}
+/** A US library's listing: 'verified', 'connected' (a connected catalog
+ * family's entry, not yet verified), 'legacy', 'removed', 'waiting' (not
+ * offered yet, with a reason), 'front-page' (connected, but its host's
+ * front-page result is not in yet or does not show it open) or
+ * 'not-listed' (the last four resolve by ID only); 'outside-us' for any
+ * other library. */
+export const usListing = createUsListing();
+/** The US listings that are offered when finding a library. */
+export const US_OFFERED = Object.freeze(['legacy', 'verified', 'connected']);
 const offered = entry => entry.country === 'IN' ? indiaListed.has(entry.id)
-  : entry.country === 'US' ? usListed.has(entry.id) && !usRemoved.has(entry.id) : true;
+  : entry.country === 'US' ? US_OFFERED.includes(usListing(entry)) : true;
 const listed = entries.filter(offered);
 const indiaAuditOnly = new Set(indiaAllowlist.egranthalayaAuditOnly || []);
 /** Why a library is offered when finding one: 'verified', 'egranthalaya-audit',
@@ -94,15 +158,44 @@ export function indiaListing(entry) {
   if (!indiaListed.has(entry.id)) return 'not-listed';
   return indiaAuditOnly.has(entry.id) ? 'egranthalaya-audit' : 'verified';
 }
-/** A US library's listing: 'verified', 'legacy', 'removed' or 'not-listed'
- * (the last two resolve by ID only); 'outside-us' for any other library. */
-export function usListing(entry) {
-  if (!entry) return null;
-  if (entry.country !== 'US') return 'outside-us';
-  if (usRemoved.has(entry.id)) return 'removed';
-  if (!usListed.has(entry.id)) return 'not-listed';
-  return usVerified.has(entry.id) ? 'verified' : 'legacy';
+// One pace for every host name of one shared catalog (pre-release review, 24
+// November 2026). The host gate (catalog-store/hostGate.js) and the
+// per-instance concurrency limit (catalog-lookup/budget.js) count requests by
+// host name, which already covers a shared catalog on one host (SHARE's 208
+// members, C/W MARS's 159, PINES's 51, Monroe County's 20). A few US shared
+// catalogs also give members a view of their own on another name of the same
+// catalog (Minuteman's cambridge.minlib.net beside catalog.minlib.net, OSL's
+// warwicklibrary.oslri.net beside catalog.oslri.net, the Nevada Library
+// Cooperative's three): those names are paced as the catalog's main host
+// (the one most members use; the first by name on a tie), so members on
+// other names cannot add to the catalog's per-minute limit. Outside the US
+// nothing changes.
+function sharedPacing(list) {
+  const groups = new Map();
+  for (const entry of list) {
+    if (entry.country !== 'US' || !entry.sharedCatalog) continue;
+    let host;
+    try { host = new URL(entry.baseUrl || entry.catalogUrl).host.toLowerCase(); } catch { continue; }
+    const counts = groups.get(entry.sharedCatalog) || new Map();
+    counts.set(host, (counts.get(host) || 0) + 1);
+    groups.set(entry.sharedCatalog, counts);
+  }
+  const pacing = new Map();
+  for (const counts of groups.values()) {
+    if (counts.size < 2) continue;
+    const [main] = [...counts].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))[0];
+    for (const host of counts.keys()) if (host !== main && !pacing.has(host)) pacing.set(host, main);
+  }
+  return pacing;
 }
+const pacingHosts = sharedPacing(entries);
+/** The host whose pace a request to `host` shares: a shared catalog's main host, else `host` itself (see above). */
+export function pacingHostOf(host) {
+  return pacingHosts.get(String(host || '').toLowerCase()) || host;
+}
+/** The host names paced as another (tests and the pre-release review). */
+export function sharedPacingHosts() { return new Map(pacingHosts); }
+
 export function getAllLibraries() { return entries; }
 export function getListedLibraries() { return listed; }
 

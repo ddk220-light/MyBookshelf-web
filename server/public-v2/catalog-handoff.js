@@ -31,9 +31,12 @@ function searchUrl(platform, catalogUrl, query, hasIsbn, entry) {
       url.searchParams.set('searchType', 'keyword');
       return url;
     case 'aspen':
+      // Aspen's any-field index, as the app's own check searches (providers/aspen.js
+      // SEARCH_INDEX; coordinator decision, 24 November 2026): an ISBN's digits or
+      // the title and author alike.
       url = new URL('/Search/Results', catalogUrl);
       url.searchParams.set('lookfor', query);
-      url.searchParams.set('searchIndex', hasIsbn ? 'ISBN' : 'AllFields');
+      url.searchParams.set('searchIndex', 'Keyword');
       return url;
     case 'vufind':
       url = new URL(`${entry.baseUrl.replace(/\/$/, '')}/Search/Results`);

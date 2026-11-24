@@ -17,3 +17,14 @@ test('anonymous HTTP exceptions bind the library identity, host and port', () =>
     { baseUrl: library.baseUrl + '/account' }, { baseUrl: library.baseUrl + '?token=1' },
   ]) assert.equal(publicCatalogOrigin({ ...library, ...change }), null);
 });
+
+test('two TLC catalogs publish only HTTP: each origin is pinned to its library, port included', () => {
+  const tangipahoa = { id: 'tlc:tangipahoa', platform: 'tlc', baseUrl: 'http://opac.tangipahoa.lib.la.us:8080/' };
+  assert.equal(publicCatalogOrigin(tangipahoa)?.origin, 'http://opac.tangipahoa.lib.la.us:8080');
+  assert.equal(publicCatalogOrigin({ id: 'tlc:nwrls', platform: 'tlc', baseUrl: 'http://ls2pac.nwrls.lib.fl.us/' })?.origin, 'http://ls2pac.nwrls.lib.fl.us');
+  for (const change of [{ id: 'tlc:other' }, { platform: 'bc' }, { baseUrl: 'http://opac.tangipahoa.lib.la.us/' }, { baseUrl: 'http://ls2pac.nwrls.lib.fl.us/' }]) {
+    assert.equal(publicCatalogOrigin({ ...tangipahoa, ...change }), null);
+  }
+  // Every other TLC catalog is https.
+  assert.equal(publicCatalogOrigin({ id: 'tlc:lapl', platform: 'tlc', baseUrl: 'https://ls2pac.lapl.org/' })?.origin, 'https://ls2pac.lapl.org');
+});

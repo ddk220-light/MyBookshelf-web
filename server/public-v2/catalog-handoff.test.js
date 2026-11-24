@@ -19,7 +19,14 @@ test('catalog handoffs use trusted, platform-specific public search routes', () 
   assert.deepEqual(catalogHandoffFor({
     entry: { platform: 'aspen', catalogUrl: 'https://discover.cuyahogalibrary.org/' }, book,
   }), {
-    catalogUrl: 'https://discover.cuyahogalibrary.org/Search/Results?lookfor=9781625275868&searchIndex=ISBN',
+    catalogUrl: 'https://discover.cuyahogalibrary.org/Search/Results?lookfor=9781625275868&searchIndex=Keyword',
+    catalogLinkKind: 'search',
+  });
+  // Aspen links use the Keyword index for a title and author too, never ISBN or AllFields.
+  assert.deepEqual(catalogHandoffFor({
+    entry: { platform: 'aspen', catalogUrl: 'https://aspen.greenvillelibrary.org/' }, book: { title: 'Lessons in Chemistry', authors: ['Bonnie Garmus'] },
+  }), {
+    catalogUrl: 'https://aspen.greenvillelibrary.org/Search/Results?lookfor=Lessons+in+Chemistry+Bonnie+Garmus&searchIndex=Keyword',
     catalogLinkKind: 'search',
   });
   assert.deepEqual(catalogHandoffFor({

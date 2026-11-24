@@ -8,18 +8,21 @@ import { createCatalogPolicy } from './policy.js';
 // Returns counts only: no text, book keys or database details.
 //
 // In production (VERCEL_ENV=production) the same call also runs the
-// front-page check (frontPageCheck.js) beside the maintenance, for the hosts
-// without a committed result, within the function's time. It needs no
-// database; its results go to the runtime log only. Once
-// server/data/front-page-results.json covers every host it does nothing.
+// front-page check (frontPageCheck.js) beside the maintenance, for the hosts,
+// member lists and catalog links without a committed result, within the
+// function's time. It needs no database; its results go to the runtime log
+// only. Once server/data/front-page-results.json covers every one it does
+// nothing.
 export const CATALOG_MAINTENANCE_PATH = '/api/internal/catalog-maintenance';
 
 const unavailable = res => res.status(503).json({ error: { code: 'MAINTENANCE_UNAVAILABLE', message: 'Catalog maintenance is unavailable.' } });
 
 async function defaultFrontPage() {
-  const { hostsWithoutResult, runFrontPageChecks } = await import('./frontPageCheck.js');
-  const hosts = hostsWithoutResult();
-  return hosts.length ? runFrontPageChecks({ hosts }) : { checked: 0, remaining: 0 };
+  const { pendingFrontPageWork, runFrontPageChecks } = await import('./frontPageCheck.js');
+  // The wall checks first, then the member lists and the catalog links
+  // (frontPageCheck.js), each without a committed result.
+  const work = pendingFrontPageWork();
+  return work.hosts.length + work.memberLists.length + work.catalogLinks.length ? runFrontPageChecks(work) : { checked: 0, remaining: 0 };
 }
 
 export function createCatalogMaintenanceMiddleware({ env = process.env, policy = createCatalogPolicy(), connect = null, frontPage = defaultFrontPage } = {}) {

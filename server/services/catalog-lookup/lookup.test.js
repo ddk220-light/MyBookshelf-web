@@ -413,8 +413,8 @@ test('Calil: one batch call answers every result ISBN separately; a missing ISBN
   }
 });
 
-test('Vega and Evergreen check the top results one ISBN at a time within the results budget', async () => {
-  for (const [id, top] of [['vega', 9], ['evergreen', 3]]) {
+test('Vega checks the top results one ISBN at a time within the results budget', async () => {
+  for (const [id, top] of [['vega', 9]]) {
     let calls = 0;
     const provider = { checkAvailability: async isbn => { calls++; return isbn.endsWith('6') ? { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }
       : { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; } };
@@ -997,4 +997,19 @@ test('the log line names the term that found the book (foundBy) and how many row
   const viaIsbn = await run({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: '' }, [{ title: 'Wings of fire', isbn: '9788173711466' }]);
   assert.deepEqual([viaIsbn.foundBy, viaIsbn.matchCount, viaIsbn.evidence], ['isbn', 1, 'exact_isbn']);
   assert.ok(!/Wings|Kalam|9788173|OL1037811W/.test(JSON.stringify([viaIsbn, viaTitle])));
+});
+
+test('a US library\'s /availability check always goes through the lookup layer (robots.txt and the host pacing), whatever CATALOG_LOOKUP_V2 says', async () => {
+  const usEntry = { id: 'evergreen:athens-regional-ga', platform: 'evergreen', country: 'US', baseUrl: 'https://gapines.org', evergreenOrgId: 6, evergreenSite: 'ARL' };
+  const usLibrary = { ...publicLibrary, id: usEntry.id };
+  let layer = 0, oldPath = 0;
+  const lookup = { enabledFor: () => false, checkBook: async () => { layer += 1; return { response: { outcome: 'unknown', lookupKind: 'exact_isbn', matchKind: null, freshness: 'none' } }; } };
+  const directory = { resolve: id => (id === usEntry.id ? usLibrary : publicLibrary), entry: id => (id === usEntry.id ? usEntry : publicEntry) };
+  const providerFor = () => ({ checkAvailability: async () => { oldPath += 1; return { outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true }; } });
+  const service = createPublicAvailabilityService({ directory, books: { resolve: async () => publicBook }, providerFor, lookup });
+  await service.check({ libraryId: usEntry.id, bookKey: publicBook.bookKey, editionScope: 'exact' });
+  assert.deepEqual([layer, oldPath], [1, 0]);
+  // A library outside the US keeps the old path while the flag does not name its platform.
+  await service.check({ libraryId: publicLibrary.id, bookKey: publicBook.bookKey, editionScope: 'exact' });
+  assert.deepEqual([layer, oldPath], [1, 1]);
 });

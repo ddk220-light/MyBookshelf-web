@@ -75,10 +75,24 @@ export const PLATFORMS = Object.freeze({
     // where the directory names one (not the unscoped shared catalogs). A
     // search Koha answers with a single record redirects to it: that page is
     // read as the search's one row (2 requests). The IIT Hyderabad API is
-    // ISBN-only and marks nothing.
+    // ISBN-only and marks nothing. The US Koha catalogs (mostly one ByWater
+    // subdomain each, a shared catalog's members on one host) are live-only
+    // (server/data/catalog-policies.json); ByWater's Cloudflare-managed
+    // robots.txt sets no Crawl-delay, which the robots policy would add.
     book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search', maxRequests: 2, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
+  },
+  tlc: {
+    // TLC LS2 PAC / CARL•Connect Discovery: one any-field JSON search (a
+    // POST, no session), 40 rows, 0.3 to 1.4 s at LAPL and Frederick
+    // (live checks, 24 November 2026). Each library has its own host (the
+    // vendor-hosted ones one subdomain each of tlcdelivers.com); none sets a
+    // Crawl-delay, which the robots policy would add. Live-only while TLC's
+    // terms are unread (server/data/catalog-policies.json).
+    book: { deadlineMs: BOOK_DEADLINE_MS },
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 30,
   },
   bc: {
     // Gateway keyword search.
@@ -116,9 +130,16 @@ export const PLATFORMS = Object.freeze({
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   evergreen: {
+    // Evergreen (Georgia PINES): one keyword search through the OpenSRF
+    // gateway, limited to the member system (site(<short name>)), then the
+    // found records' brief details: two GETs (one when nothing is found),
+    // 0.5 to 1 s each (live checks, 24 November 2026; providers/evergreen.js).
+    // Every PINES library shares one host, gapines.org, whose robots.txt sets
+    // Crawl-delay 1 for every agent, which the robots policy applies through
+    // the host gate. Live-only (server/data/catalog-policies.json).
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 15 * S, fewRequests: false, topBooks: 3, concurrency: 1 },
-    hostConcurrency: 1, minIntervalMs: 0, perMinute: 20,
+    results: { strategy: 'search', maxRequests: 2, deadlineMs: 15 * S, fewRequests: 2 },
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   chamo: {
     book: { deadlineMs: 60 * S },
@@ -131,9 +152,45 @@ export const PLATFORMS = Object.freeze({
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   aspen: {
+    // Aspen Discovery: one keyword search page (a GET, no session), 20 works
+    // with their formats, 0.4 to 1.3 s at Greenville (live checks, 24
+    // November 2026). Each library has its own host (a consortium's members
+    // share theirs). Aspen's own robots.txt sets Crawl-delay 20 (Greenville,
+    // Metro OKC), which the robots policy applies through the host gate, so a
+    // second request there waits its turn (a result mark that cannot get one
+    // within its 15 s marks nothing); the Cloudflare-managed files of the
+    // ByWater-hosted catalogs set none. Live-only while Aspen's terms are
+    // unread (server/data/catalog-policies.json).
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
-    hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
+    hostConcurrency: 1, minIntervalMs: 0, perMinute: 20,
+  },
+  polaris: {
+    // Polaris PowerPAC: one keyword search as PowerPAC's own chain of four
+    // plain GETs in one anonymous session (the search, process.search, the
+    // results page, its rows; three when nothing is found), 0.2 to 1.7 s each
+    // at Denver and Fairfax (live checks, 24 November 2026). Each library has
+    // its own host (a shared catalog's members, SHARE's above all, share
+    // theirs). Polaris's vendor robots.txt template sets no Crawl-delay, nor
+    // do the hosts without one; the robots policy would add one. A check's
+    // four requests fit the host gate's burst on a quiet host. Live-only where
+    // the library's terms are unread (server/data/catalog-policies.json).
+    book: { deadlineMs: BOOK_DEADLINE_MS },
+    results: { strategy: 'search', maxRequests: 5, deadlineMs: 20 * S, fewRequests: false },
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
+  },
+  apollo: {
+    // Apollo (Biblionix): one keyword search as Apollo's own two plain
+    // requests (search_setup, then perform_search; no cookie), and, once a
+    // day per host on each instance, the catalog page that names the script
+    // carrying the catalog's version (and that script, once per new release;
+    // providers/apollo.js). Each library has its own <name>.biblionix.com
+    // host; Biblionix's robots.txt template disallows only /ill/ and sets no
+    // Crawl-delay, which the robots policy would add. Apollo may store
+    // (server/data/catalog-policies.json).
+    book: { deadlineMs: BOOK_DEADLINE_MS },
+    results: { strategy: 'search', maxRequests: 5, deadlineMs: 15 * S, fewRequests: 2 },
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 30,
   },
   vpl: {
     // Title search only. robots Crawl-Delay 20 s is applied by the adapter;

@@ -4,15 +4,16 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { POLICY_EFFECTIVE_DATE, PLACEHOLDER_PATTERN, policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
 import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData, checkPages, checkData, CHECK_SCRIPT_PATH } from './build-pages.mjs';
-import { checkPublication, CHECK_BOOKS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
+import { checkPublication, CHECK_BOOKS, PAGE_PLATFORMS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
 import { usPageList, pageCandidates, linkSlug, formatPageList } from './us-pages.mjs';
 import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
 import usList from '../../shared/us-book-pool.json' with { type: 'json' };
 import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
 import usCities from '../../shared/seo-us-cities.json' with { type: 'json' };
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
-import { getAllLibraries, usListing } from '../../server/services/directory.js';
+import { createUsListing, getAllLibraries, usListing } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
+import { libraryLinks } from '../../server/public-v2/libraryLinks.js';
 
 test('publication is exactly seven India, four US, one Japan; remaining directory stays usable', () => {
   const pages=publishedLibraries(), counts={};
@@ -400,35 +401,73 @@ const CALIFORNIA_SLUGS = {
   'bc:ssf': 'south-san-francisco-public-library', 'bc:sunnyvale': 'sunnyvale-public-library', 'bc:ylpl': 'yorba-linda-public-library',
 };
 
-test('US pages: every offered US BiblioCommons library has a page, or is left out with a reason; the list is generated and current', () => {
+test('US pages: every offered US BiblioCommons, TLC, Koha, Aspen, Polaris, Apollo or Evergreen library has a page, or is left out with a reason; the list is generated and current', () => {
   const offered = pageCandidates(getAllLibraries()).map(entry => entry.id);
   const listed = usPages.libraries.map(item => item.id), out = usPages.leftOut.map(item => item.id);
   assert.equal(new Set([...listed, ...out]).size, listed.length + out.length, 'no library is in both lists');
   assert.deepEqual(listed.toSorted(), offered.filter(id => !out.includes(id)).toSorted(), 'every offered library not left out has a page');
-  // Only BiblioCommons libraries in the United States, none removed from finding a library; Canada is untouched.
+  // Only BiblioCommons, TLC, Koha, Aspen, Polaris, Apollo and Evergreen libraries in the United States, none removed from finding a library or waiting; Canada is untouched.
   for (const entry of getAllLibraries().filter(item => listed.includes(item.id))) {
     assert.equal(entry.country, 'US', entry.id);
-    assert.equal(entry.platform, 'bc', entry.id);
-    assert.ok(['legacy', 'verified'].includes(usListing(entry)), entry.id);
+    assert.ok(PAGE_PLATFORMS.includes(entry.platform), entry.id);
+    assert.ok(['legacy', 'verified', 'connected'].includes(usListing(entry)), entry.id);
   }
+  // Every offered TLC library has a page; the ones waiting on their identity have none.
+  const tlc = getAllLibraries().filter(entry => entry.platform === 'tlc');
+  assert.deepEqual(tlc.filter(entry => usListing(entry) === 'connected').map(entry => entry.id).filter(id => !listed.includes(id)), []);
+  assert.ok(tlc.filter(entry => usListing(entry) === 'waiting').length > 0);
+  assert.deepEqual(tlc.filter(entry => usListing(entry) === 'waiting' && listed.includes(entry.id)), []);
+  // A US Koha library has a page only once it is offered: none waiting, none on a host whose front-page result is not in or not open.
+  const koha = getAllLibraries().filter(entry => entry.platform === 'koha' && entry.country === 'US');
+  assert.ok(koha.length > 0);
+  assert.deepEqual(koha.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
+  // The same for Aspen: Greenville (no front-page host, no wall seen) has its page; the rest wait on their hosts' results
+  // (CLEVNET and MAIN among them since the coordinator's decision of 24 November 2026).
+  const aspen = getAllLibraries().filter(entry => entry.platform === 'aspen' && entry.country === 'US');
+  assert.deepEqual(aspen.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
+  assert.ok(listed.includes('aspen:greenville-sc'));
+  assert.ok(!listed.includes('aspen:_itw_clevnet') && !listed.includes('aspen:_itw_mainlib'));
+  // And for Polaris: the libraries on hosts with no robots.txt and no wall seen (Denver, Fairfax, Miami-Dade, Livingston Parish,
+  // Carroll County, Riverside, SHARE's 208 members) have their pages; the gated and the waiting ones none.
+  const polaris = getAllLibraries().filter(entry => entry.platform === 'polaris');
+  assert.deepEqual(polaris.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
+  assert.equal(polaris.filter(entry => listed.includes(entry.id)).length, 214);
+  for (const id of ['polaris:denver-co', 'polaris:fairfax-county-va', 'polaris:riverside-ca']) assert.ok(listed.includes(id), id);
+  // And for Apollo: the catalogs agents saw without a wall (Clear Lake, Lawton; and the six whose catalog page an agent read on
+  // 24 November 2026) have their pages; the gated ones none.
+  const apollo = getAllLibraries().filter(entry => entry.platform === 'apollo');
+  assert.deepEqual(apollo.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
+  assert.deepEqual(apollo.filter(entry => listed.includes(entry.id)).map(entry => entry.id).sort(), ['apollo:anderson-county-ky', 'apollo:brownsville-tx',
+    'apollo:clear-lake-ia', 'apollo:gilford-nh', 'apollo:horseshoe-bend-id', 'apollo:lamar-county-ms', 'apollo:lawton-ok', 'apollo:orange-city-ia']);
+  // And for Evergreen: every Georgia PINES system has its page (USA plan step 8); the network-wide gapines entry, split into
+  // them, has none. gapines.org sets Crawl-delay 1, so the pages check one book per tap.
+  const pines = getAllLibraries().filter(entry => entry.platform === 'evergreen');
+  assert.deepEqual(pines.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
+  assert.equal(pines.filter(entry => listed.includes(entry.id)).length, 51);
+  assert.ok(!listed.includes('evergreen:gapines'));
+  assert.ok(checkPages().libraries.filter(row => row.id.startsWith('evergreen:')).every(row => row.checkAll === false && row.library.region === 'Georgia'));
   assert.ok(!getAllLibraries().some(entry => entry.country === 'CA' && listed.includes(entry.id)));
-  // Every California entry is in one list, as before.
-  const california = getAllLibraries().filter(entry => entry.country === 'US' && entry.region === 'California').map(entry => entry.id);
+  // Every offered California entry is in one list, as before (San Bernardino's TLC entry and the California Koha entries wait).
+  const california = getAllLibraries().filter(entry => entry.country === 'US' && entry.region === 'California'
+    && ['legacy', 'verified', 'connected'].includes(usListing(entry))).map(entry => entry.id);
   assert.deepEqual(california.filter(id => !listed.includes(id) && !out.includes(id)), []);
   for (const item of usPages.leftOut) assert.ok(item.reason.length > 20 && /^\d{4}-\d{2}-\d{2}$/.test(item.on), item.id);
   // The list is what the generator writes (tools/seo/us-pages.mjs): nothing to add, move or date.
   assert.deepEqual(usPageList({ current: usPages, today: '2099-01-01' }), usPages);
   assert.equal(formatPageList(usPages), readFileSync('shared/seo-us-libraries.json', 'utf8'));
   for (const item of usPages.libraries) assert.match(item.on, /^\d{4}-\d{2}-\d{2}$/, item.id);
-  // California keeps its 30 pages and their slugs.
-  assert.deepEqual(Object.fromEntries(usPages.libraries.filter(item => item.state === 'California').map(item => [item.id, item.slug])), CALIFORNIA_SLUGS);
+  // California keeps its 30 BiblioCommons pages and their slugs; Los Angeles (TLC) joins them.
+  assert.deepEqual(Object.fromEntries(usPages.libraries.filter(item => item.state === 'California' && item.id.startsWith('bc:')).map(item => [item.id, item.slug])), CALIFORNIA_SLUGS);
+  assert.deepEqual(usPages.libraries.find(item => item.id === 'tlc:lapl'), { id: 'tlc:lapl', slug: 'los-angeles-public-library', state: 'California', on: '2026-11-24' });
   const check = checkPages();
   assert.equal(check.libraries.length, listed.length);
-  // The four reviewed guides keep their slugs; every other slug is the library's /select/ link name.
+  // The four reviewed guides keep their slugs; every other slug is the library's /select/ link name, or the
+  // name it had before another library of the same name joined the directory, kept in
+  // data/library-selection-aliases.json so it still selects the library (Rochester NY, since Rochester NH's Koha entry).
   const guides = check.libraries.filter(row => row.guide).map(row => row.path).sort();
   assert.deepEqual(guides, ['/libraries/alameda-county-library', '/libraries/san-francisco-public-library', '/libraries/san-mateo-county-libraries', '/libraries/santa-clara-county-library']);
   for (const row of check.libraries.filter(item => !item.guide)) {
-    assert.equal(linkSlug(row.library.selectionPath), row.slug, row.id);
+    if (linkSlug(row.library.selectionPath) !== row.slug) assert.equal(libraryLinks.resolve(row.slug), row.id, row.id);
     assert.ok(!row.library.address && !row.library.officialUrl, 'only facts the directory has');
   }
   // The ten books are the US list's first ten, on every page.
@@ -439,7 +478,7 @@ test('US pages: every offered US BiblioCommons library has a page, or is left ou
   assert.throws(() => publication({ ...usPages, libraries: [...usPages.libraries, { id: 'bc:marinet', slug: 'marinet', state: 'California', on: '2026-11-23' }] }), /left out/);
   assert.throws(() => publication({ ...usPages, libraries: [usPages.libraries[1], { ...usPages.libraries[2], slug: usPages.libraries[1].slug }] }), /collision/);
   assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], state: 'Oregon' }] }), /Not a Oregon library/);
-  assert.throws(() => publication({ ...usPages, libraries: [{ id: 'aspen:_itw_clevnet', slug: 'clevnet', state: 'Ohio', on: '2026-11-23' }] }), /Not a US BiblioCommons library/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ id: 'vega:_itw_nypl', slug: 'nypl', state: 'New York', on: '2026-11-23' }] }), /Not a US library of a family with pages/);
   assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], on: undefined }] }), /date/);
   assert.throws(() => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages: usPages, pool: { ...usList, updatedOn: undefined } }), /updatedOn/);
 });
@@ -496,13 +535,24 @@ test('city corrections: the system’s own city from the IMLS survey, with its r
     assert.ok(item.evidence.address.endsWith(`, ${item.city.toUpperCase()}, ${item.evidence.fscsKey.slice(0, 2)} ${item.evidence.address.match(/(\d{5})$/)[1]}`), id);
     assert.ok(item.evidence.name.length > 3, id);
     assert.notEqual(item.city, item.replaces, id);
+    // A correction of capitals only (a town with capitals inside its name) cites the system's own published spelling of
+    // that town for the library at its IMLS address, never a guess (pre-release review, 24 November 2026).
+    if (item.city.toLowerCase() === String(item.replaces).toLowerCase()) {
+      assert.ok(/[a-z][A-Z]/.test(item.city), id);
+      assert.ok(item.evidence.published.includes(item.city) && item.evidence.published.includes(item.evidence.fscsKey), id);
+    }
   }
+  // LaFayette and LaGrange, Georgia (PINES): IMLS writes them in capitals, the systems' own names keep the inner capital.
+  assert.equal(cities['evergreen:cherokee-regional-ga'].city, 'LaFayette');
+  assert.equal(cities['evergreen:troup-harris-regional-ga'].city, 'LaGrange');
   // San Diego County Library is in San Diego, not its 4S Ranch branch; MORE Libraries shows Wisconsin only.
   const check = checkPages();
   const row = id => check.libraries.find(item => item.id === id);
   assert.equal(row('bc:sdcl').library.city, 'San Diego');
   assert.equal(row('bc:sccl').library.city, 'Campbell');
   assert.equal(row('bc:more').library.city, null);
+  assert.equal(row('evergreen:cherokee-regional-ga').library.city, 'LaFayette');
+  assert.equal(row('evergreen:troup-harris-regional-ga').library.city, 'LaGrange');
   assert.equal(row('bc:seattle').library.city, 'Seattle', 'a library without a correction keeps the directory’s city');
   assert.deepEqual(withCity({ city: 'A', region: 'B' }, { city: null }), { city: null, region: 'B' });
   // The build never reads the research files.
@@ -546,6 +596,11 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
     assert.ok(oakland.includes(`src="https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg"`), book.title);
   }
   assert.ok(oakland.includes('data-library-check data-library-id="bc:oaklandlibrary"'));
+  // A catalog with a Crawl-delay (Greenville's Aspen Discovery, 20 s) checks one book per tap: no "Check all".
+  const greenville = read('/libraries/greenville-county-library-system');
+  assert.equal((greenville.match(/data-check hidden>Check at Greenville County Library System/g) || []).length, CHECK_BOOKS);
+  assert.ok(greenville.includes('Nothing is checked before you tap, and no answer is kept.'));
+  assert.ok(!greenville.includes('data-check-all'));
   assert.ok(!oakland.includes('Official library website'), 'no official site the directory lacks');
   // Structured data: Library and BreadcrumbList only, nothing that lists the books.
   const data = JSON.parse(oakland.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
@@ -753,7 +808,9 @@ test('the sitemap lists every US page with the date its content changed; the ind
   const at = id => later.libraries.find(row => row.id === id).lastmod;
   assert.equal(at('bc:tacoma'), '2027-02-01');
   assert.equal(at('bc:seattle'), '2027-02-01', 'Seattle links to Tacoma');
-  assert.equal(at('bc:chipublib'), usList.updatedOn, 'another state is unchanged');
+  assert.equal(at('bc:cantonpl'), usList.updatedOn, 'another state is unchanged');
+  // A page is dated by its related pages too: Chicago's Illinois neighbours include SHARE's Polaris pages of 24 November 2026.
+  assert.equal(at('bc:chipublib'), '2026-11-24');
   const report = JSON.parse(readFileSync(join(out, 'seo-report.json'), 'utf8'));
   assert.deepEqual(report.checkLibraryPages, usPaths());
   for (const path of usPaths()) assert.ok(report.indexablePages.includes(path), path);
@@ -771,7 +828,10 @@ test('the sitemap lists every US page with the date its content changed; the ind
     assert.equal(count, check.libraries.filter(row => row.library.region === state).length, state);
   }
   assert.equal(groups.reduce((sum, group) => sum + group[2], 0), usPaths().length);
-  assert.equal(groups.find(group => group[1] === 'California')[2], 30);
+  // California: 30 BiblioCommons libraries, Los Angeles (TLC) and Riverside (Polaris).
+  assert.equal(groups.find(group => group[1] === 'California')[2], 32);
+  // Illinois: its BiblioCommons libraries and SHARE's 208 Polaris members.
+  assert.equal(groups.find(group => group[1] === 'Illinois')[2], 37 + 208);
   assert.equal(groups.find(group => group[1] === 'Washington')[2], 9);
   // Each page's breadcrumb leads to its state's group.
   for (const row of check.libraries.filter(item => !item.guide)) assert.ok(read(row.path).includes(`<a href="/libraries#${stateAnchor(row.library.region)}">`), row.path);
@@ -822,4 +882,41 @@ test('the check script uses the app’s words for each answer (client LibraryAns
   assert.ok(phrases.length >= 10);
   for (const text of phrases) assert.ok(script.includes(text), text);
   assert.ok(script.includes(card.match(/const NOT_MISSING = '([^']+)'/)[1]));
+});
+
+test('a US library on a front-page host gets its tap-to-check page once its host\'s front-page result shows it open', () => {
+  // Every front-page host open (a hypothetical result set): the 29 connected Koha libraries, the 357 connected Aspen libraries
+  // still waiting (Greenville has its page; CLEVNET, MAIN, Nashville, Orange County FL and SWAN's 95 since the coordinator's
+  // decision of 24 November 2026), the 33 gated Polaris libraries, the 7 TLC DNS leads and the 2 gated Apollo libraries (Rolling
+  // Hills, Killeen; Brownsville and Horseshoe Bend wait on their identity) join the list; nothing else changes.
+  const hosts = JSON.parse(readFileSync('server/data/front-page-hosts.json', 'utf8')).hosts.map(item => item.host);
+  const listing = createUsListing({ results: hosts.map(host => ({ host, date: '2026-11-25', status: 200, wall: 'none' })) });
+  const next = usPageList({ current: usPages, today: '2026-11-25', listing });
+  const added = next.libraries.filter(item => !usPages.libraries.some(page => page.id === item.id));
+  const byPlatform = Object.groupBy(added, item => item.id.split(':')[0]);
+  assert.deepEqual(Object.fromEntries(Object.entries(byPlatform).map(([platform, items]) => [platform, items.length])), { koha: 29, aspen: 357, polaris: 33, tlc: 7, apollo: 2 });
+  // A later library whose link name a page already has takes the name data/library-selection-aliases.json gives it:
+  // its earlier /select/ name (Nashville, Tennessee, after Nashville, Illinois of SHARE) or one given by hand (Hinsdale,
+  // Illinois, after Hinsdale, Massachusetts, whose ID comes first): no clash, and each name selects its library.
+  const slugOf = id => added.find(item => item.id === id)?.slug;
+  assert.equal(slugOf('aspen:nashville-tn'), 'nashville-public-library');
+  assert.equal(slugOf('aspen:cwmars-hinsdale-public-library-ma'), 'hinsdale-public-library-hinsdale');
+  assert.equal(slugOf('aspen:swan-hinsdale-public-library-il'), 'hinsdale-public-library-illinois');
+  assert.equal(libraryLinks.resolve('hinsdale-public-library-illinois'), 'aspen:swan-hinsdale-public-library-il');
+  assert.equal(new Set(next.libraries.map(item => item.slug)).size, next.libraries.length);
+  assert.ok(added.every(item => item.on === '2026-11-25'));
+  assert.equal(next.libraries.length, usPages.libraries.length + added.length);
+  const check = checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages: next, pool: usList });
+  const pages = check.libraries.filter(row => added.some(item => item.id === row.id));
+  assert.equal(pages.length, added.length);
+  for (const row of pages) {
+    assert.ok(row.library.capabilities.publicAvailability, row.id);
+    if (linkSlug(row.library.selectionPath) !== row.slug) assert.equal(libraryLinks.resolve(row.slug), row.id, row.id);
+  }
+  // "Check all 10" only where the catalog sets no Crawl-delay: Metro OKC's Aspen (Crawl-delay 20) checks one book per tap.
+  assert.equal(pages.find(row => row.id === 'aspen:metro-okc-ok').checkAll, false);
+  assert.equal(pages.find(row => row.id === 'aspen:washoe-nv').checkAll, true);
+  // A wall keeps the library off the list.
+  const walled = createUsListing({ results: hosts.map(host => ({ host, date: '2026-11-25', status: 403, wall: '403' })) });
+  assert.deepEqual(usPageList({ current: usPages, today: '2026-11-25', listing: walled }), usPages);
 });

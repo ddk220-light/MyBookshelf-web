@@ -149,9 +149,19 @@ test('validated Chennai and Madurai public catalogs expose their measured availa
   }
 });
 
-test('PINES member discovery selects the explicit network scope and its web provider', async () => {
+test('a PINES system is found under its own name with its own org; the network-wide entry keeps its scope and provider', async () => {
+  // Offered when finding a library: the member system (USA plan step 8), limited to its org.
+  const [member] = createListedDirectoryService().search('Athens Regional Library System', 25);
+  assert.equal(member.id, 'evergreen:athens-regional-ga');
+  assert.equal(member.capabilities.copyCounts, false);
+  const memberEntry = createListedDirectoryService().entry(member.id);
+  assert.deepEqual([memberEntry.evergreenOrgId, memberEntry.evergreenSite], [6, 'ARL']);
+  const memberProvider = getProvider(memberEntry);
+  assert.equal(typeof memberProvider.search, 'function');
+  assert.equal(memberProvider.searchBy, undefined);
+  // The network-wide gapines entry is no longer offered but resolves, and keeps checking the whole network.
   const directory = createPublicDirectoryService();
-  const [library] = directory.search('Athens Regional Library System', 25);
+  const library = directory.resolve('evergreen:gapines');
   assert.equal(library.id, 'evergreen:gapines');
   assert.equal(library.name, 'Georgia PINES library network');
   assert.match(library.accessNote, /whole Georgia PINES network/);

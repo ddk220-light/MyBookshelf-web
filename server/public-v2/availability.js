@@ -101,8 +101,12 @@ export function createPublicAvailabilityService({
       // The new lookup layer runs this platform when CATALOG_LOOKUP_V2 names
       // it: platform budgets and deadlines, cancellation, the per-host circuit
       // and robots rules, and the answer/health record. The response contract
-      // is the same on both paths.
-      const v2 = lookup?.enabledFor(entry);
+      // is the same on both paths. A US library always goes through it (USA
+      // plan, 24 November 2026: the US connectors' hosts, Georgia PINES's
+      // gateway and the ByWater Koha catalogs among them, are read only with
+      // robots.txt and the shared host pacing); the old path, which has
+      // neither, stays for the other countries' libraries as it was.
+      const v2 = Boolean(lookup) && (lookup.enabledFor(entry) || entry.country === 'US');
       const result = v2
         ? await lookup.checkBook({ entry, library, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language,
           books, attemptedAt, signal })
