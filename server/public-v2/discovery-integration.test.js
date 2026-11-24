@@ -29,20 +29,22 @@ test('every imported inline library has search, durable reopening, and availabil
   assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4138);
   // The 16 US entries in server/data/us-catalogs-listed.json `removed` are
   // not offered either (23 November 2026; gapines, split into its member
-  // systems, 24 November 2026), nor the 293 waiting on their identity (TLC 8,
-  // Koha 23, Aspen 178, Polaris 84), nor the 428 connected ones whose hosts'
-  // front-page results are not in (7 TLC, 29 Koha, 357 Aspen, CLEVNET and
-  // MAIN among them since the coordinator's decision of 24 November 2026, 33
-  // Polaris and 2 Apollo). Offered: the 212 legacy entries, the 36 TLC
-  // entries confirmed by a published page, Greenville (Aspen), 214 Polaris
-  // entries (Denver, Fairfax, Miami-Dade, Livingston Parish, Carroll County,
-  // Riverside and SHARE's 208 members), 8 Apollo entries (Clear Lake, Lawton,
-  // and the six whose catalog page an agent read on 24 November 2026) and the
-  // 51 Georgia PINES systems. The directory has 51 TLC, 52 US Koha, 532
-  // Aspen, 331 Polaris, 10 Apollo and 51 Evergreen entries from
-  // server/data/us-catalogs.json.
-  assert.equal(createDiscoveryService().search({ country: 'US' }).total, 212 + 36 + 1 + 214 + 8 + 51);
-  assert.equal(createDiscoveryService().search({}).total, 7086 + 51 + 52 + 532 + 331 + 10 + 51 - 6701 + 4138 - 16 - 293 - 428);
+  // systems, 24 November 2026), nor the 248 waiting on their identity (TLC 7,
+  // Koha 23, Aspen 178, Polaris 40), nor the 280 connected ones whose hosts'
+  // front-page results (the production run of 24 November 2026) show a wall,
+  // no answer or a move (15 Koha, 259 Aspen with CLEVNET and MAIN, 6
+  // Polaris). Offered: the 212 legacy entries, the 37 TLC entries confirmed by
+  // a published page (Grand Island by its own homepage) and the 7 TLC DNS
+  // leads, 14 Koha and 99 Aspen entries (Greenville; Nashville, Orange County
+  // FL, Metro OKC and SWAN's 95, their hosts found open), 285 Polaris entries
+  // (Denver, Fairfax, Miami-Dade, Livingston Parish, Carroll County,
+  // Riverside, SHARE's 208 members, the front-page hosts found open, and the
+  // Southern Adirondack, Mohawk Valley and Finger Lakes members their
+  // catalog's own list names), the 10 Apollo entries and the 51 Georgia PINES
+  // systems. The directory has 51 TLC, 52 US Koha, 532 Aspen, 331 Polaris, 10
+  // Apollo and 51 Evergreen entries from server/data/us-catalogs.json.
+  assert.equal(createDiscoveryService().search({ country: 'US' }).total, 212 + 37 + 7 + 14 + 99 + 285 + 10 + 51);
+  assert.equal(createDiscoveryService().search({}).total, 7086 + 51 + 52 + 532 + 331 + 10 + 51 - 6701 + 4138 - 16 - 248 - 280);
   assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086 + 51 + 52 + 532 + 331 + 10 + 51);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });

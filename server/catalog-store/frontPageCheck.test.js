@@ -255,11 +255,18 @@ test('the member-list and catalog-link items: valid, and every waiting US librar
     assert.ok(entry, id);
     assert.equal([entry.sharedCatalog && read.has(entry.sharedCatalog), homes.has(id), skipped.has(id)].filter(Boolean).length, 1, id);
   }
-  for (const item of [...links, ...hostList.skipped.catalogLinks]) assert.ok(usListed.waiting.some(waiting => waiting.id === item.libraryId), item.libraryId);
+  const waitingIds = new Set(usListed.waiting.map(waiting => waiting.id));
+  for (const item of hostList.skipped.catalogLinks) assert.ok(waitingIds.has(item.libraryId), item.libraryId);
+  // A homepage read either left its library waiting, or its homepage linked the entry's own catalog host and
+  // tools/directory/front-page-proposals.mjs moved it to connected, with the read kept as its evidence.
+  for (const item of links) {
+    const confirmed = usListed.connected.includes(item.libraryId) && /^the library's own homepage/.test(byId.get(item.libraryId).evidence.catalog.confirmedBy || '');
+    assert.ok(waitingIds.has(item.libraryId) || confirmed, item.libraryId);
+  }
   for (const item of links) assert.equal(item.catalogHost, new URL(byId.get(item.libraryId).baseUrl || byId.get(item.libraryId).catalogUrl).hostname, item.libraryId);
-  // Nothing has a result yet: all of it is pending.
+  // The production run of 24 November 2026 read every host, member list and catalog link once: nothing is pending.
   const pending = pendingFrontPageWork();
-  assert.deepEqual([pending.memberLists.length, pending.catalogLinks.length], [members.length, links.length]);
+  assert.deepEqual([pending.hosts.length, pending.memberLists.length, pending.catalogLinks.length], [0, 0, 0]);
   assert.throws(() => memberListItems({ memberLists: [{ id: 'x', catalog: 'X', family: 'aspen', url: 'http://x.example.org/', state: 'NY', source: 's' }] }), /invalid/);
   assert.throws(() => catalogLinkItems({ catalogLinks: [{ libraryId: 'koha:x', url: 'https://x.example.org/#a', source: 's' }] }), /invalid/);
 });

@@ -4,8 +4,8 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { POLICY_EFFECTIVE_DATE, PLACEHOLDER_PATTERN, policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
 import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData, checkPages, checkData, CHECK_SCRIPT_PATH } from './build-pages.mjs';
-import { checkPublication, CHECK_BOOKS, PAGE_PLATFORMS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
-import { usPageList, pageCandidates, linkSlug, formatPageList } from './us-pages.mjs';
+import { checkPublication, bookMix, bookMixKey, checkBooks, BOOK_GROUPS, CHECK_BOOKS, GROUP_MOST, PAGE_PLATFORMS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
+import { usPageList, pageCandidates, linkSlug, formatPageList, populationRanking, topCoverage, TOP_LIBRARIES } from './us-pages.mjs';
 import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
 import usList from '../../shared/us-book-pool.json' with { type: 'json' };
 import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
@@ -366,24 +366,31 @@ test('library and book pages: shelf section, links both ways, sitemap with check
 
 // ---- California pages: popular books checked live on a tap (23 November 2026)
 
-test('the US list: 30 to 40 distinctive books in six groups, each an Open Library work with a cover and an ISBN, dated', () => {
+test('the US list: 30 to 80 distinctive books in six groups, each an Open Library work with a cover and an ISBN, dated', () => {
   assert.match(usList.updatedOn, /^\d{4}-\d{2}-\d{2}$/);
   const books = usList.books;
-  assert.ok(books.length >= 30 && books.length <= 40, String(books.length));
+  assert.ok(books.length >= 30 && books.length <= 80, String(books.length));
   assert.deepEqual([...new Set(books.map(book => book.group))].sort(), ['children', 'classic', 'fiction', 'nonfiction', 'spanish', 'ya']);
   for (const book of books) {
     assert.match(book.bookKey, /^v1:openlibrary:OL\d+W$/, book.title);
     assert.match(book.coverId, /^\d+$/, book.title);
     assert.match(book.isbn, /^97[89]\d{10}$/, book.title);
     assert.ok(book.title.trim() && book.author.trim(), book.title);
-    // Two or more words, and none of the titles the matcher would confuse.
+    // Two or more different words besides a leading article (the matcher drops it), and none of the titles it would confuse.
     assert.ok(book.title.split(/\s+/).length >= 2, book.title);
+    assert.ok(new Set(book.title.toLowerCase().replace(/^(the|an?) /, '').split(/[^\p{L}\p{N}']+/u).filter(Boolean)).size >= 2, book.title);
     assert.ok(!/1984|Nineteen Eighty|Sorcerer|Philosopher|piedra filosofal/i.test(book.title), book.title);
   }
   assert.equal(new Set(books.map(book => book.bookKey)).size, books.length);
-  // The pages' ten and the app's twenty come first, each a mix of the groups, one book per author.
+  assert.equal(new Set(books.map(book => book.coverId)).size, books.length);
+  // The app's twenty (its first-open US seed) come first, a mix of the groups, one book per author: the first forty of
+  // 23 November 2026 stay in their order, and books added later go at the end.
   assert.ok(new Set(books.slice(0, CHECK_BOOKS).map(book => book.group)).size >= 5);
   assert.equal(new Set(books.slice(0, 20).map(book => book.author)).size, 20);
+  assert.deepEqual(books.slice(0, 3).map(book => book.title), ['Remarkably Bright Creatures', 'To Kill a Mockingbird', "Charlotte's Web"]);
+  assert.equal(books[39].title, 'Pedro Páramo');
+  // Every group has more books than one page takes of it, so pages differ.
+  for (const group of BOOK_GROUPS) assert.ok(books.filter(book => book.group === group).length > GROUP_MOST, group);
 });
 
 // The 30 California pages' slugs before the pages went nationwide (23 November
@@ -428,17 +435,20 @@ test('US pages: every offered US BiblioCommons, TLC, Koha, Aspen, Polaris, Apoll
   assert.ok(listed.includes('aspen:greenville-sc'));
   assert.ok(!listed.includes('aspen:_itw_clevnet') && !listed.includes('aspen:_itw_mainlib'));
   // And for Polaris: the libraries on hosts with no robots.txt and no wall seen (Denver, Fairfax, Miami-Dade, Livingston Parish,
-  // Carroll County, Riverside, SHARE's 208 members) have their pages; the gated and the waiting ones none.
+  // Carroll County, Riverside, SHARE's 208 members, the 28 Southern Adirondack and Mohawk Valley members their catalog's own list
+  // names) and on the front-page hosts the production run of 24 November 2026 found open have their pages; the gated and the
+  // waiting ones none.
   const polaris = getAllLibraries().filter(entry => entry.platform === 'polaris');
   assert.deepEqual(polaris.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
-  assert.equal(polaris.filter(entry => listed.includes(entry.id)).length, 214);
-  for (const id of ['polaris:denver-co', 'polaris:fairfax-county-va', 'polaris:riverside-ca']) assert.ok(listed.includes(id), id);
+  assert.equal(polaris.filter(entry => listed.includes(entry.id)).length, 285);
+  for (const id of ['polaris:denver-co', 'polaris:fairfax-county-va', 'polaris:riverside-ca', 'polaris:alexandria-va']) assert.ok(listed.includes(id), id);
   // And for Apollo: the catalogs agents saw without a wall (Clear Lake, Lawton; and the six whose catalog page an agent read on
-  // 24 November 2026) have their pages; the gated ones none.
+  // 24 November 2026) and the two whose hosts the production front-page check found open (Killeen, Rolling Hills) have their pages.
   const apollo = getAllLibraries().filter(entry => entry.platform === 'apollo');
   assert.deepEqual(apollo.filter(entry => listed.includes(entry.id) !== (usListing(entry) === 'connected')).map(entry => entry.id), []);
   assert.deepEqual(apollo.filter(entry => listed.includes(entry.id)).map(entry => entry.id).sort(), ['apollo:anderson-county-ky', 'apollo:brownsville-tx',
-    'apollo:clear-lake-ia', 'apollo:gilford-nh', 'apollo:horseshoe-bend-id', 'apollo:lamar-county-ms', 'apollo:lawton-ok', 'apollo:orange-city-ia']);
+    'apollo:clear-lake-ia', 'apollo:gilford-nh', 'apollo:horseshoe-bend-id', 'apollo:killeen-tx', 'apollo:lamar-county-ms', 'apollo:lawton-ok',
+    'apollo:orange-city-ia', 'apollo:rolling-hills-consolidated-mo']);
   // And for Evergreen: every Georgia PINES system has its page (USA plan step 8); the network-wide gapines entry, split into
   // them, has none. gapines.org sets Crawl-delay 1, so the pages check one book per tap.
   const pines = getAllLibraries().filter(entry => entry.platform === 'evergreen');
@@ -458,7 +468,8 @@ test('US pages: every offered US BiblioCommons, TLC, Koha, Aspen, Polaris, Apoll
   for (const item of usPages.libraries) assert.match(item.on, /^\d{4}-\d{2}-\d{2}$/, item.id);
   // California keeps its 30 BiblioCommons pages and their slugs; Los Angeles (TLC) joins them.
   assert.deepEqual(Object.fromEntries(usPages.libraries.filter(item => item.state === 'California' && item.id.startsWith('bc:')).map(item => [item.id, item.slug])), CALIFORNIA_SLUGS);
-  assert.deepEqual(usPages.libraries.find(item => item.id === 'tlc:lapl'), { id: 'tlc:lapl', slug: 'los-angeles-public-library', state: 'California', on: '2026-11-24' });
+  assert.deepEqual(usPages.libraries.find(item => item.id === 'tlc:lapl'), { id: 'tlc:lapl', slug: 'los-angeles-public-library', state: 'California', on: '2026-11-24',
+    mix: bookMixKey(bookMix('tlc:lapl', checkBooks(usList))) });
   const check = checkPages();
   assert.equal(check.libraries.length, listed.length);
   // The four reviewed guides keep their slugs; every other slug is the library's /select/ link name, or the
@@ -470,9 +481,12 @@ test('US pages: every offered US BiblioCommons, TLC, Koha, Aspen, Polaris, Apoll
     if (linkSlug(row.library.selectionPath) !== row.slug) assert.equal(libraryLinks.resolve(row.slug), row.id, row.id);
     assert.ok(!row.library.address && !row.library.officialUrl, 'only facts the directory has');
   }
-  // The ten books are the US list's first ten, on every page.
-  assert.deepEqual(check.books.map(book => book.bookKey), usList.books.slice(0, CHECK_BOOKS).map(book => book.bookKey));
-  assert.ok(check.libraries.every(row => row.books === check.books));
+  // Each page's ten are its own mix of the US list, and its mix field is their fingerprint.
+  assert.deepEqual(check.books.map(book => book.bookKey), checkBooks(usList).map(book => book.bookKey));
+  for (const row of check.libraries) {
+    assert.deepEqual(row.books, bookMix(row.id, checkBooks(usList)), row.id);
+    assert.equal(usPages.libraries.find(item => item.id === row.id).mix, bookMixKey(row.books), row.id);
+  }
   // A slug clash, a page also left out, a library outside its state or a non-BiblioCommons library stops the build.
   const publication = pages => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages, pool: usList });
   assert.throws(() => publication({ ...usPages, libraries: [...usPages.libraries, { id: 'bc:marinet', slug: 'marinet', state: 'California', on: '2026-11-23' }] }), /left out/);
@@ -481,17 +495,22 @@ test('US pages: every offered US BiblioCommons, TLC, Koha, Aspen, Polaris, Apoll
   assert.throws(() => publication({ ...usPages, libraries: [{ id: 'vega:_itw_nypl', slug: 'nypl', state: 'New York', on: '2026-11-23' }] }), /Not a US library of a family with pages/);
   assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], on: undefined }] }), /date/);
   assert.throws(() => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages: usPages, pool: { ...usList, updatedOn: undefined } }), /updatedOn/);
+  // A page whose books changed since its date (a mix that is not its books') stops the build until the list is made current.
+  assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], mix: '000000000000' }] }), /books changed since its date/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], mix: undefined }] }), /books changed since its date/);
 });
 
 test('the generator keeps slugs and dates, adds a new library with its /select/ name and today, and drops one left out', () => {
   const current = { ...usPages, libraries: usPages.libraries.filter(item => item.id !== 'bc:seattle') };
   const next = usPageList({ current, today: '2027-01-05' });
   const seattle = next.libraries.find(item => item.id === 'bc:seattle');
-  assert.deepEqual(seattle, { id: 'bc:seattle', slug: 'the-seattle-public-library', state: 'Washington', on: '2027-01-05' });
+  const seattleMix = bookMixKey(bookMix('bc:seattle', checkBooks(usList)));
+  assert.deepEqual(seattle, { id: 'bc:seattle', slug: 'the-seattle-public-library', state: 'Washington', on: '2027-01-05', mix: seattleMix });
   assert.deepEqual(next.libraries.filter(item => item.id !== 'bc:seattle'), current.libraries);
   // A library whose state changed is dated again; a new left-out entry leaves the list.
   const moved = usPageList({ current: { ...usPages, libraries: usPages.libraries.map(item => item.id === 'bc:tacoma' ? { ...item, state: 'Oregon' } : item) }, today: '2027-01-05' });
-  assert.deepEqual(moved.libraries.find(item => item.id === 'bc:tacoma'), { id: 'bc:tacoma', slug: 'tacoma-public-library', state: 'Washington', on: '2027-01-05' });
+  const tacomaMix = bookMixKey(bookMix('bc:tacoma', checkBooks(usList)));
+  assert.deepEqual(moved.libraries.find(item => item.id === 'bc:tacoma'), { id: 'bc:tacoma', slug: 'tacoma-public-library', state: 'Washington', on: '2027-01-05', mix: tacomaMix });
   const out = usPageList({ current: { ...usPages, leftOut: [...usPages.leftOut, { id: 'bc:tacoma', reason: 'test', on: '2027-01-05' }] }, today: '2027-01-05' });
   assert.ok(!out.libraries.some(item => item.id === 'bc:tacoma'));
   // Order: the first states, then the others alphabetically; by name within a state.
@@ -499,6 +518,125 @@ test('the generator keeps slugs and dates, adds a new library with its /select/ 
   assert.deepEqual(stateOrder(['Texas', 'New Jersey', 'Alaska', 'California', 'Washington'], usPages.firstStates), ['California', 'Washington', 'New Jersey', 'Alaska', 'Texas']);
   assert.equal(stateAnchor('New Jersey'), 'us-new-jersey');
   assert.throws(() => usPageList({ current: usPages }), /today/);
+});
+
+// ---- The per-library book mix (owner, 24 November 2026: "Vary per library")
+
+const listBooks = () => checkBooks(usList);
+const keysOf = books => books.map(book => book.bookKey);
+
+test('book mix: the same library always gets the same ten, whatever the order of the list or the other libraries', () => {
+  const books = listBooks();
+  for (const id of ['bc:oaklandlibrary', 'tlc:lapl', 'polaris:denver-co', 'evergreen:athens-regional-library-system']) {
+    const mix = bookMix(id, books);
+    assert.equal(mix.length, CHECK_BOOKS, id);
+    assert.deepEqual(keysOf(bookMix(id, books)), keysOf(mix), id);
+    // The list's order is not the seed: a reversed or shuffled list gives the same ten in the same order.
+    assert.deepEqual(keysOf(bookMix(id, books.toReversed())), keysOf(mix), id);
+    assert.deepEqual(keysOf(bookMix(id, books.toSorted((a, b) => a.title.localeCompare(b.title)))), keysOf(mix), id);
+  }
+  // A known mix, so a change to the method shows up here (Oakland, the first California page).
+  assert.equal(bookMixKey(bookMix('bc:oaklandlibrary', books)), usPages.libraries.find(item => item.id === 'bc:oaklandlibrary').mix);
+  // Libraries differ: a few IDs give a few different mixes.
+  assert.equal(new Set(['bc:oaklandlibrary', 'bc:sfpl', 'bc:seattle', 'tlc:lapl'].map(id => keysOf(bookMix(id, books)).join())).size, 4);
+  assert.throws(() => bookMix('', books), /library ID/);
+  // Each page's mix is that of its own ID alone; the other pages, and their order, play no part.
+  for (const item of usPages.libraries) assert.equal(item.mix, bookMixKey(bookMix(item.id, books)), item.id);
+  const fewer = usPageList({ current: { ...usPages, libraries: usPages.libraries.filter((item, i) => i % 2 === 0) }, today: '2027-01-05' });
+  for (const item of fewer.libraries) assert.equal(item.mix, usPages.libraries.find(page => page.id === item.id).mix, item.id);
+});
+
+test('book mix: changing one library\'s books changes no other page and no other page\'s date', () => {
+  const books = listBooks();
+  // One page whose mix is out of date (as after its books changed) is dated again; every other page keeps its date.
+  const stale = { ...usPages, libraries: usPages.libraries.map(item => item.id === 'bc:tacoma' ? { ...item, mix: 'stale0000000' } : item) };
+  const next = usPageList({ current: stale, today: '2027-01-05' });
+  assert.deepEqual(next.libraries.filter(item => item.on === '2027-01-05').map(item => item.id), ['bc:tacoma']);
+  assert.deepEqual(next.libraries.find(item => item.id === 'bc:tacoma'), { ...usPages.libraries.find(item => item.id === 'bc:tacoma'), on: '2027-01-05' });
+  // A book added to the list moves only the pages where it ranks among their ten; their dates move, the others' do not.
+  const added = { ...usList, books: [...usList.books, { group: 'fiction', title: 'A Test Book of Many Words', author: 'Test Author', bookKey: 'v1:openlibrary:OL999999999W', isbn: '9780000000002', coverId: '1' }] };
+  const after = usPageList({ current: usPages, today: '2027-01-05', pool: added });
+  const changed = after.libraries.filter(item => item.on === '2027-01-05');
+  assert.ok(changed.length > 0 && changed.length < usPages.libraries.length / 4, String(changed.length));
+  for (const item of after.libraries) {
+    const mix = bookMix(item.id, checkBooks(added));
+    const before = usPages.libraries.find(page => page.id === item.id);
+    if (mix.some(book => book.bookKey === 'v1:openlibrary:OL999999999W')) assert.equal(item.on, '2027-01-05', item.id);
+    else {
+      // The page that does not take the new book keeps the same ten, the same fingerprint and its date.
+      assert.deepEqual(keysOf(mix), keysOf(bookMix(item.id, books)), item.id);
+      assert.deepEqual(item, before, item.id);
+    }
+  }
+});
+
+test('book mix: every page has a spread of the six groups, at most three of one, ten different books and authors', () => {
+  const check = checkPages();
+  assert.ok(check.libraries.length > 500);
+  for (const row of check.libraries) {
+    assert.equal(row.books.length, CHECK_BOOKS, row.id);
+    assert.equal(new Set(keysOf(row.books)).size, CHECK_BOOKS, row.id);
+    assert.equal(new Set(row.books.map(book => book.author.toLowerCase())).size, CHECK_BOOKS, row.id);
+    const groups = Object.groupBy(row.books, book => book.group);
+    assert.deepEqual(Object.keys(groups).sort(), [...BOOK_GROUPS].sort(), row.id);
+    assert.ok(Object.values(groups).every(list => list.length <= GROUP_MOST), row.id);
+    for (const book of row.books) assert.ok(usList.books.some(item => item.bookKey === book.bookKey && item.title === book.title) && /^\d+$/.test(book.coverId), row.id);
+  }
+  // A short list (one book of most groups) still fills the page, past the group limit, with what it has.
+  const short = [...BOOK_GROUPS.map((group, i) => ({ group, title: 'T' + i, author: 'A' + i, bookKey: `v1:openlibrary:OL${i + 1}W`, coverId: '1' })),
+    ...[6, 7, 8, 9].map(i => ({ group: 'fiction', title: 'T' + i, author: 'A' + i, bookKey: `v1:openlibrary:OL${i + 1}W`, coverId: '1' }))];
+  assert.equal(bookMix('bc:x', short).length, 10);
+  // One book per author: two by one author never share a page.
+  const twin = [...short.slice(0, 9), { ...short[9], author: 'A0' }];
+  assert.equal(bookMix('bc:x', twin).length, 9);
+});
+
+test('book mix: pages are distinct, sharing on average fewer than two of their ten books', () => {
+  const check = checkPages();
+  const sets = check.libraries.map(row => new Set(keysOf(row.books)));
+  let shared = 0, pairs = 0, most = 0;
+  for (let i = 0; i < sets.length; i += 1) for (let j = i + 1; j < sets.length; j += 1) {
+    let both = 0;
+    for (const key of sets[i]) if (sets[j].has(key)) both += 1;
+    shared += both; pairs += 1; most = Math.max(most, both);
+  }
+  // 24 November 2026, 710 pages and 80 books: 1.26 books in common on average, at most 7; no two pages alike.
+  assert.ok(shared / pairs < 2, String(shared / pairs));
+  assert.ok(most < CHECK_BOOKS, String(most));
+  assert.equal(new Set(sets.map(set => [...set].sort().join())).size, sets.length);
+  // Every book of the list is on some pages, none on most.
+  const uses = new Map();
+  for (const set of sets) for (const key of set) uses.set(key, (uses.get(key) || 0) + 1);
+  assert.equal(uses.size, listBooks().length);
+  assert.ok(Math.max(...uses.values()) < sets.length / 4);
+});
+
+// ---- The 500 largest offered US libraries (owner, 24 November 2026: "static pages for the biggest 500 libraries")
+
+test('the 500 largest offered US libraries by population each have a page, or are a consortium catalog whose members have theirs', () => {
+  const ranking = populationRanking();
+  const offered = getAllLibraries().filter(entry => entry.country === 'US' && ['legacy', 'verified', 'connected'].includes(usListing(entry)));
+  assert.equal(ranking.length, offered.length, 'every offered US library is ranked');
+  for (let i = 1; i < ranking.length; i += 1) assert.ok((ranking[i - 1].population ?? -1) >= (ranking[i].population ?? -1), ranking[i].id);
+  assert.equal(TOP_LIBRARIES, 500);
+  const top = topCoverage({ file: usPages });
+  assert.equal(top.length, 500);
+  const without = top.filter(row => !row.slug);
+  // Each one without a page is in leftOut: a consortium's shared catalog whose members have their own pages.
+  for (const row of without) {
+    assert.ok(row.leftOut, `#${row.rank} ${row.id} has no page and is not left out`);
+    assert.ok(row.leftOut.sameCatalogAs && usPages.libraries.some(item => item.id === row.leftOut.sameCatalogAs), row.id);
+  }
+  assert.deepEqual(without.map(row => row.id), ['bc:ccslib', 'bc:llc', 'bc:marinet', 'bc:lplp', 'bc:pac2']);
+  // Every page of the 500 is built (a checkable library with its page in the build).
+  const built = new Set(checkPages().libraries.map(row => row.id));
+  for (const row of top.filter(item => item.slug)) assert.ok(built.has(row.id), row.id);
+  // 24 November 2026: Los Angeles first; the 500th serves 7,083 people.
+  assert.equal(top[0].id, 'tlc:lapl');
+  assert.equal(top.at(-1).population, 7083);
+  assert.ok(top.every(row => Number.isInteger(row.population)));
+  // A library offered without a population row stops the ranking until the file is made again.
+  assert.throws(() => populationRanking({ rows: [] }), /No population row/);
 });
 
 test('left out: consortium catalogs whose members have their own pages, schools, colleges and moved catalogs, each with a reason', () => {
@@ -590,7 +728,10 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
   assert.equal((oakland.match(/<li class="check-book" /g) || []).length, CHECK_BOOKS);
   assert.equal((oakland.match(/<button type="button" class="button button-secondary" data-check hidden>Check at Oakland Public Library<span class="sr-only">: /g) || []).length, CHECK_BOOKS);
   assert.ok(oakland.includes('<button type="button" class="button" data-check-all hidden>Check all 10</button>'));
-  for (const book of usList.books.slice(0, CHECK_BOOKS)) {
+  // Oakland's own ten, in its order.
+  const oaklandBooks = bookMix('bc:oaklandlibrary', checkBooks(usList));
+  assert.deepEqual([...oakland.matchAll(/<li class="check-book" data-book-key="([^"]+)"/g)].map(match => match[1]), oaklandBooks.map(book => book.bookKey));
+  for (const book of oaklandBooks) {
     assert.ok(oakland.includes(`data-book-key="${book.bookKey}"`), book.title);
     assert.ok(oakland.includes(`<a href="/select/oakland-public-library?book=${encodeURIComponent(book.bookKey)}" rel="nofollow">Check in the app`), book.title);
     assert.ok(oakland.includes(`src="https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg"`), book.title);
@@ -801,14 +942,16 @@ test('the sitemap lists every US page with the date its content changed; the ind
   const sitemap = readFileSync(join(out, 'sitemap.xml'), 'utf8');
   const check = checkPages();
   for (const row of check.libraries) assert.ok(sitemap.includes(`<loc>${origin}${row.path}</loc><lastmod>${row.lastmod}</lastmod>`), row.path);
-  // A page's date: the newest of the US list's date, its own, its city correction's and its related pages'; never the build date.
-  for (const row of check.libraries) assert.equal(row.lastmod, [usList.updatedOn, row.on, usCities.cities[row.id]?.on, ...row.related.map(other => other.on)].filter(Boolean).sort().at(-1), row.id);
+  // A page's date: the newest of its own (added, moved, or its books changed), its city correction's and its related pages'; never the build date.
+  for (const row of check.libraries) assert.equal(row.lastmod, [row.on, usCities.cities[row.id]?.on, ...row.related.map(other => other.on)].filter(Boolean).sort().at(-1), row.id);
+  // The per-library book mix of 24 November 2026 changed every page's books, so no page is dated before that day.
+  assert.ok(check.libraries.every(row => row.lastmod >= '2026-11-24'));
   const later = checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pool: usList, cities: usCities.cities,
     pages: { ...usPages, libraries: usPages.libraries.map(item => item.id === 'bc:tacoma' ? { ...item, on: '2027-02-01' } : item) } });
   const at = id => later.libraries.find(row => row.id === id).lastmod;
   assert.equal(at('bc:tacoma'), '2027-02-01');
   assert.equal(at('bc:seattle'), '2027-02-01', 'Seattle links to Tacoma');
-  assert.equal(at('bc:cantonpl'), usList.updatedOn, 'another state is unchanged');
+  assert.equal(at('bc:cantonpl'), check.libraries.find(row => row.id === 'bc:cantonpl').lastmod, 'another state is unchanged');
   // A page is dated by its related pages too: Chicago's Illinois neighbours include SHARE's Polaris pages of 24 November 2026.
   assert.equal(at('bc:chipublib'), '2026-11-24');
   const report = JSON.parse(readFileSync(join(out, 'seo-report.json'), 'utf8'));
@@ -828,15 +971,27 @@ test('the sitemap lists every US page with the date its content changed; the ind
     assert.equal(count, check.libraries.filter(row => row.library.region === state).length, state);
   }
   assert.equal(groups.reduce((sum, group) => sum + group[2], 0), usPaths().length);
-  // California: 30 BiblioCommons libraries, Los Angeles (TLC) and Riverside (Polaris).
-  assert.equal(groups.find(group => group[1] === 'California')[2], 32);
-  // Illinois: its BiblioCommons libraries and SHARE's 208 Polaris members.
-  assert.equal(groups.find(group => group[1] === 'Illinois')[2], 37 + 208);
-  assert.equal(groups.find(group => group[1] === 'Washington')[2], 9);
+  // California: 30 BiblioCommons libraries, Los Angeles (TLC), Riverside and Ontario (Polaris), Corona and Salinas (Koha).
+  assert.equal(groups.find(group => group[1] === 'California')[2], 35);
+  // Illinois: its BiblioCommons libraries, SHARE's 208 Polaris members and SWAN's 95 Aspen members.
+  assert.equal(groups.find(group => group[1] === 'Illinois')[2], 37 + 208 + 95);
+  // Washington: 9 BiblioCommons libraries and Mid-Columbia (Polaris).
+  assert.equal(groups.find(group => group[1] === 'Washington')[2], 10);
   // Each page's breadcrumb leads to its state's group.
   for (const row of check.libraries.filter(item => !item.guide)) assert.ok(read(row.path).includes(`<a href="/libraries#${stateAnchor(row.library.region)}">`), row.path);
   // The index's date is its newest content.
   assert.match(sitemap, new RegExp(`<loc>${origin}/libraries</loc><lastmod>${check.date}</lastmod>`));
+  // The 500 largest offered libraries' pages are all in it.
+  for (const row of topCoverage({ file: usPages }).filter(item => item.slug)) {
+    const path = check.libraries.find(page => page.id === row.id).path;
+    assert.ok(sitemap.includes(`<loc>${origin}${path}</loc>`), path);
+  }
+  // One sitemap is enough (at most 50,000 URLs and 50 MB each), robots.txt names it, and no URL has a priority.
+  const urls = (sitemap.match(/<url>/g) || []).length;
+  assert.ok(urls > usPaths().length && urls < 50000, String(urls));
+  assert.ok(Buffer.byteLength(sitemap) < 50 * 1024 * 1024);
+  assert.ok(!sitemap.includes('<priority>'));
+  assert.ok(readFileSync(join(out, 'robots.txt'), 'utf8').includes(`Sitemap: ${origin}/sitemap.xml\n`));
 });
 
 test('India pages are unchanged by the US pages: the same bytes with and without them', async () => {
@@ -885,24 +1040,30 @@ test('the check script uses the app’s words for each answer (client LibraryAns
 });
 
 test('a US library on a front-page host gets its tap-to-check page once its host\'s front-page result shows it open', () => {
-  // Every front-page host open (a hypothetical result set): the 29 connected Koha libraries, the 357 connected Aspen libraries
-  // still waiting (Greenville has its page; CLEVNET, MAIN, Nashville, Orange County FL and SWAN's 95 since the coordinator's
-  // decision of 24 November 2026), the 33 gated Polaris libraries, the 7 TLC DNS leads and the 2 gated Apollo libraries (Rolling
-  // Hills, Killeen; Brownsville and Horseshoe Bend wait on their identity) join the list; nothing else changes.
+  // Every front-page host open (a hypothetical result set): the connected libraries whose hosts the production run of
+  // 24 November 2026 found walled, unreachable or moved join the list (15 Koha; 259 Aspen, CLEVNET and MAIN among them;
+  // 6 Polaris). Those whose hosts it found open have their pages already (14 Koha; Nashville, Orange County FL, Metro OKC
+  // and SWAN's 95 Aspen; 27 of the 33 gated Polaris, Alexandria and Finger Lakes's 15; the 7 TLC DNS leads; Rolling Hills
+  // and Killeen); nothing else changes.
   const hosts = JSON.parse(readFileSync('server/data/front-page-hosts.json', 'utf8')).hosts.map(item => item.host);
   const listing = createUsListing({ results: hosts.map(host => ({ host, date: '2026-11-25', status: 200, wall: 'none' })) });
   const next = usPageList({ current: usPages, today: '2026-11-25', listing });
   const added = next.libraries.filter(item => !usPages.libraries.some(page => page.id === item.id));
   const byPlatform = Object.groupBy(added, item => item.id.split(':')[0]);
-  assert.deepEqual(Object.fromEntries(Object.entries(byPlatform).map(([platform, items]) => [platform, items.length])), { koha: 29, aspen: 357, polaris: 33, tlc: 7, apollo: 2 });
+  assert.deepEqual(Object.fromEntries(Object.entries(byPlatform).map(([platform, items]) => [platform, items.length])), { koha: 15, aspen: 259, polaris: 6 });
   // A later library whose link name a page already has takes the name data/library-selection-aliases.json gives it:
   // its earlier /select/ name (Nashville, Tennessee, after Nashville, Illinois of SHARE) or one given by hand (Hinsdale,
-  // Illinois, after Hinsdale, Massachusetts, whose ID comes first): no clash, and each name selects its library.
-  const slugOf = id => added.find(item => item.id === id)?.slug;
+  // Illinois, after Hinsdale, Massachusetts, and Cambridge, New York, after Cambridge, Massachusetts, whose IDs come first;
+  // the Illinois and New York pages, made first, keep those names so the Massachusetts ones can take theirs): no clash,
+  // and each name selects its library.
+  const slugOf = id => (added.find(item => item.id === id) || usPages.libraries.find(item => item.id === id))?.slug;
   assert.equal(slugOf('aspen:nashville-tn'), 'nashville-public-library');
   assert.equal(slugOf('aspen:cwmars-hinsdale-public-library-ma'), 'hinsdale-public-library-hinsdale');
   assert.equal(slugOf('aspen:swan-hinsdale-public-library-il'), 'hinsdale-public-library-illinois');
   assert.equal(libraryLinks.resolve('hinsdale-public-library-illinois'), 'aspen:swan-hinsdale-public-library-il');
+  assert.equal(slugOf('aspen:minuteman-cambridge-public-library-ma'), 'cambridge-public-library-cambridge');
+  assert.equal(slugOf('polaris:sals-cambridge-public-library-ny'), 'cambridge-public-library-new-york');
+  assert.equal(libraryLinks.resolve('cambridge-public-library-new-york'), 'polaris:sals-cambridge-public-library-ny');
   assert.equal(new Set(next.libraries.map(item => item.slug)).size, next.libraries.length);
   assert.ok(added.every(item => item.on === '2026-11-25'));
   assert.equal(next.libraries.length, usPages.libraries.length + added.length);
@@ -914,9 +1075,15 @@ test('a US library on a front-page host gets its tap-to-check page once its host
     if (linkSlug(row.library.selectionPath) !== row.slug) assert.equal(libraryLinks.resolve(row.slug), row.id, row.id);
   }
   // "Check all 10" only where the catalog sets no Crawl-delay: Metro OKC's Aspen (Crawl-delay 20) checks one book per tap.
-  assert.equal(pages.find(row => row.id === 'aspen:metro-okc-ok').checkAll, false);
+  assert.equal(check.libraries.find(row => row.id === 'aspen:metro-okc-ok').checkAll, false);
   assert.equal(pages.find(row => row.id === 'aspen:washoe-nv').checkAll, true);
-  // A wall keeps the library off the list.
+  // A wall keeps the library off the list: with every front-page host walled (a hypothetical result set), the connected
+  // libraries on those hosts have no page, and nothing else changes.
   const walled = createUsListing({ results: hosts.map(host => ({ host, date: '2026-11-25', status: 403, wall: '403' })) });
-  assert.deepEqual(usPageList({ current: usPages, today: '2026-11-25', listing: walled }), usPages);
+  const byId = new Map(getAllLibraries().map(entry => [entry.id, entry]));
+  const onFrontPageHost = item => usListing(byId.get(item.id)) === 'connected'
+    && hosts.includes(new URL(byId.get(item.id).baseUrl || byId.get(item.id).catalogUrl).hostname);
+  assert.ok(usPages.libraries.some(onFrontPageHost));
+  assert.deepEqual(usPageList({ current: usPages, today: '2026-11-25', listing: walled }),
+    { ...usPages, libraries: usPages.libraries.filter(item => !onFrontPageHost(item)) });
 });

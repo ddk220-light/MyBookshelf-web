@@ -3,7 +3,8 @@
 // family with pages (PAGE_PLATFORMS: BiblioCommons, TLC, Koha, Aspen Discovery, Polaris PowerPAC, Apollo,
 // Evergreen (the Georgia PINES systems);
 // shared/seo-us-libraries.json, written by tools/seo/us-pages.mjs), with the
-// directory's facts and ten popular US books (shared/us-book-pool.json) that a
+// directory's facts and ten popular US books, a mix of its own from the US
+// list (shared/us-book-pool.json, bookMix), that a
 // reader can check at that library, live, on a tap (/library-check.js,
 // tools/seo/library-check-script.mjs). Nothing is checked in advance, on any
 // US page (USA plan, section 9): BiblioCommons' terms forbid automated
@@ -13,10 +14,62 @@
 // never books known to be there: the pages make no found claim, and no
 // structured data lists them. California was first; every state follows the
 // same rule.
+import { createHash } from 'node:crypto';
 import { coverUrl, libraryBookPath, placeOf, localityOf, fit, shelfTitle, DESCRIPTION_MAX } from './shelf-pages.mjs';
 
-// The books on each page: the first ten of the US list.
+// The books on each page: ten of the US list, chosen per library (bookMix).
 export const CHECK_BOOKS = 10;
+// The US list's groups. Every page has at least one of each, where the list
+// has one (owner, 24 November 2026: "Vary per library", with a spread of
+// groups on every page), and at most GROUP_MOST of one.
+export const BOOK_GROUPS = Object.freeze(['classic', 'fiction', 'nonfiction', 'children', 'ya', 'spanish']);
+export const GROUP_MOST = 3;
+
+/** The US list's books a page can show: an Open Library work with a cover. */
+export function checkBooks(pool) {
+  return (pool?.books || []).filter(book => WORK.test(book.bookKey || '') && /^\d+$/.test(book.coverId || ''));
+}
+const authorKey = name => String(name || '').normalize('NFKD').replace(/\p{M}+/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+// A book's place in a library's order: a hash of the library's ID and the
+// book's work key, so the order is the same on every build and one library's
+// order says nothing about another's.
+const mixRank = (id, book) => createHash('sha256').update(`${id}\n${book.bookKey}`).digest('hex');
+
+/**
+ * A library's ten books (owner, 24 November 2026: "each page gets a stable mix
+ * of 10 books from the US book list, chosen per library, so pages look less
+ * alike"). The list in a seeded shuffle, the library's own order (mixRank):
+ * first each group's first book in that order, then the next books in it,
+ * at most GROUP_MOST of one group and one book per author; shown in that
+ * order. It depends only on the library's ID and the list: the same library
+ * always gets the same ten, and no other library's books change it. Adding
+ * a book to the list changes only the pages where the new book ranks among
+ * their ten.
+ */
+export function bookMix(id, books, size = CHECK_BOOKS) {
+  if (!id) throw Error('bookMix needs a library ID');
+  const order = books.map(book => ({ book, at: mixRank(id, book) })).sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0)).map(item => item.book);
+  const chosen = new Set(), authors = new Set(), groups = new Map();
+  const fits = (book, most = GROUP_MOST) => !chosen.has(book) && !authors.has(authorKey(book.author)) && (groups.get(book.group) || 0) < most;
+  const take = book => { chosen.add(book); authors.add(authorKey(book.author)); groups.set(book.group, (groups.get(book.group) || 0) + 1); };
+  for (const group of BOOK_GROUPS) {
+    const book = order.find(item => item.group === group && fits(item));
+    if (book && chosen.size < size) take(book);
+  }
+  for (const book of order) if (chosen.size < size && fits(book)) take(book);
+  // A short list fills the page without the group limit.
+  for (const book of order) if (chosen.size < size && fits(book, Infinity)) take(book);
+  return order.filter(book => chosen.has(book));
+}
+
+/**
+ * A page's books as a short fingerprint (`mix` in shared/seo-us-libraries.json):
+ * what the page shows of them (work key, title, author, cover), in order. When
+ * it changes, the page changed, and tools/seo/us-pages.mjs dates it again.
+ */
+export function bookMixKey(books) {
+  return createHash('sha256').update(JSON.stringify(books.map(book => [book.bookKey, book.title, book.author, book.coverId]))).digest('hex').slice(0, 12);
+}
 // The catalog families the pages cover: BiblioCommons, TLC (LS2 PAC,
 // CARL.X CARL•Connect Discovery; USA plan step 3), Koha (the US Koha
 // libraries, mostly at ByWater; step 4), Aspen Discovery (step 5), Polaris
@@ -58,22 +111,23 @@ export function withCity(library, correction) {
  * The pages: one per library in `pages.libraries` (shared/seo-us-libraries.json)
  * that is in the directory, a US library of a family with pages in the state the file
  * records, and checkable; a reviewed guide keeps its own slug and text and
- * gains the section. `pool` is the US list; `cities` the city corrections.
- * A page's date (`lastmod`, the date its content last changed) is the newest
- * of the US list's `updatedOn`, the page's own `on` (added, or its state
- * changed), its city correction's `on`, and the `on` of the pages its "More
- * libraries" links show.
+ * gains the section. `pool` is the US list, from which each page shows its
+ * own ten (bookMix); `cities` the city corrections. A page's date
+ * (`lastmod`, the date its content last changed) is the newest of the page's
+ * own `on` (added, its state changed, or its ten books changed: its `mix` is
+ * checked against its books here), its city correction's `on`, and the `on`
+ * of the pages its "More libraries" links show.
  */
 export function checkPublication({ entries, toPublic, manifest, pages, pool, removed = [], cities = {} }) {
   if (!DATE.test(pool?.updatedOn || '')) throw Error('The US list needs updatedOn (YYYY-MM-DD)');
-  const books = (pool.books || []).filter(book => WORK.test(book.bookKey || '') && /^\d+$/.test(book.coverId || '')).slice(0, CHECK_BOOKS);
+  const books = checkBooks(pool);
   if (books.length < CHECK_BOOKS) throw Error('The US list needs ten books with a work key and a cover');
   const byId = new Map(entries.map(entry => [entry.id, entry]));
   const guides = new Map(manifest.map(item => [item.id, item]));
   const out = new Set([...removed, ...(pages.leftOut || []).map(item => item.id)]);
   const slugs = new Set(), ids = new Set();
   const libraries = [];
-  for (const { id, slug: given, state, on } of pages.libraries || []) {
+  for (const { id, slug: given, state, on, mix } of pages.libraries || []) {
     if (ids.has(id) || out.has(id)) throw Error('A US page is listed twice or also left out: ' + id);
     ids.add(id);
     const entry = byId.get(id);
@@ -88,14 +142,17 @@ export function checkPublication({ entries, toPublic, manifest, pages, pool, rem
     slugs.add(slug);
     const correction = cities[id] || null;
     if (correction && !DATE.test(correction.on || '')) throw Error('A city correction needs its date (on): ' + id);
+    // The page's date covers its books only while its fingerprint is theirs.
+    const own = bookMix(id, books);
+    if (mix !== bookMixKey(own)) throw Error(`A US page's books changed since its date: ${id} (run node tools/seo/us-pages.mjs)`);
     const library = withCity(toPublic(entry), correction);
     if (!library?.capabilities?.publicAvailability || !library.selectionPath) continue;
-    libraries.push({ id, slug, path: '/libraries/' + slug, guide, library, books, on, cityOn: correction?.on || null,
+    libraries.push({ id, slug, path: '/libraries/' + slug, guide, library, books: own, on, cityOn: correction?.on || null,
       checkAll: !(Number(entry.crawlDelaySeconds) > 0) });
   }
   for (const row of libraries) {
     row.related = sameStatePages(row, libraries);
-    row.lastmod = [pool.updatedOn, row.on, row.cityOn, ...row.related.map(other => other.on)].filter(Boolean).sort().at(-1);
+    row.lastmod = [row.on, row.cityOn, ...row.related.map(other => other.on)].filter(Boolean).sort().at(-1);
   }
   const states = stateOrder(libraries.map(row => row.library.region), pages.firstStates || [])
     .map(state => ({ state, anchor: stateAnchor(state), libraries: libraries.filter(row => row.library.region === state).sort(byName) }));

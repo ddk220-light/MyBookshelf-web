@@ -17,17 +17,26 @@
 // A slug, once given, is kept: a library already in the list keeps its slug
 // and its date. A new library gets its /select/ link name (a hash suffix
 // dropped; a reviewed guide's slug for a guide) and today's date (`on`, or
-// --on YYYY-MM-DD). A library whose state changed gets today's date, since
-// its page changed. A library no longer offered, or newly left out, leaves
-// the list.
+// --on YYYY-MM-DD). A library whose state or ten books changed (`mix`, the
+// fingerprint of its books: check-pages.mjs bookMix, bookMixKey) gets today's
+// date, since its page changed. A library no longer offered, or newly left
+// out, leaves the list.
+//
+// Both modes also report the 500 largest offered US libraries by the
+// population they serve (server/data/us-library-population.json, IMLS FY2024;
+// owner, 24 November 2026: "static pages for the biggest 500 libraries") and
+// any of them without a page; a test checks that each has one or is left out
+// with a reason.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import historicalLinks from '../../data/library-selection-aliases.json' with { type: 'json' };
+import usList from '../../shared/us-book-pool.json' with { type: 'json' };
+import population from '../../server/data/us-library-population.json' with { type: 'json' };
 import { getAllLibraries, usListing, US_OFFERED } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
-import { PAGE_PLATFORMS, stateOrder } from './check-pages.mjs';
+import { PAGE_PLATFORMS, bookMix, bookMixKey, checkBooks, stateOrder } from './check-pages.mjs';
 
 const FILE = fileURLToPath(new URL('../../shared/seo-us-libraries.json', import.meta.url));
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -40,8 +49,9 @@ export const pageCandidates = (entries, listing = usListing) => entries.filter(e
 export const linkSlug = selectionPath => decodeURIComponent(String(selectionPath).replace(/^\/select\//, '')).replace(/--[0-9a-f]{16}$/, '');
 
 /** The file with its `libraries` list made current; everything else in it is kept as it is. */
-export function usPageList({ current, today, entries = getAllLibraries(), listing = usListing, toPublic = toPublicLibrary, guides = manifest, aliases = historicalLinks }) {
+export function usPageList({ current, today, entries = getAllLibraries(), listing = usListing, toPublic = toPublicLibrary, guides = manifest, aliases = historicalLinks, pool = usList }) {
   if (!DATE.test(today || '')) throw Error('usPageList needs today (YYYY-MM-DD)');
+  const books = checkBooks(pool);
   const leftOut = new Set((current.leftOut || []).map(item => item.id));
   const kept = new Map((current.libraries || []).map(item => [item.id, item]));
   const guideSlugs = new Map(guides.map(item => [item.id, item.slug]));
@@ -53,8 +63,9 @@ export function usPageList({ current, today, entries = getAllLibraries(), listin
     const selectionPath = toPublic(entry)?.selectionPath;
     const slug = old?.slug || guideSlugs.get(entry.id);
     if (!slug && !selectionPath) throw Error('No slug for ' + entry.id);
-    const on = old && old.state === entry.region && DATE.test(old.on || '') ? old.on : today;
-    rows.push({ name: entry.name, selectionPath, item: { id: entry.id, slug, state: entry.region, on } });
+    const mix = bookMixKey(bookMix(entry.id, books));
+    const on = old && old.state === entry.region && old.mix === mix && DATE.test(old.on || '') ? old.on : today;
+    rows.push({ name: entry.name, selectionPath, item: { id: entry.id, slug, state: entry.region, on, mix } });
   }
   // A new page takes its link name; where another page already has that name
   // (two libraries of one name in towns of one name, such as Nashville,
@@ -82,6 +93,37 @@ export function usPageList({ current, today, entries = getAllLibraries(), listin
   return { ...current, libraries: rows.map(row => row.item) };
 }
 
+/** How many of the largest offered US libraries must have pages (owner, 24 November 2026). */
+export const TOP_LIBRARIES = 500;
+/**
+ * Every offered US library (any family) by the population it serves, largest
+ * first, one without a population last (then by ID): server/data/us-library-population.json
+ * rows (IMLS FY2024 POPU_UND, tools/directory/us-population.mjs) with the
+ * entry. Throws when an offered library has no row.
+ */
+export function populationRanking({ entries = getAllLibraries(), listing = usListing, rows = population.libraries } = {}) {
+  const byId = new Map(rows.map(row => [row.id, row]));
+  const offered = entries.filter(entry => entry.country === 'US' && OFFERED.includes(listing(entry)));
+  const missing = offered.filter(entry => !byId.has(entry.id)).map(entry => entry.id);
+  if (missing.length) throw Error(`No population row for ${missing.join(', ')} (run node tools/directory/us-population.mjs)`);
+  return offered.map(entry => ({ ...byId.get(entry.id), entry }))
+    .sort((a, b) => (b.population ?? -1) - (a.population ?? -1) || (a.id < b.id ? -1 : 1));
+}
+/** The `top` largest offered US libraries, each with its page's slug or the left-out item that keeps it off. */
+export function topCoverage({ file, ranking = populationRanking(), top = TOP_LIBRARIES }) {
+  const pages = new Map((file.libraries || []).map(item => [item.id, item]));
+  const out = new Map((file.leftOut || []).map(item => [item.id, item]));
+  return ranking.slice(0, top).map((row, i) => ({ rank: i + 1, id: row.id, name: row.entry.name, state: row.entry.region, population: row.population,
+    slug: pages.get(row.id)?.slug || null, leftOut: out.get(row.id) || null }));
+}
+const coverageReport = file => {
+  const rows = topCoverage({ file });
+  const without = rows.filter(row => !row.slug);
+  const last = rows.at(-1);
+  return [`The ${rows.length} largest offered US libraries (IMLS FY2024 population): ${rows.length - without.length} have pages; the smallest is ${last.name} (${last.state}), ${last.population ?? 'no population'}.`,
+    ...without.map(row => `  no page: #${row.rank} ${row.id} ${row.name} (${row.population}): ${row.leftOut ? 'left out: ' + row.leftOut.reason.split(/: |; /)[0] : 'NOT LEFT OUT (add a page or a leftOut reason)'}`)].join('\n');
+};
+
 // One object per line, so a change is one line of the diff.
 const line = item => `{ ${Object.entries(item).map(([key, value]) => `${JSON.stringify(key)}: ${JSON.stringify(value)}`).join(', ')} }`;
 /** The file's text: the lists one item per line, the other fields as JSON. */
@@ -106,4 +148,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     writeFileSync(FILE, next);
     console.log(`Wrote ${count} US library pages to shared/seo-us-libraries.json.`);
   }
+  console.log(coverageReport(JSON.parse(next)));
 }
