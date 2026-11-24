@@ -80,31 +80,38 @@ export function carriesAuthor(row, authors = []) {
   return [...wanted].some(name => have.has(name));
 }
 
-// Matching rows ranked, best match first (owner decision, 23 November 2026:
+// Matching rows ranked, best match first (owner decisions, 23 November 2026:
 // "If it properly matches, show it in the front, and the lesser matched ones
-// can go down the line, but just can be there"):
+// can go down the line, but just can be there"; 24 November 2026: the book's
+// author before the title groups):
 //   1. the row showing the book's ISBN (when the book has one): this edition;
-//   2. rows whose main title (`mainTitle`: before ":" or "/") is exactly the
-//      title, normalised as above ("Atomic habits : tiny changes..." is
-//      exact for "Atomic Habits");
-//   3. rows whose title starts with the title;
-//   4. the other rows passing the title rule;
-//   within each: book rows and rows with no format, then e-books and
-//   audiobooks, then other formats; then rows that carry the book's author;
-//   then the catalog's order. Video and music rows still count and come after
-//   every other row ("show last"), ranked the same way among themselves.
+//   2. rows that carry the book's author (`carriesAuthor`: a family name);
+//   3. within each: rows whose main title (`mainTitle`: before ":" or "/") is
+//      exactly the title, normalised as above ("Atomic habits : tiny
+//      changes..." is exact for "Atomic Habits"), then rows whose title
+//      starts with the title, then the other rows passing the title rule;
+//   4. within each: book rows and rows with no format, then e-books and
+//      audiobooks, then other formats;
+//   5. then the catalog's order.
+// Video and music rows still count and come after every other row ("show
+// last"; the ISBN row and the author's too), ranked the same way among
+// themselves. The author goes before the title groups because a short title
+// is shared: Gandhi's "An autobiography" is searched by that main title, and
+// "Gandhi : an autobiography" (another match) ranked below "Autobiography of
+// a yogi" (a title starting with it). The first row is the card's first entry and
+// gives the found answer its catalog link (`searchLibraryBook`); a
+// search-list mark links it too (catalog-lookup/index.js).
 // The catalog's own order is never trusted for the first row (LAPL lists study
 // guides above the novel, research 23 November 2026).
 export function orderMatches(rows, title, isbn = null, authors = []) {
   const want = titleKey(mainTitle(title));
   const group = row => {
-    if (isbn && isbnsOf(row).includes(isbn)) return 0;
-    if (titleKey(mainTitle(row.title)) === want) return 1;
-    return titleKey(row.title).startsWith(`${want} `) ? 2 : 3;
+    if (titleKey(mainTitle(row.title)) === want) return 0;
+    return titleKey(row.title).startsWith(`${want} `) ? 1 : 2;
   };
   const rank = row => {
     const tier = formatTier(row);
-    return [tier === LAST_TIER ? 1 : 0, group(row), tier, carriesAuthor(row, authors) ? 0 : 1];
+    return [tier === LAST_TIER ? 1 : 0, isbn && isbnsOf(row).includes(isbn) ? 0 : 1, carriesAuthor(row, authors) ? 0 : 1, group(row), tier];
   };
   const compare = (a, b) => {
     for (let i = 0; i < a.rank.length; i += 1) if (a.rank[i] !== b.rank[i]) return a.rank[i] - b.rank[i];

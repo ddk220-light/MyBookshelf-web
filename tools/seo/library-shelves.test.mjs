@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   askOrder, nextBook, recordCheck, createFailurePolicy, createHostQueue, serializeShelves, emptyShelves, foundCounts, shelfOf,
-  chooseCandidates, libraryScore, libraryKind, uniqueSlug, bookSlug, slugify, shortDescription, SHELF_SIZE, EXCLUDED_IDS,
+  chooseCandidates, libraryScore, libraryKind, uniqueSlug, bookSlug, slugify, shortDescription, SHELF_SIZE, EXCLUDED_IDS, choosePoolWork, plainTitle,
 } from './shelves-core.mjs';
 import { answeredInPhoneTest } from './library-shelves.mjs';
 
@@ -166,4 +166,23 @@ test('descriptions are short and end at a sentence', () => {
   assert.ok(short.length <= 320 && short.endsWith('.'));
   assert.equal(shortDescription('See [x](https://a.example) here https://b.example'), 'See here');
   assert.equal(shortDescription(''), null);
+});
+
+test('pool chooser: of the works titled or subtitled as the pool says, the most read, then the most editions', () => {
+  // Gandhi's book as Open Library's search gave it on 24 November 2026: the
+  // main record carries the pool's title as its subtitle; a small import has it as its title.
+  const main = { key: '/works/OL298031W', title: 'An autobiography', subtitle: 'the story of my experiments with truth', readinglog_count: 548, edition_count: 140 };
+  const smallImport = { key: '/works/OL35763797W', title: 'Story of My Experiments with Truth', readinglog_count: 9, edition_count: 6 };
+  const other = { key: '/works/OL1W', title: 'Gandhi and the Unspeakable', readinglog_count: 2000, edition_count: 300 };
+  assert.equal(choosePoolWork([smallImport, other, main], 'The Story of My Experiments with Truth').key, '/works/OL298031W');
+  // Equal readers: the most editions; a missing count is none.
+  const a = { key: '/works/OL2W', title: 'Godaan', readinglog_count: 10, edition_count: 3 };
+  const b = { key: '/works/OL3W', title: 'Godaan', readinglog_count: 10, edition_count: 9 };
+  const c = { key: '/works/OL4W', title: 'Godaan', edition_count: 50 };
+  assert.equal(choosePoolWork([a, c, b], 'Godaan').key, '/works/OL3W');
+  // No work with the title: the same order over all of them (as the old rule fell back to most editions).
+  assert.equal(choosePoolWork([a, other], 'Something Else').key, '/works/OL1W');
+  assert.equal(choosePoolWork([], 'Godaan'), null);
+  assert.equal(choosePoolWork(undefined, 'Godaan'), null);
+  assert.equal(plainTitle('The Story of My Experiments with Truth'), plainTitle('story of my experiments, with truth.'));
 });

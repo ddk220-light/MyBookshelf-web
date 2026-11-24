@@ -56,7 +56,7 @@ test('display order: the ISBN row first, then the exact title, then titles that 
   assert.deepEqual(orderMatches(rows, 'Wings of Fire').map(row => row.title), ['Wings of fire', 'Wings of Fire 2', 'Kalam: Wings of Fire', 'Fire wings of']);
 });
 
-test('display order: within each title group, books, then e-books and audiobooks, then other formats; then rows with the book\'s author', () => {
+test('display order: rows with the book\'s author first; within them and the rest, the title groups; within each, books, then e-books and audiobooks, then other formats', () => {
   const rows = [
     { title: 'Wings of fire', format: 'eBook', authors: ['Kalam, A. P. J. Abdul'] },
     { title: 'Wings of fire : a guide', format: 'Book', authors: ['Guide, Some'] },
@@ -69,14 +69,13 @@ test('display order: within each title group, books, then e-books and audiobooks
     { title: 'Wings of fire', format: 'DVD', authors: [] },
   ];
   assert.deepEqual(orderMatches(rows, 'Wings of Fire', null, ['A. P. J. Abdul Kalam']).map(row => [row.title, row.format || '-']), [
-    // The exact main title (before ":" or "/"): the book rows (and the row
-    // with no format), the author's first, then the catalog's order...
-    ['Wings of fire', '-'], ['Wings of fire : a guide', 'Book'], ['Wings of fire', 'Book'],
-    // ...then the e-book and the audiobook, the author's first, then the kit...
-    ['Wings of fire', 'eBook'], ['Wings of fire', 'Book on CD'], ['Wings of fire', 'Kit'],
-    // ...then the other match.
-    ['Kalam: Wings of Fire', 'Book'],
-    // Films and music after every other row, ranked the same way among themselves.
+    // Kalam's rows: the exact main title (before ":" or "/") as the row with
+    // no format, the e-book and the kit, then his other match...
+    ['Wings of fire', '-'], ['Wings of fire', 'eBook'], ['Wings of fire', 'Kit'], ['Kalam: Wings of Fire', 'Book'],
+    // ...then the other rows: the exact main title as books in the catalog's
+    // order, then the audiobook.
+    ['Wings of fire : a guide', 'Book'], ['Wings of fire', 'Book'], ['Wings of fire', 'Book on CD'],
+    // Films and music after every other row, the author's included, ranked the same way among themselves.
     ['Wings of fire : the film', 'DVD'], ['Wings of fire', 'DVD']]);
   // With no author known, the title groups and formats alone, then the catalog's order.
   assert.deepEqual(orderMatches(rows, 'Wings of Fire').map(row => row.format || '-'), ['Book', 'Book', '-', 'eBook', 'Book on CD', 'Kit', 'Book', 'DVD', 'DVD']);
@@ -98,6 +97,62 @@ test('an author is matched by family name, never decides a find', () => {
   assert.equal(carriesAuthor({ authors: ['Hartley, Mary'] }, ['Harper Lee']), false);
   assert.equal(carriesAuthor({ authors: [] }, ['Harper Lee']), false);
   assert.equal(carriesAuthor({ authors: ['Lee, Harper'] }, []), false);
+});
+
+// Gandhi's "An autobiography": the check searches the main title, and other
+// people's autobiographies pass the title rule too (24 November 2026: they
+// ranked above "Gandhi : an autobiography", whose main title is "Gandhi").
+const GANDHI = { title: 'An autobiography', authors: ['Mahatma Gandhi'] };
+const GANDHI_ISBN = '9780143039679';
+const gandhiRows = () => [
+  { title: 'Autobiography of a yogi', format: 'Book', authors: ['Yogananda, Paramahansa, 1893-1952'] },
+  { title: 'The autobiography of Malcolm X', format: 'Book', authors: ['X, Malcolm, 1925-1965'] },
+  { title: 'An autobiography', format: 'Book', authors: ['Nehru, Jawaharlal, 1889-1964'] },
+  { title: 'Gandhi : an autobiography', format: 'Book', authors: ['Gandhi, Mahatma, 1869-1948'] },
+  { title: 'An autobiography, or the story of my experiments with truth / M.K. Gandhi', format: 'Book', authors: ['Gandhi, M. K.'] },
+].map((row, index) => ({ ...row, recordId: String(index + 1), catalogUrl: `https://c.example/${index + 1}`, catalogLinkKind: 'record' }));
+
+test('display order: rows with the book\'s author go before the title groups (Gandhi\'s "An autobiography")', async () => {
+  const ranked = matchingRows(gandhiRows(), GANDHI);
+  assert.deepEqual(ranked.map(row => row.title), [
+    // Gandhi's rows: the title that starts with the book's title, then the other match...
+    'An autobiography, or the story of my experiments with truth / M.K. Gandhi', 'Gandhi : an autobiography',
+    // ...then the other authors' rows: the exact main title, then the titles that start with it.
+    'An autobiography', 'Autobiography of a yogi', 'The autobiography of Malcolm X']);
+  // With no author known, the title groups alone (the order of every row before 24 November 2026).
+  assert.deepEqual(matchingRows(gandhiRows(), { title: GANDHI.title }).map(row => row.recordId), ['3', '1', '2', '5', '4']);
+  // The first row is the card's first entry and the found answer's catalog
+  // link; every row is still a find (ranking only).
+  const result = await searchLibraryBook(catalog(gandhiRows()), GANDHI);
+  assert.deepEqual([result.outcome, result.catalogUrl, result.catalogLinkKind, result.matchedBook.title],
+    ['in_catalog', 'https://c.example/5', 'record', 'An autobiography, or the story of my experiments with truth / M.K. Gandhi']);
+  assert.deepEqual(result.matches.map(match => match.url), ['https://c.example/5', 'https://c.example/4', 'https://c.example/3', 'https://c.example/1', 'https://c.example/2']);
+  assert.equal((await searchLibraryBook(catalog(gandhiRows()), { title: GANDHI.title })).matches.length, 5);
+});
+
+test('display order: the ISBN row still goes first, before the author\'s rows', () => {
+  const isbnRow = { title: 'The story of my experiments with truth : an autobiography', format: 'eBook', authors: [], isbn: GANDHI_ISBN };
+  for (const rows of [[...gandhiRows(), isbnRow], [isbnRow, ...gandhiRows()]]) {
+    const ranked = matchingRows(rows, GANDHI, { isbn: GANDHI_ISBN });
+    assert.equal(ranked[0], isbnRow);
+    assert.deepEqual(ranked.slice(1, 3).map(row => row.recordId), ['5', '4']);
+  }
+  // Without the book's ISBN it is one of the other rows, after the author's.
+  assert.equal(matchingRows([isbnRow, ...gandhiRows()], GANDHI).at(-1), isbnRow);
+});
+
+test('display order: a film row by the author still goes last, and still counts', async () => {
+  const film = { title: 'Gandhi : an autobiography', format: 'DVD', authors: ['Gandhi, Mahatma, 1869-1948'], recordId: '6', catalogUrl: 'https://c.example/6', catalogLinkKind: 'record' };
+  for (const rows of [[film, ...gandhiRows()], [...gandhiRows(), film]]) {
+    const ranked = matchingRows(rows, GANDHI);
+    assert.equal(ranked.length, 6);
+    assert.equal(ranked.at(-1), film);
+    assert.deepEqual(ranked.slice(0, 2).map(row => row.recordId), ['5', '4']);
+  }
+  // A film showing the book's ISBN goes last too.
+  assert.equal(matchingRows([{ ...film, isbn: GANDHI_ISBN }, ...gandhiRows()], GANDHI, { isbn: GANDHI_ISBN }).at(-1).recordId, '6');
+  const result = await searchLibraryBook(catalog([film, ...gandhiRows()]), GANDHI);
+  assert.deepEqual([result.catalogUrl, result.matches.at(-1).url, result.matches.length], ['https://c.example/5', 'https://c.example/6', 6]);
 });
 
 test('every row passing the title rule is a find, whatever its format: films and music count, and come last', async () => {
@@ -192,14 +247,16 @@ test('TLC fixtures: LAPL lists study guides above the novel; the card starts wit
     ['CliffsNotes Lee\'s To kill a mockingbird', 'Castleman, Tamara'], ['An Introduction to To kill a mockingbird by Harper Lee : audio guide', 'Stone, Dan']]);
   const ranked = matchingRows(mockingbird, { title: 'To Kill a Mockingbird', authors: ['Harper Lee'] });
   assert.equal(ranked.length, 25);
-  // The exact main title: print and large print first (Harper Lee's, then the
-  // study, the record with no author and the graphic novel in the catalog's
-  // order), then e-books and audiobooks; the film last.
+  // The exact main title first: Harper Lee's 13 rows (print and large print,
+  // then her e-books and audiobooks), then the others' (the study, the record
+  // with no author and the graphic novel in the catalog's order, then an
+  // e-book); the film last.
   assert.deepEqual(ranked.slice(0, 17).map(row => mainTitle(row.title)), Array(17).fill('To kill a mockingbird'));
-  assert.deepEqual([...new Set(ranked.slice(0, 11).map(row => row.format))].sort(), ['Book', 'Large Print']);
-  assert.deepEqual(ranked.slice(8, 11).map(row => row.title), ['To kill a mockingbird : threatening boundaries', 'To kill a mockingbird',
-    'To kill a mockingbird : a graphic novel']);
-  assert.deepEqual([...new Set(ranked.slice(11, 17).map(row => row.format))].sort(), ['Book on CD', 'eAudioBook', 'eBook']);
+  assert.deepEqual(ranked.map(row => carriesAuthor(row, ['Harper Lee'])), [...Array(13).fill(true), ...Array(12).fill(false)]);
+  assert.deepEqual([...new Set(ranked.slice(0, 8).map(row => row.format))].sort(), ['Book', 'Large Print']);
+  assert.deepEqual([...new Set(ranked.slice(8, 13).map(row => row.format))].sort(), ['Book on CD', 'eAudioBook', 'eBook']);
+  assert.deepEqual(ranked.slice(13, 17).map(row => [row.title, row.format]), [['To kill a mockingbird : threatening boundaries', 'Book'],
+    ['To kill a mockingbird', 'Book'], ['To kill a mockingbird : a graphic novel', 'Book'], ['To kill a mockingbird', 'eBook']]);
   assert.deepEqual([ranked[24].format, ranked[24].title], ['DVD', 'To kill a mockingbird']);
   // Frederick: the print book, then the Spanish edition is not a match, unrelated rows never are.
   const bright = await searchLibraryBook(catalog(tlcSearch('fcpl-01-remarkably-bright-creatures.json')), { title: 'Remarkably Bright Creatures', authors: ['Shelby Van Pelt'] });

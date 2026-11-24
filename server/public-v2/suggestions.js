@@ -15,11 +15,14 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 // The related list is one public book's related books, the same for every
 // reader: its first author's most-read other works, then the most-read works
 // on its subject in its place, or on two of its specific subjects (never one
-// subject alone). Covers only, Latin-letter titles, nothing for adults or
-// naming extremism, no school anthology or textbook (more than three
-// authors, or a title such as "… Literature, Gold Level"), one work per
-// title. The address names only that book (an ISBN key or an Open Library
-// work key) and the answer holds nothing about the reader, so Vercel's CDN
+// subject alone). Covers only, at least 25 readers on Open Library
+// (MIN_SUGGESTED_READERS, openLibrarySuggestions.js), Latin-letter titles,
+// nothing for adults or naming extremism, no school anthology or textbook
+// (more than three authors, or a title such as "… Literature, Gold Level"),
+// one work per title (a leading The/A/An ignored), the most-read first.
+// Titles are Open Library's, unchanged. The address names only that book
+// (an ISBN key or an Open Library work key) and the answer holds nothing
+// about the reader, so Vercel's CDN
 // and the browser keep it (RELATED_CACHE): a repeat lookup costs no function
 // run. The app merges up to three such lists, adds
 // its seed list, leaves out its saved books and picks five; it asks the
@@ -210,7 +213,8 @@ export function createSuggestionService({ reads = createOpenLibrarySuggestionRea
       if (books.length >= RELATED_RETURNED) break;
       const candidate = suggestionBook(raw);
       if (!usable(candidate) || own.has(candidate.workId)) continue;
-      // The first work with a title only ("Ignited Minds" is three works).
+      // The first work with a title only ("Ignited Minds" is three works;
+      // "The Story of …" and "Story of …" are one title, `titleKey`).
       const key = titleKey(candidate.title);
       if (titles.has(key)) continue;
       titles.add(key);

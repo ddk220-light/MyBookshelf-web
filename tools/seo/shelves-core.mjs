@@ -303,6 +303,28 @@ export function shelfOf(library, pool) {
   return pool.filter(book => found(checks[book.bookKey])).slice(0, SHELF_SIZE).map(book => ({ book, check: checks[book.bookKey] }));
 }
 
+// A title compared without case, punctuation or a leading The/A/An.
+export const plainTitle = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/^(the|an?) /, '');
+const count = value => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : 0);
+
+/**
+ * The Open Library work a pool book's title search chose (`pool` in
+ * library-shelves.mjs), or null: of the works whose title or subtitle is the
+ * pool's title (`plainTitle`), the one with the most readers
+ * (`readinglog_count`), then the most editions; with no such work, the same
+ * order over all of them. Open Library can hold one book as several works:
+ * on 24 November 2026 a small import titled "Story of My Experiments with
+ * Truth" (9 readers, 6 editions, no cover) stood beside the main record,
+ * "An autobiography" with that subtitle (548 readers, 140 editions). The
+ * earlier rule (exact title, then most editions) chose the import.
+ */
+export function choosePoolWork(docs, title) {
+  const want = plainTitle(title);
+  const same = doc => Number(Boolean(want) && (plainTitle(doc?.title) === want || plainTitle(doc?.subtitle) === want));
+  return [...(Array.isArray(docs) ? docs : [])].sort((a, b) => same(b) - same(a)
+    || count(b?.readinglog_count) - count(a?.readinglog_count) || count(b?.edition_count) - count(a?.edition_count))[0] || null;
+}
+
 // Description: at most `max` characters, ending at a sentence where possible.
 export function shortDescription(text, max = 320) {
   const clean = String(text || '').replace(/\[[^\]]*\]\([^)]*\)/g, '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim();

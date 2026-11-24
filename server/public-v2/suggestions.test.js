@@ -8,8 +8,8 @@ import { createRedactedTelemetrySink } from './telemetry.js';
 import { OUTBOUND_CAP, RELATED_CACHE, RELATED_RETURNED, SUGGESTION_CACHE_TTL_MS } from './suggestions.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
-import { blockedBook, collectionOrTextbook, createOpenLibrarySuggestionReads, isBroadSubject, isJunkSubject, parseSubjectWorks, parseWorkRecord, readOpenLibrary,
-  relatedQuery } from '../services/openLibrarySuggestions.js';
+import { blockedBook, collectionOrTextbook, createOpenLibrarySuggestionReads, isBroadSubject, isJunkSubject, MIN_SUGGESTED_READERS, parseSubjectWorks, parseWorkRecord,
+  readOpenLibrary, relatedQuery } from '../services/openLibrarySuggestions.js';
 import { clearHttpCache } from '../services/providers/http.js';
 
 const LIBRARY = 'koha:test-library';
@@ -202,7 +202,7 @@ test('related: a work with one specific subject and no place gets only its autho
 
 test('filters: covers only, an author, Latin-letter titles, nothing for adults or naming extremism', async () => {
   // Docs as Open Library's search gives them, through the real parser.
-  const doc = (n, extra = {}) => ({ key: `/works/OL${n}W`, title: 'Book ' + n, author_name: ['Author ' + n], cover_i: n, ...extra });
+  const doc = (n, extra = {}) => ({ key: `/works/OL${n}W`, title: 'Book ' + n, author_name: ['Author ' + n], cover_i: n, readinglog_count: 100, ...extra });
   const docs = [doc(201), doc(202, { cover_i: undefined }), doc(203, { author_name: [] }), doc(204, { title: 'कामसूत्र' }), doc(205, { title: 'The Kama Sutra' }),
     doc(206, { subject: ['Erotic literature'] }), doc(207, { title: 'The Rise of the Nazi Party' }), doc(208, { subject: ['Antisemitism'] }), doc(209, { title: 'Les Misérables' })];
   const openLibrary = fakeOpenLibrary({ works: RECENT, related: { [ROCKETRY_IN_INDIA]: parseSubjectWorks({ docs }) } });
@@ -240,12 +240,14 @@ test('the real reads ask openlibrary.org only, with the app’s User-Agent', asy
   assert.equal(seen.length, 4);
   assert.ok(seen.every(({ url, agent }) => url.host === 'openlibrary.org' && /^MyBookshelf\/1\.0 \(book suggestions; https:\/\/mybookshelf\.cloud\/privacy\)$/.test(agent)), JSON.stringify(seen));
   // The queries: the work record; the ISBN's work with its subjects, places and authors;
-  // the author's works and the subject-and-place works by readers, with subjects for the filters.
+  // the author's works and the subject-and-place works by readers, with subjects for the filters
+  // and the reader count for the floor (no subtitle: titles are Open Library's, unchanged).
   const [workRead, isbnRead, authorRead, relatedRead] = seen.map(({ url }) => url);
   assert.equal(workRead.pathname, '/works/OL1W.json');
   assert.deepEqual([isbnRead.pathname, isbnRead.searchParams.get('isbn'), isbnRead.searchParams.get('fields')], ['/search.json', isbn(1), 'key,title,subject,place,subject_place,author_key']);
-  assert.deepEqual(Object.fromEntries(authorRead.searchParams), { author_key: 'OL101656A', sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: '10' });
-  assert.deepEqual(Object.fromEntries(relatedRead.searchParams), { q: 'subject:"Biography" place:"India"', sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: '20' });
+  const listFields = 'key,title,author_name,cover_i,subject,readinglog_count';
+  assert.deepEqual(Object.fromEntries(authorRead.searchParams), { author_key: 'OL101656A', sort: 'readinglog', fields: listFields, limit: '10' });
+  assert.deepEqual(Object.fromEntries(relatedRead.searchParams), { q: 'subject:"Biography" place:"India"', sort: 'readinglog', fields: listFields, limit: '20' });
 });
 
 test('the search by ISBN reads the work’s places from `place`, and `subject_place` only when `place` is missing', async () => {
@@ -412,7 +414,7 @@ test('records: a work record and a search doc give the same title, subjects, pla
 });
 
 test('deny-lists: nothing for adults or naming extremism, in a title or a subject; one work per title', () => {
-  const doc = (n, title, subject = []) => ({ key: `/works/OL${n}W`, title, author_name: ['Author ' + n], cover_i: n, subject });
+  const doc = (n, title, subject = []) => ({ key: `/works/OL${n}W`, title, author_name: ['Author ' + n], cover_i: n, subject, readinglog_count: 100 });
   const kept = parseSubjectWorks({ docs: [doc(1, 'Mein Kampf', ['National socialism', 'Germany']), doc(2, 'The Rise of the Nazi Party'), doc(3, 'A History', ['Antisemitism']),
     doc(4, 'White Supremacy Explained'), doc(5, 'Neo-Nazis in Europe'), doc(6, 'Ignited Minds'), doc(7, 'Ignited minds'), doc(8, 'Ignited  Minds!'), doc(9, 'India 2020', ['India'])] });
   assert.deepEqual(kept.map(book => book.title), ['Ignited Minds', 'India 2020']);
@@ -421,13 +423,55 @@ test('deny-lists: nothing for adults or naming extremism, in a title or a subjec
 });
 
 test('Open Library answers are read defensively: works need a cover and an author', () => {
-  assert.deepEqual(parseSubjectWorks({ docs: [{ key: '/works/OL1W', title: 'A', author_name: ['X'], cover_i: 5 }, { key: '/works/OL2W', title: 'No cover', author_name: ['Y'] },
-    { key: '/works/OL3W', title: 'No author', cover_i: 6 }, { key: '/books/OL4M', title: 'Edition', author_name: ['Z'], cover_i: 7 }] }),
+  const readers = { readinglog_count: 30 };
+  assert.deepEqual(parseSubjectWorks({ docs: [{ key: '/works/OL1W', title: 'A', author_name: ['X'], cover_i: 5, ...readers }, { key: '/works/OL2W', title: 'No cover', author_name: ['Y'], ...readers },
+    { key: '/works/OL3W', title: 'No author', cover_i: 6, ...readers }, { key: '/books/OL4M', title: 'Edition', author_name: ['Z'], cover_i: 7, ...readers }] }),
   [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W', title: 'A', authors: ['X'], coverUrl: cover(5) }]);
 });
 
+test(`list works need at least ${MIN_SUGGESTED_READERS} readers on Open Library; a missing count is none`, () => {
+  assert.equal(MIN_SUGGESTED_READERS, 25);
+  const doc = (n, readers) => ({ key: `/works/OL${n}W`, title: 'Book ' + n, author_name: ['Author ' + n], cover_i: n, ...(readers === undefined ? {} : { readinglog_count: readers }) });
+  assert.deepEqual(parseSubjectWorks({ docs: [doc(1, 548), doc(2, 25), doc(3, 24), doc(4, 0), doc(5), doc(6, '30'), doc(7, -40), doc(8, 'many')] }).map(book => book.workId),
+    ['OL1W', 'OL2W', 'OL6W']);
+});
+
+test('one work per title: case, punctuation and a leading The/A/An are ignored, the most-read first; titles stay as Open Library gives them', async () => {
+  const doc = (n, title, readers, extra = {}) => ({ key: `/works/OL${n}W`, title, author_name: ['Author ' + n], cover_i: n, readinglog_count: readers, ...extra });
+  const kept = parseSubjectWorks({ docs: [
+    // Open Library's main record of Gandhi's book and a small import, as on 24 November 2026.
+    doc(298031, 'An autobiography', 548, { subtitle: 'the story of my experiments with truth' }),
+    doc(1, 'The Story of My Experiments with Truth', 60), doc(2, 'Story of My Experiments with Truth', 30),
+    doc(3, 'A Suitable Boy', 286), doc(4, 'Suitable Boy', 40), doc(5, 'The Guide', 65), doc(6, 'An Guide', 30),
+    // Only a leading article followed by a word goes: "Theory" stays, and "The" or "A" alone is a title.
+    doc(7, 'Theory', 50), doc(8, 'The', 50), doc(9, 'A', 50) ] });
+  assert.deepEqual(kept.map(book => book.title), ['An autobiography', 'The Story of My Experiments with Truth', 'A Suitable Boy', 'The Guide', 'Theory', 'The', 'A']);
+  // The title is Open Library's own: no subtitle is added to it.
+  assert.equal(kept[0].title, 'An autobiography');
+  // Through the route: never the book itself or its title with or without "The"; across lists, the first wins.
+  const openLibrary = fakeOpenLibrary({ works: { [work(100)]: record(100, { subjects: ['Rocketry'], places: ['India'], title: 'The discovery of India' }) },
+    authors: { OL100A: [{ ...relatedWork(201), title: 'Discovery of India' }, { ...relatedWork(202), title: 'The Glimpses' }] },
+    related: { [ROCKETRY_IN_INDIA]: [{ ...relatedWork(203), title: 'Glimpses' }, { ...relatedWork(204), title: 'A Suitable Boy' }] } });
+  assert.deepEqual((await related(harness({ openLibrary }).app, 'v1:openlibrary:OL100W')).body.books.map(book => book.title), ['The Glimpses', 'A Suitable Boy']);
+});
+
+// The related list for The Discovery of India (subject:"Civilización"
+// place:"India") as Open Library gave it on 24 November 2026: most of it is
+// works a few readers have logged, which filled the suggestion slots ahead of
+// the reader's other books' lists.
+const CIVILIZATION_INDIA = JSON.parse(readFileSync(new URL('../test/fixtures/suggestions/subject-civilization-india.json', import.meta.url), 'utf8')).response;
+
+test('the reader floor on a real list: only Sapiens and the book itself pass; the book itself is never suggested', async () => {
+  assert.equal(CIVILIZATION_INDIA.docs.length, 16);
+  const parsed = parseSubjectWorks(CIVILIZATION_INDIA);
+  assert.deepEqual(parsed.map(book => book.title), ['Sapiens', 'The discovery of India']);
+  const openLibrary = fakeOpenLibrary({ works: { OL296039W: { workId: 'OL296039W', title: 'The discovery of India', subjects: ['Civilización'], places: ['India'], authorKeys: ['OL741A'] } },
+    related: { 'subject:"Civilización" place:"India"': parsed } });
+  assert.deepEqual((await related(harness({ openLibrary }).app, 'v1:openlibrary:OL296039W')).body.books.map(book => book.title), ['Sapiens']);
+});
+
 test('Suggestions skip books for adults, and related books need a title in Latin letters', () => {
-  const doc = (n, extra) => ({ key: `/works/OL${n}W`, author_name: ['Author ' + n], cover_i: n, ...extra });
+  const doc = (n, extra) => ({ key: `/works/OL${n}W`, author_name: ['Author ' + n], cover_i: n, readinglog_count: 100, ...extra });
   const kept = parseSubjectWorks({ docs: [
     doc(1, { title: 'कामसूत्र' }),
     doc(2, { title: 'The Kama Sutra' }),
@@ -462,6 +506,7 @@ test('anthologies and textbooks: the Prentice Hall anthologies after Malgudi Day
   const prenticeHall = NARAYAN.docs.filter(doc => /^Prentice Hall Literature/.test(doc.title));
   assert.equal(prenticeHall.length, 2);
   assert.ok(prenticeHall.every(doc => doc.author_name.length > 20), 'each lists dozens of authors');
+  assert.ok(prenticeHall.every(doc => doc.readinglog_count >= MIN_SUGGESTED_READERS), 'the anthology rule, not the reader floor, leaves them out');
   const parsed = parseSubjectWorks(NARAYAN);
   assert.deepEqual(parsed.map(book => book.title), ['Malgudi days', 'Swami and Friends', 'The painter of signs', 'The English teacher', 'The Guide',
     'The dark room', 'The vendor of sweets']);

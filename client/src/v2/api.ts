@@ -282,7 +282,7 @@ export type CatalogMatch = { title: string; author?: string; url?: string };
 /** At most this many catalog rows are shown for a found book (server libraryBookSearch.js MAX_MATCHES). */
 export const MAX_CATALOG_MATCHES = 10;
 export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; reason?: CheckReason; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog';
-  /** A found answer's matching catalog rows, at most ten, best match first (the ISBN row, then the exact title, ...). */
+  /** A found answer's matching catalog rows, at most ten, best match first (the ISBN row, then the book's author's rows, then the exact title, ...). */
   matches?: CatalogMatch[] };
 
 function catalogMatches(input: unknown): CatalogMatch[] {

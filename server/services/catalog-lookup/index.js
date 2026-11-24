@@ -716,7 +716,9 @@ export function createCatalogLookup({
           pending.delete(book.bookKey);
           // The same rule and ranking as a book check: any row passing the
           // title rule marks the book, and the link is the best-ranked row's
-          // (the ISBN row, then the exact title, ...; films and music last).
+          // (the ISBN row, then rows with the book's author, from the
+          // `authors` holdings.js gives each book, then the exact title, ...;
+          // films and music last).
           const [row] = matchingRows(rows, book, { isbn: validateAndNormalize(book.isbn13 || '') || null });
           if (!row) { unmatched.push(book.bookKey); continue; }
           // The link is the book's record only when the adapter said so.

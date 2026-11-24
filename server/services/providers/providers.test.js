@@ -53,28 +53,30 @@ test('BiblioCommons passes every row of the search page with the gateway\'s form
   assert.equal(calls.length, 1);
 });
 
-test('BiblioCommons through the one library search: every row is a find, the exact main title first, print before audio, films and soundtracks last', async () => {
+test('BiblioCommons through the one library search: every row is a find, the author\'s rows and the exact main title first, print before audio, films and soundtracks last', async () => {
   global.fetch = async url => response(JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json')), { url });
   const provider = getProvider({ id: 'bc:seattle', slug: 'seattle', platform: 'bc', capabilities: ['catalogSearch', 'availability'] });
   const result = await searchLibraryBook(provider, { title: 'The Hobbit', authors: ['J. R. R. Tolkien'] });
   assert.equal(result.outcome, 'in_catalog');
-  // Ten rows: the records whose main title is "The Hobbit", print first
-  // (the graphic novels, Tolkien's before Dixon's), then the audiobooks and
-  // downloadable editions, Tolkien's first.
+  // Ten rows, all Tolkien's: the records whose main title is "The Hobbit",
+  // print first (his graphic novel), then the audiobooks and downloadable
+  // editions; then the print novel "The Hobbit, Or, There and Back Again" (a
+  // comma, not a colon: a title starting with the book's title). Dixon's
+  // graphic novels come after every row of Tolkien's.
   assert.deepEqual(result.matches.map(match => [match.title, match.author]), [
     ['The Hobbit: Or There and Back Again', 'Tolkien, J. R. R.'],
-    ['The Hobbit: An Illustrated Edition of the Fantasy Classic', 'Dixon, Chuck'],
-    ['The Hobbit: An Illustrated Edition of the Fantasy Classic', 'Dixon, Chuck'],
     ...Array(5).fill(['The Hobbit', 'Tolkien, J. R. R.']),
     ['The Hobbit: The Classic BBC TV Jackanory', 'Tolkien, J. R. R.'],
-    ['The Hobbit: Revised and Expanded Edition', 'Tolkien, J. R. R.']]);
+    ['The Hobbit: Revised and Expanded Edition', 'Tolkien, J. R. R.'],
+    ...Array(2).fill(['The Hobbit, Or, There and Back Again', 'Tolkien, J. R. R.'])]);
   assert.equal(result.catalogUrl, 'https://seattle.bibliocommons.com/v2/record/S246C1349814');
   const rows = await provider.search('The Hobbit');
   const ranked = matchingRows(rows, { title: 'The Hobbit', authors: ['J. R. R. Tolkien'] });
   // Every row passes the title rule and is a find; the four films and two soundtracks come last.
   assert.equal(ranked.length, 25);
   assert.deepEqual(ranked.slice(19).map(row => row.format), ['DVD', 'DVD', 'DVD', 'DVD', 'MUSIC_CD', 'MUSIC_CD']);
-  assert.deepEqual(ranked.slice(0, 5).map(row => row.format), ['GRAPHIC_NOVEL', 'GRAPHIC_NOVEL', 'GRAPHIC_NOVEL', 'BOOK_CD', 'EAUDIOBOOK']);
+  assert.deepEqual(ranked.slice(0, 5).map(row => row.format), ['GRAPHIC_NOVEL', 'BOOK_CD', 'EAUDIOBOOK', 'EAUDIOBOOK', 'GRAPHIC_NOVEL_DOWNLOAD']);
+  assert.deepEqual(ranked.slice(15, 19).map(row => row.authors[0]), ['Dixon, Chuck', 'Dixon, Chuck', 'Hammond, Wayne G.', 'Hardy, Gene B.']);
   // Only the films and the soundtracks: still found; the DVDs' main title is "The Hobbit", so the catalog's first DVD leads.
   const films = JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json'));
   const bibs = films.entities.bibs;

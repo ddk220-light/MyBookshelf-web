@@ -65,10 +65,11 @@ upstream arrive here in the next sync. README.md has the commands and layout.
 - A catalog row with at least 80% of the title's words is a find, whatever
   its format or author, for every library. The card lists up to 10 matching
   rows, ranked (`server/services/libraryBookSearch.js`): the row showing the
-  book's ISBN, exact main titles (before ":" or "/"), titles starting with the book's title, then
+  book's ISBN, then rows with the book's author; within each, exact main
+  titles (before ":" or "/"), titles starting with the book's title, then
   other matches; within each, books and rows with no format, then e-books and
-  audiobooks, then other formats, then rows with the book's author; films and
-  music last (`server/services/rowFormats.js`).
+  audiobooks, then other formats; films and music last
+  (`server/services/rowFormats.js`).
 - `shared/seo-libraries.json` controls the reviewed library guides;
   `shared/seo-shelves.json` the generated library shelf and book pages.
 - Never commit secrets, local environment values, account data or browser state.

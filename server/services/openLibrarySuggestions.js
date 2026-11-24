@@ -11,9 +11,12 @@ import { enqueueTask, getJson } from './providers/http.js';
 //   authorWorks(authorKey)  /search.json?author_key=…&sort=readinglog   the author's most-read works
 //   relatedWorks(query)     /search.json?q=subject:"…" place:"…"&sort=readinglog
 //                           (or two specific subjects; never a single subject)
-// Related books need a cover, a title in Latin letters, nothing for adults
+// Related books need a cover, at least MIN_SUGGESTED_READERS readers on Open
+// Library (`readinglog_count`), a title in Latin letters, nothing for adults
 // or extremist (`blockedBook`), and no school anthology or textbook
-// (`collectionOrTextbook`).
+// (`collectionOrTextbook`). Of several works with the same title (`titleKey`:
+// without case, punctuation or a leading The/A/An) only the first, the most
+// read, is kept. Titles are Open Library's, unchanged.
 
 const ORIGIN = 'https://openlibrary.org';
 const USER_AGENT = 'MyBookshelf/1.0 (book suggestions; https://mybookshelf.cloud/privacy)';
@@ -25,6 +28,18 @@ const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 const AUTHOR_WORKS_LIMIT = 10;
 const RELATED_WORKS_LIMIT = 20;
 const AUTHOR_KEY = /^OL\d+A$/;
+// The fields of the author and subject lists: what the filters and the
+// suggestion need, and the reader count for the floor below.
+const LIST_FIELDS = 'key,title,author_name,cover_i,subject,readinglog_count';
+// A list work needs this many readers on Open Library (want to read,
+// reading or read; `readinglog_count`, which Open Library leaves out when it
+// is 0). On 24 November 2026 the newest book's weak subject list filled the
+// slots with works 2 to 20 readers had logged (Antiquities of India, The
+// Mullendore murder case) ahead of the reader's other books' lists (Swami and
+// Friends, A Suitable Boy, The Adventures of Tom Sawyer, Kindred). The seed
+// lists are not affected.
+export const MIN_SUGGESTED_READERS = 25;
+const readersOf = doc => (Number.isFinite(Number(doc?.readinglog_count)) && Number(doc.readinglog_count) > 0 ? Math.floor(Number(doc.readinglog_count)) : 0);
 
 const unavailable = () => Object.assign(new Error('Open Library is unavailable for suggestions'), { code: 'SUGGESTIONS_UPSTREAM' });
 const text = (value, maximum = 500) => (typeof value === 'string' && value.trim() ? value.trim().slice(0, maximum) : null);
@@ -85,8 +100,12 @@ export function readOpenLibrary(path, { timeoutMs = OPEN_LIBRARY_TIMEOUT_MS } = 
   }, { deadlineAt });
 }
 
-/** A title compared without case, punctuation or extra spaces. */
-export const titleKey = value => subjectWords(value);
+/**
+ * A title compared without case, punctuation, extra spaces or a leading
+ * The/A/An ("The Story of My Experiments with Truth" = "Story of My
+ * Experiments with Truth"). For removing duplicates only; never shown.
+ */
+export const titleKey = value => subjectWords(value).replace(/^(?:the|an?) (?=\S)/, '');
 
 /** The subjects named on a work or search record, as Open Library writes them. */
 export function parseSubjects(values) {
@@ -150,9 +169,10 @@ export function relatedQuery({ subjects = [], places = [] } = {}) {
 
 /**
  * Search docs to suggestion books: Open Library works with a title in Latin
- * letters, an author and a cover, nothing for adults or extremist, no school
- * anthology or textbook, and only the first of several works with the same
- * title.
+ * letters, an author, a cover and at least MIN_SUGGESTED_READERS readers,
+ * nothing for adults or extremist, no school anthology or textbook, and only
+ * the first of several works with the same title (`titleKey`). The docs
+ * come most-read first, so the first is the strongest record.
  */
 export function parseSubjectWorks(data) {
   const books = [];
@@ -162,7 +182,7 @@ export function parseSubjectWorks(data) {
     const title = text(doc?.title);
     const authors = names(doc?.author_name);
     const coverUrl = coverOf(doc?.cover_i);
-    if (!workId || !title || !authors.length || !coverUrl) continue;
+    if (!workId || !title || !authors.length || !coverUrl || readersOf(doc) < MIN_SUGGESTED_READERS) continue;
     if (!LATIN_TITLE.test(title) || blockedBook(title, parseSubjects(doc?.subject)) || collectionOrTextbook(title, authors)) continue;
     const key = titleKey(title);
     if (titles.has(key)) continue;
@@ -187,12 +207,12 @@ export function createOpenLibrarySuggestionReads({ read = readOpenLibrary } = {}
     },
     async authorWorks(authorKey) {
       if (!AUTHOR_KEY.test(authorKey || '')) return [];
-      const params = new URLSearchParams({ author_key: authorKey, sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: String(AUTHOR_WORKS_LIMIT) });
+      const params = new URLSearchParams({ author_key: authorKey, sort: 'readinglog', fields: LIST_FIELDS, limit: String(AUTHOR_WORKS_LIMIT) });
       return parseSubjectWorks(await read(`/search.json?${params}`));
     },
     async relatedWorks(query) {
       if (typeof query !== 'string' || !/^subject:"/.test(query)) return [];
-      const params = new URLSearchParams({ q: query, sort: 'readinglog', fields: 'key,title,author_name,cover_i,subject', limit: String(RELATED_WORKS_LIMIT) });
+      const params = new URLSearchParams({ q: query, sort: 'readinglog', fields: LIST_FIELDS, limit: String(RELATED_WORKS_LIMIT) });
       return parseSubjectWorks(await read(`/search.json?${params}`));
     },
   });

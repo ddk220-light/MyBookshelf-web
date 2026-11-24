@@ -31,7 +31,7 @@ import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import {
   chooseCandidates, askOrder, nextBook, recordCheck, createFailurePolicy, createHostQueue, serializeShelves, emptyShelves,
-  foundCounts, foundBooks, today, uniqueSlug, bookSlug, correctBookSlugs, shortDescription, MIN_SHELF, SHELF_SIZE, PLATFORM_CAPS,
+  foundCounts, foundBooks, today, uniqueSlug, bookSlug, correctBookSlugs, shortDescription, choosePoolWork, MIN_SHELF, SHELF_SIZE, PLATFORM_CAPS,
 } from './shelves-core.mjs';
 import { storesAvailability } from '../../server/catalog-store/policy.js';
 
@@ -85,12 +85,12 @@ async function candidates() {
 }
 
 async function olSearch(params) {
-  const url = 'https://openlibrary.org/search.json?' + new URLSearchParams({ ...params, fields: 'key,title,author_name,first_publish_year,edition_count,isbn,cover_i' });
+  const url = 'https://openlibrary.org/search.json?' + new URLSearchParams({ ...params,
+    fields: 'key,title,subtitle,author_name,first_publish_year,edition_count,readinglog_count,isbn,cover_i' });
   const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' }, signal: AbortSignal.timeout(30_000) });
   if (!response.ok) throw Error('Open Library search ' + response.status);
   return (await response.json()).docs || [];
 }
-const plainTitle = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/^(the|an?) /, '');
 const isbn13s = list => [...new Set((list || []).filter(v => /^97[89]\d{10}$/.test(v)))].sort();
 const workKey = doc => `v1:openlibrary:${String(doc.key).replace('/works/', '')}`;
 
@@ -107,10 +107,9 @@ async function pool(options = {}) {
       let doc;
       if (book.bookKey) doc = (await olSearch({ q: `key:/works/${book.bookKey.split(':').pop()}` }))[0];
       else {
-        const docs = await olSearch({ title: book.title, author: book.author, limit: '20' });
-        // The work titled exactly as the pool says, else the one with most editions.
-        const same = doc => plainTitle(doc.title) === plainTitle(book.title);
-        doc = docs.sort((a, b) => same(b) - same(a) || (b.edition_count || 0) - (a.edition_count || 0))[0];
+        // Of the works titled (or subtitled) as the pool says, the most read,
+        // then the one with most editions (choosePoolWork, shelves-core.mjs).
+        doc = choosePoolWork(await olSearch({ title: book.title, author: book.author, limit: '20' }), book.title);
       }
       if (!doc) { console.log('not found on Open Library:', book.title); continue; }
       book.bookKey ||= workKey(doc);
