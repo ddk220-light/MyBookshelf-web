@@ -10,7 +10,7 @@ test('every adapter label in the table has one of the kinds', () => {
 
 test('BiblioCommons codes (Seattle, "the hobbit"), TLC labels and Polaris labels', () => {
   const bc = { BK: 'book', GRAPHIC_NOVEL: 'book', LPRINT: 'book', EBOOK: 'ebook', GRAPHIC_NOVEL_DOWNLOAD: 'ebook', BOOK_CD: 'audiobook',
-    EAUDIOBOOK: 'audiobook', DVD: 'video', MUSIC_CD: 'music' };
+    EAUDIOBOOK: 'audiobook', DVD: 'video', MUSIC_CD: 'music', MUSIC_DOWNLOAD: 'music' };
   for (const [code, kind] of Object.entries(bc)) assert.equal(formatKind(code), kind, code);
   const tlc = { Book: 'book', 'Large Print': 'book', eBook: 'ebook', 'Book on CD': 'audiobook', 'Book on Tape': 'audiobook', eAudioBook: 'audiobook',
     Audiobook: 'audiobook', Playaway: 'audiobook', DVD: 'video', 'Video Recording': 'video', eVideo: 'video', 'Music CD': 'music', eMusic: 'music', Score: 'music' };
@@ -21,6 +21,8 @@ test('BiblioCommons codes (Seattle, "the hobbit"), TLC labels and Polaris labels
 test('labels not in the table are read by their words; no label is no format', () => {
   const words = { 'Blu-ray 4K': 'video', 'Video cassette': 'video', videorecording: 'video', 'Motion picture': 'video', 'DVD (Region 1)': 'video', VCD: 'video',
     'Musical sound recording': 'music', 'Sheet music': 'music', 'Sound recording of music': 'music',
+    // Music words before the e-book words: a music download is not an e-book.
+    'Music download': 'music', 'Downloadable music': 'music', Music: 'music', 'MUSIC_STREAMING': 'music',
     'Audio book': 'audiobook', 'Sound recording': 'audiobook', 'Talking book': 'audiobook',
     'E-book': 'ebook', 'Downloadable e-book': 'ebook', 'Electronic resource': 'ebook',
     'Hardcover book': 'book', 'Large print book': 'book', 'Text book': 'book', 'TEXTBOOK': 'book', 'Reference': 'book',
@@ -33,7 +35,7 @@ test('a format only orders the card: books and rows with no format, then e-books
   for (const format of ['BK', 'Large Print', 'Text book', undefined, '0']) assert.equal(formatTier({ format }), 0, String(format));
   for (const format of ['EBOOK', 'eBook', 'EAUDIOBOOK', 'Book on CD', 'Playaway']) assert.equal(formatTier({ format }), 1, format);
   for (const format of ['Magazine', 'Kit', 'VIDEO_GAME']) assert.equal(formatTier({ format }), 2, format);
-  for (const format of ['DVD', 'Blu-ray', 'eVideo', 'MUSIC_CD', 'Score']) assert.equal(formatTier({ format }), LAST_TIER, format);
+  for (const format of ['DVD', 'Blu-ray', 'eVideo', 'MUSIC_CD', 'MUSIC_DOWNLOAD', 'Music download', 'Score']) assert.equal(formatTier({ format }), LAST_TIER, format);
   // An adapter may say the kind itself.
   assert.equal(rowFormatKind({ formatKind: 'video', format: 'Book' }), 'video');
   assert.equal(rowFormatKind({ formatKind: 'nonsense', format: 'Book' }), 'book');

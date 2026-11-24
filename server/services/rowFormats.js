@@ -28,7 +28,8 @@ export const FORMAT_LABELS = Object.freeze({
     EBOOK: 'ebook', GRAPHIC_NOVEL_DOWNLOAD: 'ebook', EMAGAZINE: 'other',
     AB: 'audiobook', BOOK_CD: 'audiobook', BOOK_TAPE: 'audiobook', EAUDIOBOOK: 'audiobook', AUDIOBOOK: 'audiobook', PLAYAWAY: 'audiobook',
     DVD: 'video', BLURAY: 'video', UHD_BLURAY: 'video', VIDEO_ONLINE: 'video', VHS: 'video', VIDEO_GAME: 'other',
-    MUSIC_CD: 'music', MUSIC_ONLINE: 'music', MUSIC_SCORE: 'music', LP: 'music', VINYL: 'music',
+    // MUSIC_DOWNLOAD: SFPL's soundtrack rows (live check, 23 November 2026).
+    MUSIC_CD: 'music', MUSIC_DOWNLOAD: 'music', MUSIC_ONLINE: 'music', MUSIC_SCORE: 'music', LP: 'music', VINYL: 'music',
     MAG: 'other', KIT: 'other', MAP: 'other', BOARD_GAME: 'other', EQUIPMENT: 'other',
   }),
   // TLC LS2 PAC / CARL.X `resources[].format` (research, 23 November 2026:
@@ -68,11 +69,12 @@ for (const labels of Object.values(FORMAT_LABELS)) {
 }
 
 // Word patterns for labels the table does not list, tried in this order (a
-// "Music CD" is music before it is a CD; a "Book on CD" is an audiobook
-// before it is a book).
+// "Music CD" is music before it is a CD; a "Music download" is music before
+// it is a download, which the e-book words would take; a "Book on CD" is an
+// audiobook before it is a book).
 const PATTERNS = [
   ['video', /\b(?:e ?video\w*|videos?|video ?recordings?|videorecordings?|video ?cassettes?|videocassettes?|dvds?|vcds?|blu ?rays?|bluray\w*|vhs|uhd|films?|motion pictures?)\b/],
-  ['music', /\b(?:e ?music\w*|musical\w*|sound recordings? of music|scores?|sheet music)\b/],
+  ['music', /\b(?:e ?music\w*|music|musical\w*|sound recordings? of music|scores?|sheet music)\b/],
   ['audiobook', /\b(?:e ?audio\w*|audio\w*|books? on (?:cd|tape|cassette)|playaway\w*|talking books?|spoken word|sound recordings?)\b/],
   ['ebook', /\b(?:e ?books?|ebook\w*|e ?pubs?|downloads?|downloadable|electronic (?:books?|resources?))\b/],
   ['book', /\b(?:books?|bk|large print|lprint|graphic novels?|text ?books?|paperbacks?|hardcovers?|hardbacks?|print|reference|manga|comics?|picture books?)\b/],

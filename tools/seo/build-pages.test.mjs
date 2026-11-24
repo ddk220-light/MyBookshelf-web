@@ -4,12 +4,14 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { POLICY_EFFECTIVE_DATE, PLACEHOLDER_PATTERN, policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
 import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData, checkPages, checkData, CHECK_SCRIPT_PATH } from './build-pages.mjs';
-import { checkPublication, CHECK_BOOKS } from './check-pages.mjs';
+import { checkPublication, CHECK_BOOKS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
+import { usPageList, pageCandidates, linkSlug, formatPageList } from './us-pages.mjs';
 import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
 import usList from '../../shared/us-book-pool.json' with { type: 'json' };
 import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
+import usCities from '../../shared/seo-us-cities.json' with { type: 'json' };
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
-import { getAllLibraries } from '../../server/services/directory.js';
+import { getAllLibraries, usListing } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
 
 test('publication is exactly seven India, four US, one Japan; remaining directory stays usable', () => {
@@ -383,30 +385,128 @@ test('the US list: 30 to 40 distinctive books in six groups, each an Open Librar
   assert.equal(new Set(books.slice(0, 20).map(book => book.author)).size, 20);
 });
 
-test('California: every public library system in the directory has a page; the others are left out with a reason', () => {
-  const california = getAllLibraries().filter(entry => entry.country === 'US' && entry.region === usPages.state);
+// The 30 California pages' slugs before the pages went nationwide (23 November
+// 2026). Slugs are kept forever.
+const CALIFORNIA_SLUGS = {
+  'bc:aclibrary': 'alameda-county-library', 'bc:beverlyhills': 'beverly-hills-public-library', 'bc:burlingame': 'burlingame-public-library',
+  'bc:ccclib': 'contra-costa-county-library', 'bc:dalycity': 'daly-city-public-library', 'bc:glac': 'glendale-library-arts-culture',
+  'bc:hayward': 'hayward-public-library', 'bc:lakecountyca': 'lake-county-library', 'bc:livermorelibrary': 'livermore-public-library',
+  'bc:marinlibrary': 'marin-county-free-library', 'bc:menlopark': 'menlo-park-library', 'bc:napalibrary': 'napa-county-library',
+  'bc:oaklandlibrary': 'oakland-public-library', 'bc:paloalto': 'palo-alto-city-library', 'bc:pleasantonlibrary': 'pleasanton-public-library',
+  'bc:rcpl': 'redwood-city-public-library', 'bc:richmondlibrary': 'richmond-public-library-california', 'bc:sbl': 'san-bruno-public-library',
+  'bc:sdcl': 'san-diego-county-library', 'bc:sfpl': 'san-francisco-public-library', 'bc:sjpl': 'san-jose-public-library',
+  'bc:smcl': 'san-mateo-county-libraries', 'bc:smplibrary': 'san-mateo-public-library', 'bc:sclibrary': 'santa-clara-city-library',
+  'bc:sccl': 'santa-clara-county-library', 'bc:smpl': 'santa-monica-public-library', 'bc:sonoma': 'sonoma-county-library',
+  'bc:ssf': 'south-san-francisco-public-library', 'bc:sunnyvale': 'sunnyvale-public-library', 'bc:ylpl': 'yorba-linda-public-library',
+};
+
+test('US pages: every offered US BiblioCommons library has a page, or is left out with a reason; the list is generated and current', () => {
+  const offered = pageCandidates(getAllLibraries()).map(entry => entry.id);
   const listed = usPages.libraries.map(item => item.id), out = usPages.leftOut.map(item => item.id);
-  assert.deepEqual([...listed, ...out].sort(), california.map(entry => entry.id).sort(), 'each California entry is in exactly one list');
-  assert.equal(new Set([...listed, ...out]).size, listed.length + out.length);
+  assert.equal(new Set([...listed, ...out]).size, listed.length + out.length, 'no library is in both lists');
+  assert.deepEqual(listed.toSorted(), offered.filter(id => !out.includes(id)).toSorted(), 'every offered library not left out has a page');
+  // Only BiblioCommons libraries in the United States, none removed from finding a library; Canada is untouched.
+  for (const entry of getAllLibraries().filter(item => listed.includes(item.id))) {
+    assert.equal(entry.country, 'US', entry.id);
+    assert.equal(entry.platform, 'bc', entry.id);
+    assert.ok(['legacy', 'verified'].includes(usListing(entry)), entry.id);
+  }
+  assert.ok(!getAllLibraries().some(entry => entry.country === 'CA' && listed.includes(entry.id)));
+  // Every California entry is in one list, as before.
+  const california = getAllLibraries().filter(entry => entry.country === 'US' && entry.region === 'California').map(entry => entry.id);
+  assert.deepEqual(california.filter(id => !listed.includes(id) && !out.includes(id)), []);
   for (const item of usPages.leftOut) assert.ok(item.reason.length > 20 && /^\d{4}-\d{2}-\d{2}$/.test(item.on), item.id);
+  // The list is what the generator writes (tools/seo/us-pages.mjs): nothing to add, move or date.
+  assert.deepEqual(usPageList({ current: usPages, today: '2099-01-01' }), usPages);
+  assert.equal(formatPageList(usPages), readFileSync('shared/seo-us-libraries.json', 'utf8'));
+  for (const item of usPages.libraries) assert.match(item.on, /^\d{4}-\d{2}-\d{2}$/, item.id);
+  // California keeps its 30 pages and their slugs.
+  assert.deepEqual(Object.fromEntries(usPages.libraries.filter(item => item.state === 'California').map(item => [item.id, item.slug])), CALIFORNIA_SLUGS);
   const check = checkPages();
   assert.equal(check.libraries.length, listed.length);
-  assert.equal(check.date, usList.updatedOn);
   // The four reviewed guides keep their slugs; every other slug is the library's /select/ link name.
   const guides = check.libraries.filter(row => row.guide).map(row => row.path).sort();
   assert.deepEqual(guides, ['/libraries/alameda-county-library', '/libraries/san-francisco-public-library', '/libraries/san-mateo-county-libraries', '/libraries/santa-clara-county-library']);
   for (const row of check.libraries.filter(item => !item.guide)) {
-    assert.equal(row.library.selectionPath.replace(/^\/select\//, '').replace(/--[0-9a-f]{16}$/, ''), row.slug, row.id);
+    assert.equal(linkSlug(row.library.selectionPath), row.slug, row.id);
     assert.ok(!row.library.address && !row.library.officialUrl, 'only facts the directory has');
   }
-  // The ten books are the US list's first ten.
+  // The ten books are the US list's first ten, on every page.
   assert.deepEqual(check.books.map(book => book.bookKey), usList.books.slice(0, CHECK_BOOKS).map(book => book.bookKey));
-  // A slug clash, a page also left out, or a library outside the state stops the build.
+  assert.ok(check.libraries.every(row => row.books === check.books));
+  // A slug clash, a page also left out, a library outside its state or a non-BiblioCommons library stops the build.
   const publication = pages => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages, pool: usList });
-  assert.throws(() => publication({ ...usPages, libraries: [...usPages.libraries, { id: 'bc:marinet', slug: 'marinet' }] }), /left out/);
+  assert.throws(() => publication({ ...usPages, libraries: [...usPages.libraries, { id: 'bc:marinet', slug: 'marinet', state: 'California', on: '2026-11-23' }] }), /left out/);
   assert.throws(() => publication({ ...usPages, libraries: [usPages.libraries[1], { ...usPages.libraries[2], slug: usPages.libraries[1].slug }] }), /collision/);
-  assert.throws(() => publication({ ...usPages, libraries: [{ id: 'bc:nypl-stagedoor', slug: 'stagedoor' }] }), /Not a California library/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], state: 'Oregon' }] }), /Not a Oregon library/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ id: 'aspen:_itw_clevnet', slug: 'clevnet', state: 'Ohio', on: '2026-11-23' }] }), /Not a US BiblioCommons library/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ ...usPages.libraries[0], on: undefined }] }), /date/);
   assert.throws(() => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages: usPages, pool: { ...usList, updatedOn: undefined } }), /updatedOn/);
+});
+
+test('the generator keeps slugs and dates, adds a new library with its /select/ name and today, and drops one left out', () => {
+  const current = { ...usPages, libraries: usPages.libraries.filter(item => item.id !== 'bc:seattle') };
+  const next = usPageList({ current, today: '2027-01-05' });
+  const seattle = next.libraries.find(item => item.id === 'bc:seattle');
+  assert.deepEqual(seattle, { id: 'bc:seattle', slug: 'the-seattle-public-library', state: 'Washington', on: '2027-01-05' });
+  assert.deepEqual(next.libraries.filter(item => item.id !== 'bc:seattle'), current.libraries);
+  // A library whose state changed is dated again; a new left-out entry leaves the list.
+  const moved = usPageList({ current: { ...usPages, libraries: usPages.libraries.map(item => item.id === 'bc:tacoma' ? { ...item, state: 'Oregon' } : item) }, today: '2027-01-05' });
+  assert.deepEqual(moved.libraries.find(item => item.id === 'bc:tacoma'), { id: 'bc:tacoma', slug: 'tacoma-public-library', state: 'Washington', on: '2027-01-05' });
+  const out = usPageList({ current: { ...usPages, leftOut: [...usPages.leftOut, { id: 'bc:tacoma', reason: 'test', on: '2027-01-05' }] }, today: '2027-01-05' });
+  assert.ok(!out.libraries.some(item => item.id === 'bc:tacoma'));
+  // Order: the first states, then the others alphabetically; by name within a state.
+  assert.deepEqual([...new Set(usPages.libraries.map(item => item.state))].slice(0, 4), ['California', 'Washington', 'New Jersey', 'Arizona']);
+  assert.deepEqual(stateOrder(['Texas', 'New Jersey', 'Alaska', 'California', 'Washington'], usPages.firstStates), ['California', 'Washington', 'New Jersey', 'Alaska', 'Texas']);
+  assert.equal(stateAnchor('New Jersey'), 'us-new-jersey');
+  assert.throws(() => usPageList({ current: usPages }), /today/);
+});
+
+test('left out: consortium catalogs whose members have their own pages, schools, colleges and moved catalogs, each with a reason', () => {
+  const byId = new Map(getAllLibraries().map(entry => [entry.id, entry]));
+  const listed = new Set(usPages.libraries.map(item => item.id));
+  const branches = id => (byId.get(id).branches || []).map(branch => branch.name).sort();
+  const consortia = usPages.leftOut.filter(item => item.sameCatalogAs);
+  assert.deepEqual(consortia.map(item => item.id).sort(), ['bc:ccslib', 'bc:llc', 'bc:lplp', 'bc:marinet', 'bc:pac2']);
+  for (const item of consortia) {
+    // The page it duplicates exists and shows the same locations.
+    assert.ok(listed.has(item.sameCatalogAs), item.id);
+    assert.deepEqual(branches(item.id), branches(item.sameCatalogAs), item.id);
+    assert.ok(branches(item.id).length > 1, item.id);
+  }
+  // Kids' catalogs and the other school entries are already off the US list (us-catalogs-listed.json removed).
+  for (const id of ['bc:indyplkids', 'bc:stplkids', 'bc:godfrey-lee']) assert.equal(usListing(byId.get(id)), 'removed', id);
+  // School-and-public libraries that the IMLS survey lists as public libraries keep their pages.
+  for (const id of ['bc:tahq', 'bc:thornapplekellogg']) assert.ok(listed.has(id), id);
+});
+
+test('city corrections: the system’s own city from the IMLS survey, with its record; never from a name', () => {
+  const byId = new Map(getAllLibraries().map(entry => [entry.id, toPublicLibrary(entry)]));
+  const listed = new Set(usPages.libraries.map(item => item.id));
+  const cities = usCities.cities;
+  assert.ok(Object.keys(cities).length >= 40);
+  for (const [id, item] of Object.entries(cities)) {
+    assert.ok(listed.has(id), 'only libraries with a page: ' + id);
+    assert.match(item.on, /^\d{4}-\d{2}-\d{2}$/, id);
+    // The value replaces what the directory still says.
+    assert.equal(item.replaces, byId.get(id).city, id);
+    if (item.city === null) { assert.ok(item.evidence.note.length > 60, id); continue; }
+    // The city is the one in the IMLS record's address, which names the library system.
+    assert.match(item.evidence.fscsKey, /^[A-Z]{2}\d{4}$/, id);
+    assert.ok(item.evidence.address.endsWith(`, ${item.city.toUpperCase()}, ${item.evidence.fscsKey.slice(0, 2)} ${item.evidence.address.match(/(\d{5})$/)[1]}`), id);
+    assert.ok(item.evidence.name.length > 3, id);
+    assert.notEqual(item.city, item.replaces, id);
+  }
+  // San Diego County Library is in San Diego, not its 4S Ranch branch; MORE Libraries shows Wisconsin only.
+  const check = checkPages();
+  const row = id => check.libraries.find(item => item.id === id);
+  assert.equal(row('bc:sdcl').library.city, 'San Diego');
+  assert.equal(row('bc:sccl').library.city, 'Campbell');
+  assert.equal(row('bc:more').library.city, null);
+  assert.equal(row('bc:seattle').library.city, 'Seattle', 'a library without a correction keeps the directory’s city');
+  assert.deepEqual(withCity({ city: 'A', region: 'B' }, { city: null }), { city: null, region: 'B' });
+  // The build never reads the research files.
+  assert.ok(!/planning\//.test(readFileSync('tools/seo/check-pages.mjs', 'utf8') + readFileSync('tools/seo/build-pages.mjs', 'utf8') + readFileSync('tools/seo/us-pages.mjs', 'utf8') + JSON.stringify(usCities)));
 });
 
 // One build into a temporary folder, shared by the tests below.
@@ -423,9 +523,9 @@ async function buildOnce() {
   built = { out, read: path => readFileSync(join(out, path.slice(1) + '.html'), 'utf8') };
   return built;
 }
-const californiaPaths = () => checkPages().libraries.map(row => row.path);
+const usPaths = () => checkPages().libraries.map(row => row.path);
 
-test('California pages: the directory’s facts, ten books to check, a button and an app link per book, and no found claim', async () => {
+test('US pages: the directory’s facts, ten books to check, a button and an app link per book, and no found claim', async () => {
   const { read } = await buildOnce();
   const oakland = read('/libraries/oakland-public-library');
   assert.match(oakland, /<title>Oakland Public Library — catalog and book search \| MyBookshelf<\/title>|<title>Oakland Public Library — catalog and book search<\/title>/);
@@ -459,8 +559,24 @@ test('California pages: the directory’s facts, ten books to check, a button an
   assert.ok(sfpl.includes(`<script src="${CHECK_SCRIPT_PATH}" defer></script>`));
   const sfplData = JSON.parse(sfpl.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
   assert.deepEqual(sfplData.map(item => item['@type']), ['WebPage', 'Library', 'BreadcrumbList']);
-  // No found claim, count, due date or shelf location on any California page.
-  for (const path of californiaPaths()) {
+  // Other states: the same page, in its state, with links to that state's pages only.
+  const seattle = read('/libraries/the-seattle-public-library');
+  assert.match(seattle, /<title>The Seattle Public Library — catalog and book search(?: \| MyBookshelf)?<\/title>/);
+  assert.match(seattle, /<meta name="description" content="Book search for The Seattle Public Library catalog \(Seattle, Washington\): check popular books live when you tap[^"]*">/);
+  assert.ok(seattle.includes('<p class="eyebrow">Seattle · Washington · United States</p>'));
+  assert.ok(seattle.includes('<a href="/libraries#us-washington">Washington</a> / The Seattle Public Library</nav>'));
+  assert.ok(seattle.includes('They are books to check, not books known to be in The Seattle Public Library.'));
+  assert.ok(seattle.includes('<h3>More libraries in Washington</h3>'));
+  const washington = checkPages().libraries.filter(row => row.library.region === 'Washington');
+  for (const m of seattle.slice(seattle.indexOf('More libraries in Washington')).matchAll(/href="(\/libraries\/[^"]+)"/g)) assert.ok(washington.some(row => row.path === m[1]), m[1]);
+  const kcls = read('/libraries/king-county-library-system');
+  assert.ok(kcls.includes('<title>King County Library System, Issaquah — catalog and books</title>'), 'the IMLS city, not "King County"');
+  const sdcl = read('/libraries/san-diego-county-library');
+  assert.ok(sdcl.includes('<p class="eyebrow">San Diego · California · United States</p>') && !sdcl.includes('4S Ranch ·'));
+  const more = read('/libraries/more-libraries');
+  assert.ok(more.includes('<p class="eyebrow">Wisconsin · United States</p>') && !more.includes('Francis Creek'));
+  // No found claim, count, due date or shelf location on any US page.
+  for (const path of usPaths()) {
     const html = read(path);
     assert.ok(!/Found in the catalog|Books found in this|found in its catalog|In your library|Not in your library|checked \d{1,2} [A-Z][a-z]+ \d{4}|"ItemList"/.test(html), path);
     assert.ok(!/copies available|available now|due back|on the shelf|floor \d|shelf number|call number/i.test(html), path);
@@ -481,7 +597,7 @@ test('the check script is one external same-origin file: no inline script or sty
   const csp = JSON.parse(readFileSync('vercel.json', 'utf8')).services.web.routes[0].headers['Content-Security-Policy'];
   assert.match(csp, /script-src 'self'/);
   assert.match(csp, /connect-src 'self'/);
-  for (const path of californiaPaths()) {
+  for (const path of usPaths()) {
     const html = read(path);
     assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"))/.test(html), path);
     assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
@@ -625,22 +741,45 @@ test('the check script needs a page section and fetch: elsewhere it does nothing
   dom.window.close(); plain.window.close();
 });
 
-test('the sitemap lists every California page with the US list’s date; the index groups them under California', async () => {
+test('the sitemap lists every US page with the date its content changed; the index groups them by state', async () => {
   const { out, read } = await buildOnce();
   const sitemap = readFileSync(join(out, 'sitemap.xml'), 'utf8');
-  for (const path of californiaPaths()) assert.ok(sitemap.includes(`<loc>${origin}${path}</loc><lastmod>${usList.updatedOn}</lastmod>`), path);
+  const check = checkPages();
+  for (const row of check.libraries) assert.ok(sitemap.includes(`<loc>${origin}${row.path}</loc><lastmod>${row.lastmod}</lastmod>`), row.path);
+  // A page's date: the newest of the US list's date, its own, its city correction's and its related pages'; never the build date.
+  for (const row of check.libraries) assert.equal(row.lastmod, [usList.updatedOn, row.on, usCities.cities[row.id]?.on, ...row.related.map(other => other.on)].filter(Boolean).sort().at(-1), row.id);
+  const later = checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pool: usList, cities: usCities.cities,
+    pages: { ...usPages, libraries: usPages.libraries.map(item => item.id === 'bc:tacoma' ? { ...item, on: '2027-02-01' } : item) } });
+  const at = id => later.libraries.find(row => row.id === id).lastmod;
+  assert.equal(at('bc:tacoma'), '2027-02-01');
+  assert.equal(at('bc:seattle'), '2027-02-01', 'Seattle links to Tacoma');
+  assert.equal(at('bc:chipublib'), usList.updatedOn, 'another state is unchanged');
   const report = JSON.parse(readFileSync(join(out, 'seo-report.json'), 'utf8'));
-  assert.deepEqual(report.checkLibraryPages, californiaPaths());
-  for (const path of californiaPaths()) assert.ok(report.indexablePages.includes(path), path);
+  assert.deepEqual(report.checkLibraryPages, usPaths());
+  for (const path of usPaths()) assert.ok(report.indexablePages.includes(path), path);
+  for (const path of usPaths()) assert.ok(read(path).includes('<meta name="robots" content="index, follow">'), path);
   const hub = read('/libraries');
-  assert.ok(hub.includes(`<section id="us-california" class="state-index"><h2>United States: California <small>· ${californiaPaths().length} libraries</small></h2>`));
-  for (const path of californiaPaths()) assert.ok(hub.includes(`href="${path}"`), path);
-  assert.ok(hub.indexOf('id="india-by-state"') < hub.indexOf('id="us-california"'), 'next to the Indian groups');
+  assert.ok(hub.includes(`<section id="us-by-state" class="state-index"><h2>United States libraries by state <small>· ${usPaths().length} libraries</small></h2>`));
+  for (const path of usPaths()) assert.ok(hub.includes(`href="${path}"`), path);
+  assert.ok(hub.indexOf('id="india-by-state"') < hub.indexOf('id="us-by-state"'), 'next to the Indian groups');
+  // California, Washington and New Jersey first, then the other states alphabetically, each with its count.
+  const groups = [...hub.matchAll(/<h3 id="(us-[a-z-]+)">([^<]+) <small>· (\d+) librar(?:y|ies)<\/small><\/h3>/g)].map(m => [m[1], m[2], Number(m[3])]);
+  const states = [...new Set(check.libraries.map(row => row.library.region))];
+  assert.deepEqual(groups.map(group => group[1]), ['California', 'Washington', 'New Jersey', ...states.filter(state => !['California', 'Washington', 'New Jersey'].includes(state)).sort()]);
+  for (const [anchor, state, count] of groups) {
+    assert.equal(anchor, stateAnchor(state));
+    assert.equal(count, check.libraries.filter(row => row.library.region === state).length, state);
+  }
+  assert.equal(groups.reduce((sum, group) => sum + group[2], 0), usPaths().length);
+  assert.equal(groups.find(group => group[1] === 'California')[2], 30);
+  assert.equal(groups.find(group => group[1] === 'Washington')[2], 9);
+  // Each page's breadcrumb leads to its state's group.
+  for (const row of check.libraries.filter(item => !item.guide)) assert.ok(read(row.path).includes(`<a href="/libraries#${stateAnchor(row.library.region)}">`), row.path);
   // The index's date is its newest content.
-  assert.match(sitemap, new RegExp(`<loc>${origin}/libraries</loc><lastmod>${usList.updatedOn}</lastmod>`));
+  assert.match(sitemap, new RegExp(`<loc>${origin}/libraries</loc><lastmod>${check.date}</lastmod>`));
 });
 
-test('India pages are unchanged by the California pages: the same bytes with and without them', async () => {
+test('India pages are unchanged by the US pages: the same bytes with and without them', async () => {
   const { buildPages } = await import('./build-pages.mjs');
   const { mkdtemp, writeFile, rm, readdir } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
@@ -648,10 +787,10 @@ test('India pages are unchanged by the California pages: the same bytes with and
   const without = await mkdtemp(join(tmpdir(), 'no-check-pages-'));
   try {
     await writeFile(join(without, 'index.html'), APP_SHELL);
-    await buildPages(without, { analytics: false, siteVerification: null, policyEffectiveDate: null }, shelfPages(), { libraries: [], books: [], state: null, date: null });
+    await buildPages(without, { analytics: false, siteVerification: null, policyEffectiveDate: null }, shelfPages(), { libraries: [], books: [], states: [], date: null });
     const files = async dir => (await readdir(dir, { recursive: true })).filter(name => name.endsWith('.html')).sort();
     const before = await files(without);
-    const changed = new Set(['libraries.html', ...californiaPaths().map(path => path.slice(1) + '.html')]);
+    const changed = new Set(['libraries.html', ...usPaths().map(path => path.slice(1) + '.html')]);
     let compared = 0;
     for (const name of before) {
       if (changed.has(name)) continue;
@@ -667,9 +806,10 @@ test('India pages are unchanged by the California pages: the same bytes with and
 });
 
 test('checkData reads the committed files', () => {
-  const { pages, pool } = checkData();
-  assert.equal(pages.state, 'California');
+  const { pages, pool, cities } = checkData();
+  assert.deepEqual(pages.firstStates, ['California', 'Washington', 'New Jersey']);
   assert.equal(pool.updatedOn, usList.updatedOn);
+  assert.equal(cities['bc:sdcl'].city, 'San Diego');
 });
 
 test('the check script uses the app’s words for each answer (client LibraryAnswerCard)', () => {

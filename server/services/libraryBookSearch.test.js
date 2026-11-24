@@ -120,6 +120,27 @@ test('every row passing the title rule is a find, whatever its format: films and
     .map(row => row.format), ['Text book', 'Video cassette']);
 });
 
+// SFPL labels soundtrack rows MUSIC_DOWNLOAD (live check, 23 November 2026).
+// It was read as an e-book ("download") and ranked before the print rows.
+test('a MUSIC_DOWNLOAD soundtrack ranks after every book, e-book and audio row, and still counts', async () => {
+  const soundtrack = { title: "Charlotte's Web (Original Motion Picture Soundtrack)", format: 'MUSIC_DOWNLOAD' };
+  const others = [{ title: "Charlotte's web", format: 'BK' }, { title: "Charlotte's web", format: 'LPRINT' }, { title: "Charlotte's web", format: 'EBOOK' },
+    { title: "Charlotte's web", format: 'EAUDIOBOOK' }, { title: "Charlotte's web", format: 'BOOK_CD' }, { title: "Charlotte's web", format: 'AB' },
+    { title: "Charlotte's web : a study guide", format: 'BK' }, { title: "Charlotte's web", format: undefined },
+    // Rows the soundtrack outranked as an "e-book": later title groups.
+    { title: "Charlotte's web (unabridged)", format: 'EAUDIOBOOK' }, { title: "The annotated Charlotte's web", format: 'BK' },
+    { title: "E. B. White's Charlotte's web", format: 'EBOOK' }];
+  const book = { title: "Charlotte's Web", authors: ['E. B. White'] };
+  for (const rows of [[soundtrack, ...others], [...others, soundtrack], [others[0], soundtrack, ...others.slice(1)]]) {
+    const ranked = matchingRows(rows, book);
+    assert.equal(ranked.length, others.length + 1, 'the soundtrack is still a find');
+    assert.equal(ranked.at(-1), soundtrack);
+  }
+  // Ranking only: a library with only the soundtrack still has a find.
+  const only = await searchLibraryBook(catalog([{ ...soundtrack, recordId: '1' }]), book);
+  assert.equal(only.outcome, 'in_catalog');
+});
+
 test('TLC rows: all 80 finds and every matching row stay, the exact main title comes first, and films and music come last', () => {
   const searches = new Map();
   for (const row of tlcRows) {
