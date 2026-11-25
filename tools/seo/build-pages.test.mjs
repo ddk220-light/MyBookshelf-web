@@ -8,6 +8,7 @@ import { checkPublication, bookMix, bookMixKey, checkBooks, BOOK_GROUPS, CHECK_B
 import { usPageList, pageCandidates, linkSlug, formatPageList, populationRanking, topCoverage, TOP_LIBRARIES } from './us-pages.mjs';
 import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
 import { HTML_SECURITY_POLICY } from '../../shared/security-policy.mjs';
+import { GOOGLE_TAG_SNIPPET } from '../../shared/google-tag.mjs';
 import usList from '../../shared/us-book-pool.json' with { type: 'json' };
 import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
 import usCities from '../../shared/seo-us-cities.json' with { type: 'json' };
@@ -185,7 +186,7 @@ test('analytics and Search Console are off by default and, when set, add only th
       }
       assert.ok(!html.includes('google-site-verification'), name);
       assert.ok(html.includes('<script src="/insights.js" defer></script>'), name);
-      assert.ok(!html.includes('<script>window'), 'no inline script (CSP script-src self)');
+      assert.ok(!html.replace(GOOGLE_TAG_SNIPPET, '').includes('<script>'), 'no inline script but the Google tag (CSP)');
     }
     assert.ok((await readFile(join(out, 'libraries', 'anna-centenary-library.html'), 'utf8')).includes('/insights.js'));
     assert.ok(!(await readFile(join(out, 'app', 'index.html'), 'utf8')).includes('google-site-verification'));
@@ -222,14 +223,15 @@ test('every build publishes the policy texts with the committed date and keeps t
     assert.match(privacy, /<th scope="row">GitHub<\/th><td>Running the nightly backup of the accounts database\. The copy is encrypted as it is made, and only the encrypted file is kept, with Vercel\. Only we hold the key that opens it\.<\/td>/);
     assert.match(privacy, /<th scope="row">Vercel<\/th><td>[^<]*, encrypted backups of the accounts database, [^<]*<\/td>/);
     // Google Analytics: named as a provider, with its retention and the way to stop it, in the policy and in the older page's copy of it.
-    assert.match(privacy, /<th scope="row">Google Analytics<\/th><td>Counting visits and actions \(see <strong>Visit counts<\/strong>\)\. Its script runs on our pages; its advertising features are off\.<\/td>/);
+    assert.match(privacy, /<th scope="row">Google Analytics<\/th><td>Counting visits and actions \(see <strong>Visit counts<\/strong>\)\. Its script, the Google tag, runs on our pages\.<\/td>/);
     assert.match(privacy, /<th scope="row">Visit counts in Google Analytics<\/th><td>Up to 14 months, then only totals<\/td>/);
     assert.match(privacy, /<th scope="row">Google Search Console<\/th><td>[^<]*It adds nothing to our pages\.<\/td>/);
     for (const text of [privacy, readFileSync('client/public-app/privacy.html', 'utf8')]) {
-      for (const words of ['never your search words, which books you search for, open or save in the app, your account or your precise location', 'https://tools.google.com/dlpage/gaoptout', 'European Economic Area, the United Kingdom and Switzerland', 'up to 13 months'])
-        assert.ok(text.replace('never sent your search words', 'never your search words').includes(words), words);
-      assert.ok(!/Vercel Web Analytics|sets no cookies/.test(text));
+      for (const words of ['the addresses and titles of the pages you open (a book', 'search words, your account or your precise location', 'up to two years after your visit', 'https://tools.google.com/dlpage/gaoptout'])
+        assert.ok(text.includes(words), words);
+      assert.ok(!/Vercel Web Analytics|sets no cookie|13 months|advertising features|European Economic Area/.test(text));
     }
+    assert.match(await readFile(join(out, 'terms.html'), 'utf8'), /We use Google Analytics to understand how MyBookshelf is used\. See Privacy\./);
     // How it works: the one check as the app makes it (20 November 2026), no old rules.
     const how = await readFile(join(out, 'how-it-works.html'), 'utf8');
     for (const words of ['one search of your chosen library’s own catalog, across all its fields', 'at least 80% of the words in the book’s title', 'can only be searched by ISBN',
@@ -357,9 +359,9 @@ test('library and book pages: shelf section, links both ways, sitemap with check
     assert.equal(report.indexablePages.length, 19 + 1 + checkPages().libraries.filter(r => !r.guide).length + shelf.books.length + 1);
     for (const path of report.indexablePages) {
       const html = await readFile(join(out, path === '/' ? 'index.html' : path.slice(1) + '.html'), 'utf8');
-      // CSP 'self': no inline style or handler, no inline script but JSON-LD, images only from allowed hosts.
+      // CSP 'self': no inline style or handler, no inline script but JSON-LD and the Google tag, images only from allowed hosts.
       assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
-      assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|type="module"|src="\/))/.test(html), path);
+      assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|type="module"|src="\/))/.test(html.replace(GOOGLE_TAG_SNIPPET, '')), path);
       for (const m of html.matchAll(/<img[^>]+src="([^"]+)"/g)) assert.match(m[1], /^https:\/\/covers\.openlibrary\.org\/b\/id\/\d+-[ML]\.jpg$/, path);
       // No search text in any URL: no q= parameter, and select links carry only the book key.
       for (const m of html.matchAll(/href="([^"]+)"/g)) {
@@ -746,7 +748,7 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
     assert.ok(oakland.includes(`<a href="/select/oakland-public-library?book=${encodeURIComponent(book.bookKey)}" rel="nofollow">Check in the app`), book.title);
     assert.ok(oakland.includes(`src="https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg"`), book.title);
   }
-  assert.ok(oakland.includes('data-library-check data-library-id="bc:oaklandlibrary"'));
+  assert.ok(oakland.includes('data-library-check data-library-id="bc:oaklandlibrary" data-library-country="US"'));
   // A catalog with a Crawl-delay (Greenville's Aspen Discovery, 20 s) checks one book per tap: no "Check all".
   const greenville = read('/libraries/greenville-county-library-system');
   assert.equal((greenville.match(/data-check hidden>Check at Greenville County Library System/g) || []).length, CHECK_BOOKS);
@@ -804,7 +806,7 @@ test('the check script is one external same-origin file: no inline script or sty
   assert.equal(csp, HTML_SECURITY_POLICY);
   for (const path of usPaths()) {
     const html = read(path);
-    assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"|src="\/google-tag\.js"))/.test(html), path);
+    assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"))/.test(html.replace(GOOGLE_TAG_SNIPPET, '')), path);
     assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
   }
   // Pages without the section do not load it.

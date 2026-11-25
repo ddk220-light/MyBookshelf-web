@@ -1,22 +1,18 @@
-// Google Analytics page views and events (shared/google-tag.mjs): what may be
-// sent, where it runs and how addresses are scrubbed is all there. These are
-// the app's few shared words for it. Search text, books, places and the
-// account are never passed.
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { trackEvent, trackPage } from '../../../shared/google-tag.mjs';
+// Key events for the Google tag (shared/google-tag.mjs; docs/GOOGLE_TAG.md).
+// Page views, scrolls and clicks on outside links come from the tag itself.
+// Never pass search text or anything about the account.
 import type { BookNavigation } from './bookNavigation';
 import { candidatesFor, shelfMatchesFor } from './searchMemory';
 import type { PublicLibrary } from './types';
 import type { SearchAnswer } from './ui/search/useBookSearch';
 
-export { trackEvent };
+declare global {
+  interface Window { gtag?: (command: 'event', name: string, params?: Record<string, unknown>) => void }
+}
 
-/** Counts a page view when the path changes; an overlay keeps the path, so it is not one. */
-export function GoogleTagPages() {
-  const { pathname } = useLocation();
-  useEffect(() => { trackPage(); }, [pathname]);
-  return null;
+/** Sends one key event; nothing without the tag. */
+export function trackEvent(name: string, params: Record<string, unknown> = {}) {
+  window.gtag?.('event', name, params);
 }
 
 /** The library's public directory ID and country, for an event about a chosen library. */

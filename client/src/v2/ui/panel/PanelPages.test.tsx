@@ -83,7 +83,7 @@ describe('policy texts', () => {
     expect(screen.getByText(/^Running the nightly backup of the accounts database\./)).toBeInTheDocument();
     expect(screen.getByText(/encrypted backups of the accounts database/)).toBeInTheDocument();
     // Google Analytics: what it counts, its provider row, how long, and how to stop it; the cookieless counter is gone.
-    expect(screen.getByText(/^We use Google Analytics to count visits, /, { exact: false, selector: 'p' })).toHaveTextContent(/never sent your search words, which books you search for, open or save in the app, your account or your precise location/);
+    expect(screen.getByText(/^We use Google Analytics, through the Google tag, /, { exact: false, selector: 'p' })).toHaveTextContent(/never sent your search words, your account or your precise location/);
     expect(screen.getByRole('row', { name: /^Google Analytics Counting visits and actions/ })).toBeInTheDocument();
     expect(screen.getByRole('row', { name: 'Visit counts in Google Analytics Up to 14 months, then only totals' })).toBeInTheDocument();
     expect(screen.getByText(/tools\.google\.com\/dlpage\/gaoptout/)).toBeInTheDocument();

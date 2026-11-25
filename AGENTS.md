@@ -52,8 +52,8 @@ upstream arrive here in the next sync. README.md has the commands and layout.
   analytics. The server may keep it only in the anonymous operational log
   (no account ID, IP or device identifier), never linked to an account. A
   typed ISBN may appear in a book page's address: it is the book's identity.
-  Google tag events go only through the allow list in `shared/google-tag.mjs`
-  and never carry search text, book identity (a public page is sent by its address), the account or location.
+  The Google tag (`shared/google-tag.mjs`) is Google's snippet, unmodified; its
+  key events never carry search text or the account.
 - Location is used once and never stored.
 - Respect reduced motion and keep everything usable by keyboard.
 - Indian libraries are offered when finding a library only if

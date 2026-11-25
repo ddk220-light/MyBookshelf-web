@@ -7,9 +7,9 @@ In short: Node 22, npm workspaces, React/Vite client and an Express anonymous
 API. A library check shows found / not found / couldn't check for the chosen
 library, never copy counts, due dates, floors or shelf numbers, and a failed
 check never means absent. Provider keys stay server-side. Search text never goes
-in URLs, browser storage, platform logs or analytics. Google tag events go only
-through the allow list in shared/google-tag.mjs and never carry search text,
-book identity (a public page is sent by its address), the account or location. Respect catalog access
+in URLs, browser storage, platform logs or analytics. The Google tag
+(shared/google-tag.mjs) is Google's snippet, unmodified; its key events never
+carry search text or the account. Respect catalog access
 restrictions, robots.txt and reduced motion. Where a catalog's terms do not
 allow storing availability (BiblioCommons, 23 November 2026;
 server/data/catalog-policies.json), nothing is stored or cached for it: every

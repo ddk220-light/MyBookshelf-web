@@ -39,6 +39,10 @@ An account is optional. Keep your password to yourself. You are responsible
 for what happens in your account. You can delete it at any time from Account
 settings. We may close accounts that break these terms.
 
+## Analytics
+
+We use Google Analytics to understand how MyBookshelf is used. See Privacy.
+
 ## No warranty
 
 MyBookshelf is provided as it is, without any promise that it will always work

@@ -42,6 +42,8 @@ jobs:
       - run: node --test tools/catalog-hardening/*.test.mjs
       - run: node --test tools/accounts/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
+      # The pages carry the Google tag; test visits must never reach Google Analytics.
+      - run: echo "0.0.0.0 www.googletagmanager.com www.google-analytics.com" | sudo tee -a /etc/hosts
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
         env:

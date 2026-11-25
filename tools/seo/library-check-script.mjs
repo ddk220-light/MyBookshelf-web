@@ -1,8 +1,8 @@
 // The California library pages' check script (/library-check.js; owner
 // decision, 23 November 2026: "Yes, live on tap"). tools/seo/build-pages.mjs
 // writes this function's source into that same-origin file (the pages' CSP
-// allows scripts from 'self' only, and none inline), so it is
-// self-contained: no module-level references.
+// allows no inline script but the Google tag's), so it is self-contained: no
+// module-level references.
 //
 // Nothing is checked when the page loads: crawlers that run scripts never
 // start a catalog search. The script only shows the "Check" buttons (hidden
@@ -136,6 +136,16 @@ export function installLibraryChecks(win, doc) {
     if (!libraryId) return false;
     var rows = Array.prototype.slice.call(section.querySelectorAll('[data-book-key]'));
     var all = section.querySelector('[data-check-all]'), progress = section.querySelector('[data-check-progress]');
+    // Key events for the Google tag: the library, never the book.
+    function count(name, params) {
+      params.library_id = libraryId;
+      params.library_country = section.getAttribute('data-library-country');
+      params.event_source = 'library_page';
+      if (typeof win.gtag === 'function') win.gtag('event', name, params);
+    }
+    section.addEventListener('click', function (event) {
+      if (event.target.closest('.check-matches a, .check-catalog')) count('catalog_open', {});
+    });
     // One check at a time on this page: taps and "Check all" share one queue.
     var queue = win.Promise.resolve();
     function enqueue(row) {
@@ -151,9 +161,7 @@ export function installLibraryChecks(win, doc) {
         return ask(libraryId, row.getAttribute('data-book-key')).then(function (view) {
           row.setAttribute('data-state', 'answered');
           render(row, view);
-          // The answer shown, for /google-tag.js: the answer and its reason, never the book.
-          row.setAttribute('data-answer', view.answer);
-          try { row.dispatchEvent(new win.CustomEvent('mybookshelf-check', { bubbles: true, detail: { answer: view.answer, reason: view.reason } })); } catch (error) { /* Not counted. */ }
+          count('library_check', { outcome: view.answer === 'found' || view.answer === 'not_found' ? view.answer : 'unknown', reason: view.reason });
           if (button) {
             label(button, 'Check again', row.getAttribute('data-title') || 'this book');
             button.disabled = false;
