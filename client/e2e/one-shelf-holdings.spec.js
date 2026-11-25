@@ -130,6 +130,31 @@ test.describe('One-shelf result badges', () => {
     expect(calls.marks).toHaveLength(1);
   });
 
+  test('a marked book lists the search’s own catalog entries on its page, each time it is opened, with no check', async ({ page }) => {
+    const record = LINKED_LIBRARY.catalogUrl + 'record/5';
+    const calls = await setup(page, { marks: body => ({ delay: 100, raw: lines([
+      { type: 'mark', bookKey: RESULTS[5].bookKey, answer: 'found', catalogUrl: record, catalogLinkKind: 'record',
+        matches: [{ title: 'Malgudi days', author: 'Narayan, R. K.', url: record }, { title: 'Malgudi days : stories' }] },
+      { type: 'done', unchecked: body.books.map(item => item.bookKey).filter(key => key !== RESULTS[5].bookKey) }]) }) });
+    await page.goto('/');
+    await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
+    await searchFor(page, 'narayan');
+    for (let visit = 0; visit < 2; visit += 1) {
+      await results(page).getByRole('link', { name: label(RESULTS[5], LINKED_LIBRARY) }).click();
+      const card = page.getByRole('group', { name: 'In your library' });
+      await expect(card.getByText('In the library’s catalog:')).toBeVisible();
+      await expect(card.getByRole('listitem')).toHaveCount(2);
+      await expect(card.getByRole('listitem').first()).toContainText('Malgudi days');
+      await expect(card.getByRole('listitem').first().getByRole('link')).toHaveAttribute('href', record);
+      await page.waitForTimeout(200);
+      await page.goBack();
+    }
+    expect(calls.checks).toEqual([]);
+    expect(calls.marks).toHaveLength(1);
+    // The entries are in memory only.
+    expect(await everything(page)).not.toMatch(/: stories|narayan, r/i);
+  });
+
   test('a slow catalog: tapping a book while it is still looking aborts the request; Back asks once more for the rest', async ({ page }) => {
     const calls = await setup(page, { marks: () => ({ delay: 20_000, found: [RESULTS[0].bookKey] }) });
     await page.goto('/');

@@ -124,7 +124,8 @@ describe('background check for search results', () => {
     await screen.findByText('Anna Centenary Library');
     await searchFor('wings of fire');
     await waitFor(() => expect(marks).toHaveLength(1));
-    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found', catalogUrl: 'https://catalog.example.test/record/7' });
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found', catalogUrl: 'https://catalog.example.test/record/7',
+      matches: [{ title: 'The dragonet prophecy', author: 'Sutherland, Tui T.', url: 'https://catalog.example.test/record/7' }, { title: 'The dragonet prophecy : the graphic novel' }] });
     const results = await screen.findByRole('region', { name: 'Search results' });
     const marked = await within(results).findByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library' });
     fireEvent.click(marked);
@@ -132,6 +133,10 @@ describe('background check for search results', () => {
     expect(marks[0].signal?.aborted).toBe(true);
     const card = await screen.findByRole('group', { name: 'In your library' });
     expect(within(card).getByRole('link', { name: /^See this book/ })).toHaveAttribute('href', 'https://catalog.example.test/record/7');
+    // The search's own rows are listed: the catalog is not asked again.
+    expect(within(card).getAllByRole('listitem').map(item => item.textContent)).toEqual([
+      'The dragonet prophecy, opens in a new tabSutherland, Tui T.', 'The dragonet prophecy : the graphic novel, opens in a new tab']);
+    await new Promise(resolve => setTimeout(resolve, 20));
     expect(checks).toEqual([]);
 
     navigateRef!(-1);
@@ -151,6 +156,35 @@ describe('background check for search results', () => {
     await screen.findByRole('region', { name: 'Search results' });
     await new Promise(resolve => setTimeout(resolve, 20));
     expect(marks).toHaveLength(2);
+  });
+
+  it('a mark without rows (a stored find) is at once found with its link, and its one check adds the rows or changes nothing', async () => {
+    const { marks, checks } = stubApi({ check: 'not_found' });
+    seed();
+    renderHome();
+    await screen.findByText('Anna Centenary Library');
+    await searchFor('wings of fire');
+    await waitFor(() => expect(marks).toHaveLength(1));
+    const record = 'https://catalog.example.test/record/7';
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found', catalogUrl: record });
+    // Another, marked from the store and then again with the search's rows.
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[0].bookKey, answer: 'found', catalogUrl: record });
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[0].bookKey, answer: 'found', catalogUrl: record, matches: [{ title: 'Wings of fire' }] });
+    marks[0].stream.line({ type: 'done', unchecked: [PUBLIC[2].bookKey] });
+    marks[0].stream.end();
+    const open = async (name: string) => fireEvent.click(await within(await screen.findByRole('region', { name: 'Search results' })).findByRole('link', { name }));
+    await open('The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library');
+    let card = await screen.findByRole('group', { name: 'In your library' });
+    await waitFor(() => expect(checks).toHaveLength(1));
+    await new Promise(resolve => setTimeout(resolve, 20));
+    card = screen.getByRole('group', { name: 'In your library' });
+    expect(within(card).getByRole('link', { name: /^See this book/ })).toHaveAttribute('href', record);
+    navigateRef!(-1);
+    await open('Wings of Fire by A. P. J. Abdul Kalam, in Anna Centenary Library');
+    card = await screen.findByRole('group', { name: 'In your library' });
+    expect(within(card).getAllByRole('listitem')).toHaveLength(1);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(checks).toHaveLength(1);
   });
 
   it('a mark without the book’s record is checked again on the book page, and an unconfirmed reply keeps "In your library"', async () => {

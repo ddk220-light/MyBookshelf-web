@@ -70,6 +70,13 @@ describe('public API adapter', () => {
     let call = run();
     await expect(call.done).resolves.toEqual({ unchecked: ['v1:openlibrary:OL1W'], notFound: [], couldntCheck: [] });
     expect(call.marks).toEqual(['v1:openlibrary:OL2W']);
+    // A mark's rows are read as a book check's: ten at most, titles only when they are text, web links only.
+    const rows = [{ title: ' One ', author: 'A', url: 'javascript:alert(1)' }, { author: 'no title' }, ...Array.from({ length: 12 }, (_, index) => ({ title: 'T' + index, url: 'https://catalog.example.test/' + index }))];
+    stream(JSON.stringify({ type: 'mark', bookKey: 'v1:openlibrary:OL2W', answer: 'found', matches: rows }) + '\n' + JSON.stringify({ type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', matches: 'x' }) + '\n{"type":"done","unchecked":[]}\n');
+    const given: unknown[] = [];
+    await publicApi.holdingsSearch('koha:a', 'wings', asked, (key, url, matches) => given.push([key, url, matches]));
+    expect(given).toEqual([['v1:openlibrary:OL2W', undefined, [{ title: 'One', author: 'A' }, ...Array.from({ length: 8 }, (_, index) => ({ title: 'T' + index, url: 'https://catalog.example.test/' + index }))]],
+      ['v1:openlibrary:OL1W', undefined, undefined]]);
     expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/v2/holdings/search', expect.objectContaining({ body: JSON.stringify({ libraryId: 'koha:a', query: 'wings', books: asked.map(bookKey => ({ bookKey })) }),
       headers: expect.objectContaining({ Accept: 'application/x-ndjson' }) }));
     // Marks already passed on stand; the call still rejects.

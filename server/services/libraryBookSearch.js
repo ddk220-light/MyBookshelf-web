@@ -140,6 +140,20 @@ function listEntry(row, fallbackTitle) {
   return entry;
 }
 
+/** The reader's list for a found book: its ranked matching rows, one entry per record, at most MAX_MATCHES. */
+export function matchEntries(rows, fallbackTitle) {
+  const seen = new Set();
+  const list = [];
+  for (const row of rows) {
+    const id = row.recordId || recordLink(row) || row.title;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    list.push(listEntry(row, fallbackTitle));
+    if (list.length >= MAX_MATCHES) break;
+  }
+  return list;
+}
+
 const coded = (message, code) => Object.assign(new Error(message), { code });
 const failureCode = error => (/^CATALOG_[A-Z_]+$/.test(error?.code || '') ? error.code
   : error?.name === 'AbortError' || /deadline|timeout/i.test(error?.message || '') ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE');
@@ -198,15 +212,6 @@ async function check(provider, book, { deadline, readerIsbn, latestIsbn, rows })
     } catch (error) { return { outcome: 'unknown', errorCode: failureCode(error) }; }
     if (!found.length) return { outcome: 'no_match' };
 
-    const seen = new Set();
-    const list = [];
-    for (const row of found) {
-      const id = row.recordId || recordLink(row) || row.title;
-      if (seen.has(id)) continue;
-      seen.add(id);
-      list.push(listEntry(row, book?.title));
-      if (list.length >= MAX_MATCHES) break;
-    }
     const first = found[0];
     const link = recordLink(first);
     const shown = first.observation?.catalogUrl ? first.observation : first.catalogUrl ? first : null;
@@ -216,7 +221,7 @@ async function check(provider, book, { deadline, readerIsbn, latestIsbn, rows })
       ...(link ? { catalogUrl: link, catalogLinkKind: 'record' } : shown ? { catalogUrl: shown.catalogUrl, catalogLinkKind: shown.catalogLinkKind } : {}),
       matchedBook: { title: first.title || book?.title || '', ...(viaIsbn ? { isbn13: isbn } : {}) },
       foundBy: viaIsbn ? 'isbn' : 'title',
-      matches: list,
+      matches: matchEntries(found, book?.title),
     };
   } finally { clearTimeout(timer); }
 }

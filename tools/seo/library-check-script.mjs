@@ -148,6 +148,9 @@ export function installLibraryChecks(win, doc) {
     });
     // One check at a time on this page: taps and "Check all" share one queue.
     var queue = win.Promise.resolve();
+    // Each row's entries, in this page only: "Check again" can be answered
+    // from a stored find, which has none, and the entries stay shown.
+    var entries = [];
     function enqueue(row) {
       var state = row.getAttribute('data-state');
       if (state === 'waiting' || state === 'checking') return queue;
@@ -160,6 +163,9 @@ export function installLibraryChecks(win, doc) {
         render(row, { answer: 'checking' });
         return ask(libraryId, row.getAttribute('data-book-key')).then(function (view) {
           row.setAttribute('data-state', 'answered');
+          var at = rows.indexOf(row);
+          if (view.matches.length) entries[at] = view.matches;
+          else if (view.answer === 'found' && entries[at]) view.matches = entries[at];
           render(row, view);
           count('library_check', { outcome: view.answer === 'found' || view.answer === 'not_found' ? view.answer : 'unknown', reason: view.reason });
           if (button) {

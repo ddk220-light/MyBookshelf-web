@@ -745,7 +745,7 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
   assert.deepEqual([...oakland.matchAll(/<li class="check-book" data-book-key="([^"]+)"/g)].map(match => match[1]), oaklandBooks.map(book => book.bookKey));
   for (const book of oaklandBooks) {
     assert.ok(oakland.includes(`data-book-key="${book.bookKey}"`), book.title);
-    assert.ok(oakland.includes(`<a href="/select/oakland-public-library?book=${encodeURIComponent(book.bookKey)}" rel="nofollow">Check in the app`), book.title);
+    assert.ok(oakland.includes(`<a href="/select/oakland-public-library?book=${encodeURIComponent(book.bookKey)}" rel="nofollow">Check in the app<span class="sr-only">: `), book.title);
     assert.ok(oakland.includes(`src="https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg"`), book.title);
   }
   assert.ok(oakland.includes('data-library-check data-library-id="bc:oaklandlibrary" data-library-country="US"'));
@@ -772,7 +772,7 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
   assert.match(seattle, /<title>The Seattle Public Library — catalog and book search(?: \| MyBookshelf)?<\/title>/);
   assert.match(seattle, /<meta name="description" content="Book search for The Seattle Public Library catalog \(Seattle, Washington\): check popular books live when you tap[^"]*">/);
   assert.ok(seattle.includes('<p class="eyebrow">Seattle · Washington · United States</p>'));
-  assert.ok(seattle.includes('<a href="/libraries#us-washington">Washington</a> / The Seattle Public Library</nav>'));
+  assert.ok(seattle.includes('<a href="/libraries#us-washington">Washington</a> / <span>The Seattle Public Library</span></nav>'));
   assert.ok(seattle.includes('They are books to check, not books known to be in The Seattle Public Library.'));
   assert.ok(seattle.includes('<h3>More libraries in Washington</h3>'));
   const washington = checkPages().libraries.filter(row => row.library.region === 'Washington');
@@ -792,6 +792,19 @@ test('US pages: the directory’s facts, ten books to check, a button and an app
     // No search text in any address: book keys and library slugs only.
     for (const m of html.matchAll(/href="([^"]+)"/g)) assert.ok(!/[?&](q|query|search|term)=/i.test(m[1]), m[1]);
   }
+});
+
+test('an arrow link keeps a space before its arrow, and a breadcrumb’s last part is an item like the others', async () => {
+  const { read } = await buildOnce();
+  for (const path of ['/libraries/oakland-public-library', '/libraries/anna-centenary-library', '/libraries', '/', '/about', '/404', ...usPaths()]) {
+    let html;
+    try { html = read(path); } catch { continue; }
+    // The link is a flex box (site.css): a plain space after a hidden word or before a text of its own is dropped.
+    assert.ok(!/[^\s;][→↗]/.test(html.replace(GOOGLE_TAG_SNIPPET, '')), path);
+    assert.ok(!/<\/span>\s[→↗]/.test(html), path);
+    for (const [, crumbs] of html.matchAll(/<nav class="breadcrumbs"[^>]*>(.*?)<\/nav>/g)) assert.match(crumbs, / \/ <span>[^<]+<\/span>$/, path);
+  }
+  assert.ok(read('/libraries/oakland-public-library').includes('</span>&nbsp;→</a>'));
 });
 
 test('the check script is one external same-origin file: no inline script or style, and the CSP allows it', async () => {
@@ -923,6 +936,19 @@ test('the check script sends nothing when the page loads; a tap is one check, an
     assert.deepEqual([...rows[9].querySelectorAll('.check-matches li')].map(item => item.textContent), Array.from({ length: 10 }, (_, index) => `Entry ${index + 1}`));
     assert.match(doc.querySelector('[data-check-progress]').textContent, /Checked 10 books\./);
     assert.equal(doc.querySelector('[data-check-all]').disabled, false);
+    // "Check again" answered from a stored find, which has no entries: those already shown stay.
+    button(rows[9]).click();
+    await settle();
+    api.reply(11, { answer: 'found', catalogUrl: 'https://oaklandlibrary.bibliocommons.com/v2/record/S9', catalogLinkKind: 'record' });
+    await settle();
+    assert.equal(rows[9].querySelectorAll('.check-matches li').length, 10);
+    assert.equal(rows[9].querySelector('.check-matches a').getAttribute('href'), 'https://oaklandlibrary.bibliocommons.com/v2/record/S9');
+    // A book that is not found any more lists nothing.
+    button(rows[9]).click();
+    await settle();
+    api.reply(12, { answer: 'not_found' });
+    await settle();
+    assert.equal(rows[9].querySelector('.check-matches'), null);
     // Only library IDs and book keys ever leave the page.
     for (const call of api.calls) {
       assert.deepEqual(Object.keys(call.body).sort(), ['bookKey', 'libraryId']);

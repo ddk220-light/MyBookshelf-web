@@ -118,6 +118,19 @@ function lazyProfile(start) {
   return { then: (resolve, reject) => run().then(resolve, reject) };
 }
 
+// The catalog's own rows for a found book (up to ten, best match first,
+// libraryBookSearch.js): title and author as the catalog shows them, and the
+// record's link only when it is on the library's catalog address.
+function shownMatches(matches, library, entry) {
+  return (Array.isArray(matches) ? matches : []).slice(0, MAX_MATCHES).flatMap(match => {
+    const title = typeof match?.title === 'string' ? match.title.trim().slice(0, 300) : '';
+    if (!title) return [];
+    const author = typeof match.author === 'string' ? match.author.trim().slice(0, 300) : '';
+    const url = library.capabilities?.catalogLink ? onCatalogOrigin(match.url, library, entry) : undefined;
+    return [{ title, ...(author ? { author } : {}), ...(url ? { url } : {}) }];
+  });
+}
+
 const safeCatalogUrl = value => {
   if (typeof value !== 'string' || value.length > 2000) return undefined;
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : undefined; } catch { return undefined; }
@@ -208,16 +221,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         ? onCatalogOrigin(found.catalogUrl, library, entry) : undefined;
       const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
       const reason = answerReason(answer, found);
-      // The catalog's own rows for a found book (up to ten, best match first,
-      // libraryBookSearch.js): title and author as the catalog shows them, and
-      // the record's link only when it is on the library's catalog address.
-      const matches = answer === 'found' && Array.isArray(found?.matches) ? found.matches.slice(0, MAX_MATCHES).flatMap(match => {
-        const title = typeof match?.title === 'string' ? match.title.trim().slice(0, 300) : '';
-        if (!title) return [];
-        const author = typeof match.author === 'string' ? match.author.trim().slice(0, 300) : '';
-        const url = library.capabilities?.catalogLink ? onCatalogOrigin(match.url, library, entry) : undefined;
-        return [{ title, ...(author ? { author } : {}), ...(url ? { url } : {}) }];
-      }) : [];
+      const matches = answer === 'found' ? shownMatches(found?.matches, library, entry) : [];
       res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}),
         ...(matches.length ? { matches } : {}) });
       usage({ kind: 'book_check', libraryId, ...(keeps(libraryId) ? { bookKey } : {}), outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
@@ -260,12 +264,15 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
   }
 
   // Background check for search results (5.7): NDJSON lines
-  //   {"type":"mark","bookKey":"…","answer":"found","catalogUrl":"…","catalogLinkKind":"record"}   one per found book
+  //   {"type":"mark","bookKey":"…","answer":"found","catalogUrl":"…","catalogLinkKind":"record","matches":[…]}   per found book
   //   {"type":"done","unchecked":["…"],"notFound":["…"],"couldntCheck":["…"]}   always last
   // `catalogUrl` is the book's own record in this library's catalog, only when
   // the catalog adapter said the link is that record and it is on the
   // library's catalog address (absent otherwise, e.g. for a search link);
-  // `catalogLinkKind` is then always "record".
+  // `catalogLinkKind` is then always "record". `matches` is the same list as
+  // a book check's (shape, cap, links), from the rows of this one search; a
+  // stored find has none, and its mark is sent again with them when the
+  // search shows that book.
   // `notFound` lists only definite answers: the asked identity is not listed
   // (a work with a complete edition list, or a book asked by its ISBN). A row
   // that did not match is never "not found". `couldntCheck` lists books this
@@ -352,7 +359,9 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         if (item.outcome === 'found') {
           marked.add(item.bookKey);
           const catalogUrl = recordLink(item);
-          write({ type: 'mark', bookKey: item.bookKey, answer: 'found', ...(catalogUrl ? { catalogUrl, catalogLinkKind: 'record' } : {}) });
+          const matches = shownMatches(item.matches, library, entry);
+          write({ type: 'mark', bookKey: item.bookKey, answer: 'found', ...(catalogUrl ? { catalogUrl, catalogLinkKind: 'record' } : {}),
+            ...(matches.length ? { matches } : {}) });
         } else if (item.outcome === 'not_found' && book && definiteNotFound(item, book, libraryId)) {
           answered.add(item.bookKey);
         }

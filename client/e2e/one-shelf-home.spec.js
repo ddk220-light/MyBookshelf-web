@@ -579,6 +579,39 @@ test.describe('One-shelf phone details', () => {
     expect((await axe(page)).violations).toEqual([]);
   });
 
+  for (const [name, lines] of [['Anna Centenary Library', 1], ['Bengaluru City Central Public Library and Reading Room', 2]])
+    test(`"My library" stays clear of "${name}", 320 to 430 px wide and with text at twice the size`, async ({ page }) => {
+      const long = { ...LINKED_LIBRARY, name };
+      await setup(page, { saved: [book(1), book(2)], libraryId: long.id });
+      await page.route('**/api/v2/libraries/resolve', route => route.fulfill({ json: { library: long } }));
+      await page.goto('/');
+      const link = page.locator('.home-library');
+      await expect(link).toHaveText(name);
+      let shortest = Infinity;
+      for (const scale of [1, 2]) {
+        await page.evaluate(size => { document.documentElement.style.fontSize = size; }, scale * 100 + '%');
+        for (const width of [320, 360, 390, 430]) {
+          await page.setViewportSize({ width, height: 844 });
+          const at = `${width} px, text ${scale * 100}%`;
+          const box = await link.evaluate(element => {
+            const caption = element.parentElement.querySelector('.home-library-caption').getBoundingClientRect();
+            const text = document.createRange();
+            text.selectNodeContents(element);
+            const words = text.getBoundingClientRect(), target = element.getBoundingClientRect();
+            return { caption: caption.bottom, words: words.top, wordsBottom: words.bottom, target: target.height, targetBottom: target.bottom,
+              row: element.parentElement.getBoundingClientRect().height, lines: Math.round(words.height / parseFloat(getComputedStyle(element).lineHeight)) };
+          });
+          expect(box.words, at).toBeGreaterThanOrEqual(box.caption);
+          expect(box.wordsBottom, at).toBeLessThanOrEqual(box.targetBottom);
+          expect(box.target, at).toBeGreaterThanOrEqual(44);
+          // One line at the usual text size looks as it did: a 44 px target with the caption 10 px into it.
+          if (scale === 1 && box.lines === 1) { expect(box.target, at).toBeCloseTo(44, 0); expect(box.row, at).toBeCloseTo(50.8, 0); }
+          shortest = Math.min(shortest, box.lines);
+        }
+      }
+      expect(shortest).toBeGreaterThanOrEqual(lines);
+    });
+
   test('a press shows: the held button gets its inset ring over any hover style', async ({ page }) => {
     await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
     await page.goto('/');

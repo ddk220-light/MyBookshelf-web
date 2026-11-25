@@ -499,8 +499,9 @@ test('result marking identifies results from the search that produced them, with
     .send({ libraryId: rowsLibrary.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }, { bookKey: 'v1:openlibrary:OL2W' }] });
   assert.ok(Date.now() - startedAt < 1_500, 'no wait on a full resolution');
   assert.deepEqual(lines(response.text), [
-    // The mark carries the matching row's own record address.
-    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' },
+    // The mark carries the matching row's own record address, and the rows.
+    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record',
+      matches: [{ title: 'Matilda', author: 'Dahl, Roald', url: 'https://rows.example/Record/R1' }] },
     // No matching row is neither "not found" nor "couldn't check".
     { type: 'done', unchecked: ['v1:openlibrary:OL2W'], notFound: [], couldntCheck: [] },
   ]);
@@ -524,7 +525,9 @@ test('a mark carries a link only when the catalog said it is the book’s record
       express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 } }));
     });
     const response = await request(app).post('/api/v2/holdings/search').send({ libraryId: rowsLibrary.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }] });
-    assert.deepEqual(lines(response.text)[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', ...expected });
+    // The same for its row's link.
+    assert.deepEqual(lines(response.text)[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', ...expected,
+      matches: [{ title: 'Matilda', author: 'Dahl, Roald', ...(expected.catalogUrl ? { url: expected.catalogUrl } : {}) }] });
   }
 });
 
@@ -558,6 +561,54 @@ test('the done line lists definite "not found" answers and books the catalog cou
   assert.deepEqual(lines(failed.body), [{ type: 'done', unchecked: ['v1:openlibrary:OL1W'], notFound: [], couldntCheck: ['v1:openlibrary:OL1W'] }]);
 });
 
+// 25 November 2026: a book opened from search results shows its entries
+// without a second catalog request.
+test('a mark carries the catalog’s rows as a book check does (best ten, links on the catalog’s own address); a stored find is marked again with them', async () => {
+  const searched = [];
+  const rows = [...Array.from({ length: 12 }, (_, index) => ({ recordId: `G${index}`, title: `Matilda study guide ${index}`, authors: ['Guides, Gale'],
+    catalogUrl: `https://sfpl.bibliocommons.com/v2/record/G${index}`, catalogLinkKind: 'record' })),
+  { recordId: 'S1', title: 'Matilda', authors: ['Roald Dahl'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record' },
+  { recordId: 'S2', title: 'Matilda', authors: ['Roald Dahl'], catalogUrl: 'https://elsewhere.example/S2', catalogLinkKind: 'record' },
+  { recordId: 'X', title: 'James and the Giant Peach', authors: ['Roald Dahl'] }];
+  const { app, settle } = harness({ policies: shippedPolicies, searches: { search: async term => { searched.push(term); return rows; } } });
+  const check = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL1W' });
+  const marks = lines((await request(app).post('/api/v2/holdings/search').send({ libraryId: biblio.id, query: 'matilda dahl', books: [{ bookKey: 'v1:openlibrary:OL1W' }] })).text);
+  assert.deepEqual(searched, ['Matilda', 'matilda dahl']);
+  assert.deepEqual(marks[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: check.body.catalogUrl, catalogLinkKind: 'record', matches: check.body.matches });
+  assert.equal(marks[0].matches.length, 10);
+  assert.deepEqual(marks[0].matches.slice(0, 3), [{ title: 'Matilda', author: 'Roald Dahl', url: 'https://sfpl.bibliocommons.com/v2/record/S1' },
+    { title: 'Matilda', author: 'Roald Dahl' }, { title: 'Matilda study guide 0', author: 'Guides, Gale', url: 'https://sfpl.bibliocommons.com/v2/record/G0' }]);
+  await settle();
+
+  // A library that may be stored: the stored find has no rows, so its mark is
+  // sent at once and again with the rows of the search the other books needed.
+  const config = { ...readCatalogStoreConfig({}), backgroundChecksEnabled: true };
+  const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
+  await store.answers.writeAnswers([{ libraryId: 'vufind:rows', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'catalog_record',
+    catalogUrl: 'https://rows.example/Record/R9', catalogLinkKind: 'record', expiresAt: Date.now() + 60_000 }]);
+  const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', baseUrl: 'https://rows.example', catalogUrl: 'https://rows.example/' };
+  const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
+  let searches = 0;
+  const provider = { checkAvailability: async () => ({}), search: async () => { searches += 1; return [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'],
+    catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' }]; } };
+  const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
+    recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
+  const stored = makeTestApp(express => {
+    express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 } }));
+  });
+  const stream = async keys => lines((await request(stored).post('/api/v2/holdings/search').send({ libraryId: rowsLibrary.id, query: 'matilda', books: keys.map(bookKey => ({ bookKey })) })).text);
+  const mark = { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://rows.example/Record/R9', catalogLinkKind: 'record' };
+  assert.deepEqual(await stream(['v1:openlibrary:OL1W', 'v1:openlibrary:OL2W']), [mark,
+    { ...mark, matches: [{ title: 'Matilda', author: 'Dahl, Roald', url: 'https://rows.example/Record/R1' }] },
+    { type: 'done', unchecked: ['v1:openlibrary:OL2W'], notFound: [], couldntCheck: [] }]);
+  assert.equal(searches, 1);
+  // Every book answered from the store: no search, so no rows.
+  assert.deepEqual(await stream(['v1:openlibrary:OL1W']), [mark, { type: 'done', unchecked: [], notFound: [], couldntCheck: [] }]);
+  // And the book page's stored answer keeps its link only.
+  const page = await request(stored).post('/api/v2/holdings/check').send({ libraryId: rowsLibrary.id, bookKey: 'v1:openlibrary:OL1W' });
+  assert.deepEqual([page.body.answer, page.body.catalogUrl, page.body.matches, searches], ['found', 'https://rows.example/Record/R9', undefined, 1]);
+});
+
 test('a mark never carries a link off the library’s catalog address, or for a library that allows no links', async () => {
   const config = { ...readCatalogStoreConfig({}), backgroundChecksEnabled: true };
   const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
@@ -566,17 +617,18 @@ test('a mark never carries a link off the library’s catalog address, or for a 
   const rowsDirectory = { ...directory, entry: id => (id === rowsLibrary.id ? rowsLibrary : null),
     resolve: id => (id === rowsLibrary.id ? { ...publicOf(rowsLibrary), capabilities: { ...publicOf(rowsLibrary).capabilities, catalogLink: allowLinks } } : null) };
   let url = 'https://elsewhere.example/Record/R1';
-  const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, catalogUrl: url }] };
+  const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, catalogUrl: url, catalogLinkKind: 'record' }] };
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
   const app = makeTestApp(express => {
     express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 } }));
   });
   const marks = async query => lines((await request(app).post('/api/v2/holdings/search').send({ libraryId: rowsLibrary.id, query, books: [{ bookKey: 'v1:openlibrary:OL1W' }] })).text);
-  assert.deepEqual((await marks('matilda one'))[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found' });
+  const unlinked = { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', matches: [{ title: 'Matilda', author: 'Dahl, Roald' }] };
+  assert.deepEqual((await marks('matilda one'))[0], unlinked);
   url = 'https://rows.example/Record/R1';
   allowLinks = false;
-  assert.deepEqual((await marks('matilda two'))[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found' });
+  assert.deepEqual((await marks('matilda two'))[0], unlinked);
 });
 
 // 20 November 2026: the library's deadline counts from the reader's tap, so
@@ -615,9 +667,9 @@ test('a no-store library (BiblioCommons): live every time, no stored answers for
   assert.deepEqual(searched, ['Matilda', 'Matilda'], 'one live search per check');
   const shelf = await request(app).post('/api/v2/holdings/lookup').send({ libraryId: biblio.id, books: [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W' }] });
   assert.deepEqual(shelf.body, { answers: {} });
-  // The search-list mark comes from the live search, with no rows kept for the book page.
+  // The search-list mark comes from the live search and carries its rows to the open page; none are kept here.
   const marks = await request(app).post('/api/v2/holdings/search').send({ libraryId: biblio.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }] });
-  assert.deepEqual(lines(marks.text).map(line => [line.type, line.answer]), [['mark', 'found'], ['done', undefined]]);
+  assert.deepEqual(lines(marks.text).map(line => [line.type, line.answer, line.matches?.length]), [['mark', 'found', 1], ['done', undefined, undefined]]);
   await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL1W' });
   await settle();
   assert.equal(searched.length, 4);

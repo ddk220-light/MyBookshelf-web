@@ -190,7 +190,8 @@ test('marks and book checks share the rows of one search: opening a book whose t
   const catalog = rowsCatalog([row('Malgudi Days', { catalogUrl: 'https://rows.example/7', catalogLinkKind: 'record' })]);
   const { lookup } = harness({ providerFor: () => catalog.provider, platforms: NO_PACING });
   const items = await collect(lookup.markResults({ library, query: 'malgudi days', books: [{ bookKey: 'v1:openlibrary:OL5W', title: 'Malgudi Days' }] }));
-  assert.deepEqual(items[0], { bookKey: 'v1:openlibrary:OL5W', outcome: 'found', evidence: 'title_match', catalogUrl: 'https://rows.example/7', catalogLinkKind: 'record', source: 'live' });
+  assert.deepEqual(items[0], { bookKey: 'v1:openlibrary:OL5W', outcome: 'found', evidence: 'title_match', catalogUrl: 'https://rows.example/7', catalogLinkKind: 'record',
+    matches: [{ title: 'Malgudi Days', author: 'Someone', url: 'https://rows.example/7' }], source: 'live' });
   const answer = await lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL5W', workId: 'OL5W', title: 'Malgudi Days' } });
   assert.deepEqual([answer.outcome, answer.requests, catalog.asked], ['found', 0, ['malgudi days']]);
 });

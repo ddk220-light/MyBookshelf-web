@@ -1,9 +1,10 @@
 // In-memory library answers for the one-shelf screens (plan 3.3). Nothing here
 // is written to browser storage, and no search text is kept: entries are keyed
 // only by library and book. Answers are cleared whenever the chosen library
-// changes. Later phases feed this from /holdings/lookup (shelf),
-// /holdings/search (results) and /holdings/check (book page).
+// changes. Fed from /holdings/lookup (shelf), /holdings/search (results) and
+// /holdings/check (book page).
 import { createContext, createElement, useContext, useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
+import type { CatalogMatch } from './api';
 
 export type HoldingsAnswer = 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'checking';
 const ANSWERS: ReadonlySet<string> = new Set(['found', 'not_found', 'unconfirmed', 'unknown', 'checking']);
@@ -29,8 +30,10 @@ export type HoldingsStore = {
   setLibrary: (libraryId: string | null) => void;
   get: (bookKey: string) => HoldingsAnswer | undefined;
   recordUrl: (bookKey: string) => string | undefined;
+  /** A found book's rows from the library's catalog: empty when a check gave none, undefined when none has been asked for. */
+  matches: (bookKey: string) => CatalogMatch[] | undefined;
   /** Records answers for the given library; ignored if that library is no longer chosen. */
-  set: (libraryId: string, answers: Record<string, HoldingsAnswer>, recordUrls?: Record<string, string>) => void;
+  set: (libraryId: string, answers: Record<string, HoldingsAnswer>, recordUrls?: Record<string, string>, matches?: Record<string, CatalogMatch[]>) => void;
   clear: () => void;
   subscribe: (listener: () => void) => () => void;
   version: () => number;
@@ -40,6 +43,7 @@ export function createHoldingsStore(initialLibraryId: string | null = null): Hol
   let library = initialLibraryId;
   const answers = new Map<string, HoldingsAnswer>();
   const links = new Map<string, string>();
+  const rows = new Map<string, CatalogMatch[]>();
   let revision = 0;
   const listeners = new Set<() => void>();
   const changed = () => { revision += 1; for (const listener of [...listeners]) listener(); };
@@ -50,24 +54,30 @@ export function createHoldingsStore(initialLibraryId: string | null = null): Hol
       library = next;
       answers.clear();
       links.clear();
+      rows.clear();
       changed();
     },
     get: (bookKey) => (library ? answers.get(holdingsKey(library, bookKey)) : undefined),
     recordUrl: (bookKey) => (library ? links.get(holdingsKey(library, bookKey)) : undefined),
-    set(libraryId, next, urls) {
+    matches: (bookKey) => (library ? rows.get(holdingsKey(library, bookKey)) : undefined),
+    set(libraryId, next, urls, matches) {
       if (!library || libraryId !== library) return;
       let updated = false;
       for (const [bookKey, answer] of Object.entries(next)) {
         if (!ANSWERS.has(answer)) continue;
         const key = holdingsKey(libraryId, bookKey);
         const previous = answers.get(key);
-        // A check that could not answer (unknown, unconfirmed) or has not
-        // answered yet never replaces a proven answer.
-        if ((answer === 'unknown' || answer === 'unconfirmed' || answer === 'checking') && (previous === 'found' || previous === 'not_found')) continue;
+        // A find is never taken away (as in the server's store), and a check
+        // that could not answer (unknown, unconfirmed) or has not answered
+        // yet never replaces a proven answer.
+        if (answer !== 'found' && (previous === 'found' || (previous === 'not_found' && answer !== 'not_found'))) continue;
         if (previous !== answer) { answers.set(key, answer); updated = true; }
-        const url = answer === 'found' ? urls?.[bookKey] : undefined;
+        if (answer !== 'found') continue;
+        const url = urls?.[bookKey];
         if (url && links.get(key) !== url) { links.set(key, url); updated = true; }
-        else if (answer !== 'found' && links.delete(key)) updated = true;
+        // An answer without rows (a stored one keeps none) leaves known rows.
+        const found = matches?.[bookKey];
+        if (found && (found.length || !rows.has(key))) { rows.set(key, found); updated = true; }
       }
       if (updated) changed();
     },
@@ -75,6 +85,7 @@ export function createHoldingsStore(initialLibraryId: string | null = null): Hol
       if (!answers.size) return;
       answers.clear();
       links.clear();
+      rows.clear();
       changed();
     },
     subscribe(listener) {

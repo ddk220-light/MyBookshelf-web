@@ -163,7 +163,7 @@ export function ShelfBookPage() {
 
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
-  const card = useLibraryAnswer(book?.bookKey);
+  const card = useLibraryAnswer(bookKey, Boolean(book));
   // Google Analytics: an answer that is shown, and the way to the catalog, with
   // the library and never the book. Checking again shows a new answer.
   const shownAnswer = book && card.kind === 'library' && card.answer !== 'checking' && card.answer !== 'unsupported' ? card.answer : null;

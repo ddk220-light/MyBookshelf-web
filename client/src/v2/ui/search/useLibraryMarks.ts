@@ -102,8 +102,8 @@ export function useLibraryMarks({ active, libraryId, candidateId, entries, query
         if (record && record.phase === 'running') record.phase = 'done';
         setRun(current => current?.candidateId === candidateId && current.libraryId === libraryId ? { ...current, status } : current);
       };
-      api.holdingsSearch(libraryId, text, asked, (bookKey, catalogUrl) => {
-        if (!controller.signal.aborted) store.set(libraryId, { [bookKey]: 'found' }, catalogUrl ? { [bookKey]: catalogUrl } : undefined);
+      api.holdingsSearch(libraryId, text, asked, (bookKey, catalogUrl, matches) => {
+        if (!controller.signal.aborted) store.set(libraryId, { [bookKey]: 'found' }, catalogUrl ? { [bookKey]: catalogUrl } : undefined, matches && { [bookKey]: matches });
       }, controller.signal).then(({ notFound, couldntCheck }) => {
         if (controller.signal.aborted) return;
         const answers: Record<string, HoldingsAnswer> = Object.fromEntries([

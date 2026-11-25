@@ -2,7 +2,7 @@ import { getProvider, withProviderRouteExecution } from '../providers/index.js';
 import { catalogOperation, withCatalogOperation, withCatalogSuboperation } from '../providers/http.js';
 import { createRobotsPolicy } from '../providers/robots.js';
 import { validateAndNormalize } from '../isbn.js';
-import { matchingRows, termKey } from '../libraryBookSearch.js';
+import { matchEntries, matchingRows, termKey } from '../libraryBookSearch.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { linkKind, normalizeProviderObservation } from './observation.js';
@@ -20,7 +20,9 @@ import { pacingHostOf } from '../directory.js';
 //     "does library X have book Y" -> found | not_found | couldnt_check
 //   markResults({ library, query, books, signal, deadlineAt })
 //     async iterable of { bookKey, outcome, ... } as answers arrive, then
-//     { done: true, notAttempted, unmatched, failed }
+//     { done: true, notAttempted, unmatched, failed }. A book found by the
+//     run's own search carries its rows (`matches`); a stored "found" has
+//     none and is given again with them when the search shows that book.
 //
 // `library` is a directory entry (server/data/*.json). `book` is
 //   { bookKey, isbn13?, workId?, title?, authors?, recordId?, recordLibraryId? }
@@ -617,6 +619,7 @@ export function createCatalogLookup({
     const { platform, host, paced, platformName } = settings(entry);
     const list = books.filter(book => book?.bookKey).slice(0, MAX_RESULT_BOOKS);
     const pending = new Map(list.map(book => [book.bookKey, book]));
+    const storedFinds = [];
     const unmatched = [];
     // Books this run asked the catalog about without a usable answer (the
     // search failed or ran out of time, an ISBN answer could not be read):
@@ -641,7 +644,9 @@ export function createCatalogLookup({
       const stored = storedAnswer(storedRows.filter(row => own.has(identityKey(row))), askedIdentity(libraryId, book, 'work'));
       if (!stored) continue;
       pending.delete(book.bookKey);
-      yield { bookKey: book.bookKey, ...stored, source: 'stored' };
+      const item = { bookKey: book.bookKey, ...stored, source: 'stored' };
+      if (stored.outcome === 'found') storedFinds.push({ book, item });
+      yield item;
     }
     const strategy = platform?.results.strategy || 'none';
     const adapter = pending.size && strategy !== 'none' ? providerFor(entry) : null;
@@ -712,19 +717,30 @@ export function createCatalogLookup({
           return;
         }
         endRun();
+        // The same rule and ranking as a book check: any row passing the
+        // title rule marks the book, and the link is the best-ranked row's
+        // (the ISBN row, then rows with the book's author, from the
+        // `authors` holdings.js gives each book, then the exact title, ...;
+        // films and music last). The rows go with the mark, so the book page
+        // lists them without a second request (the check's list and cap,
+        // `matchEntries`).
+        const rowsFor = book => matchingRows(rows, book, { isbn: validateAndNormalize(book.isbn13 || '') || null });
+        // Stored answers keep no rows (record.js): a book already marked from
+        // the store is given again with the rows this search has for it.
+        for (const { book, item } of storedFinds) {
+          const matches = matchEntries(rowsFor(book), book.title);
+          if (matches.length) yield { ...item, matches };
+        }
         for (const book of [...pending.values()]) {
           pending.delete(book.bookKey);
-          // The same rule and ranking as a book check: any row passing the
-          // title rule marks the book, and the link is the best-ranked row's
-          // (the ISBN row, then rows with the book's author, from the
-          // `authors` holdings.js gives each book, then the exact title, ...;
-          // films and music last).
-          const [row] = matchingRows(rows, book, { isbn: validateAndNormalize(book.isbn13 || '') || null });
+          const found = rowsFor(book);
+          const [row] = found;
           if (!row) { unmatched.push(book.bookKey); continue; }
           // The link is the book's record only when the adapter said so.
           const catalogUrl = row.catalogUrl || row.observation?.catalogUrl;
           const catalogLinkKind = linkKind(row.catalogUrl ? row.catalogLinkKind : row.observation?.catalogLinkKind);
-          yield { bookKey: book.bookKey, outcome: 'found', evidence: 'title_match', ...(catalogUrl ? { catalogUrl, catalogLinkKind } : {}), source: 'live' };
+          yield { bookKey: book.bookKey, outcome: 'found', evidence: 'title_match', ...(catalogUrl ? { catalogUrl, catalogLinkKind } : {}),
+            matches: matchEntries(found, book.title), source: 'live' };
         }
       } else if (strategy === 'batch_isbn' && provider.checkMany) {
         const plan = [];

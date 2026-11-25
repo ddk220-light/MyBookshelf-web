@@ -44,7 +44,7 @@
 /* The wordmark on the left and the settings gear opposite it (Main board). */
 .one-shelf-frame .home-brand { display: flex; align-items: center; justify-content: space-between; gap: 2px; height: 44px; }
 .one-shelf-frame .home-person { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; margin-right: -10px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; }
-.one-shelf-frame .home-wordmark { font: 500 1.5rem/1.2 var(--serif); letter-spacing: -.02em; color: var(--reader-ink); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.one-shelf-frame .home-wordmark { font: 500 min(1.5rem, 11vw)/1.2 var(--serif); white-space: nowrap; letter-spacing: -.02em; color: var(--reader-ink); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 
 .one-shelf-frame .search-bar { margin-top: 12px; height: 52px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding-left: 14px; background: var(--reader-surface); border: 1px solid var(--reader-line); border-radius: 14px; box-shadow: 0 1px 2px rgb(31 26 23 / .06); }
 .one-shelf-frame .search-bar:focus-within { border-color: var(--reader-accent); outline: 2px solid var(--reader-accent); outline-offset: 1px; }
@@ -95,17 +95,18 @@
 .one-shelf-frame .bay-shadow { height: 8px; flex: 0 0 auto; background: linear-gradient(180deg, var(--plank-shadow), transparent); }
 /* "Suggested": a small label on the plank front below each suggested book
    (owner review, 14 November). It is drawn over the plank from the book's
-   own slot, centred on the plank as the old per-bay tag was, so the bay keeps
-   its height and the shelf its rhythm. Not faded: the fade is on the cover
-   face only. */
-.one-shelf-frame .suggested-label { position: absolute; top: calc(100% - 2px); left: 50%; transform: translateX(-50%); height: 18px; box-sizing: border-box; padding: 0 8px;
+   own slot, whose foot is the top of the plank front, and centred on it
+   (14 px; 16 px on desks), so the bay keeps its height and the shelf its
+   rhythm. Not faded: the fade is on the cover face only. Larger text grows it
+   only as far as the labels of one row stay apart. */
+.one-shelf-frame .suggested-label { position: absolute; top: calc(100% + 7px); left: 50%; transform: translate(-50%, -50%); box-sizing: border-box; padding: 0 8px;
   border: 1px solid var(--page-side-b); border-radius: 3px; background: var(--reader-bg); color: var(--reader-secondary); pointer-events: none;
-  font-size: .75rem; font-weight: 600; line-height: 16px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 1px 2px var(--plank-shadow); }
+  font-size: clamp(12px, 3.6vw, .75rem); font-weight: 600; line-height: calc(4 / 3); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 1px 2px var(--plank-shadow); }
 
 /* My shelf */
 .one-shelf-frame .my-shelf { margin-top: 10px; }
 .one-shelf-frame .my-shelf-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 40px; }
-.one-shelf-frame .my-shelf-heading h1 { margin: 0; font: 500 1.75rem/40px var(--serif); letter-spacing: -.025em; }
+.one-shelf-frame .my-shelf-heading h1 { margin: 0; padding: 3.2px 0; font: 500 1.75rem/1.2 var(--serif); letter-spacing: -.025em; }
 .one-shelf-frame .my-shelf-heading span { font-size: .875rem; color: var(--reader-muted); }
 .one-shelf-frame .home-bookcase { margin-top: 10px; }
 .one-shelf-frame .home-bookcase .bay { margin-bottom: 6px; content-visibility: auto; contain-intrinsic-size: none calc(166px + var(--shelf-answer-space, 0px)); }
@@ -155,9 +156,9 @@
 .one-shelf-frame .cover-badge-library { top: -12px; right: -13px; }
 .one-shelf-frame .cover-badge-small { width: 20px; height: 20px; border-width: 1.5px; border-color: var(--reader-bg); top: -6px; right: -8px; }
 
-/* List view */
+/* List view: every row the list's full width; titles and bylines of two lines at most. */
 .one-shelf-frame .shelf-list { margin: 6px 0 0; padding: 0; list-style: none; }
-.one-shelf-frame .shelf-list-item { min-height: 70px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--reader-line); color: var(--reader-ink); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.one-shelf-frame .shelf-list-item { box-sizing: border-box; min-height: 71px; padding: 8px 0; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--reader-line); color: var(--reader-ink); text-decoration: none; }
 .one-shelf-frame .shelf-list-cover { position: relative; flex: 0 0 36px; width: 36px; height: 54px; border-radius: 1px 2px 2px 1px; box-shadow: 2px 2px 4px var(--book-shadow);
   background: linear-gradient(90deg, rgb(0 0 0 / .3) 0, rgb(255 255 255 / .16) 2px, transparent 6px), var(--cover-bg); }
 .one-shelf-frame .shelf-list-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; }
@@ -168,9 +169,10 @@
   background: linear-gradient(90deg, rgb(0 0 0 / .3) 0, rgb(255 255 255 / .16) 2px, transparent 6px), var(--cover-bg); }
 .one-shelf-frame .shelf-list-cover.is-suggested img[data-ready] { opacity: .75; }
 .one-shelf-frame .shelf-list-cover.is-suggested.is-arriving::before, .one-shelf-frame .shelf-list-cover.is-suggested.is-arriving img[data-ready] { animation: suggestion-in 600ms ease-out both; }
-.one-shelf-frame .shelf-list-text { display: flex; flex-direction: column; min-width: 0; }
-.one-shelf-frame .shelf-list-title { font: 400 1.0625rem/1.25 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.one-shelf-frame .shelf-list-author { font-size: .8125rem; line-height: 1.4; color: var(--reader-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.one-shelf-frame .shelf-list-text { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.one-shelf-frame .shelf-list-title, .one-shelf-frame .shelf-list-author { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.one-shelf-frame .shelf-list-title { font: 400 1.0625rem/1.25 var(--serif); }
+.one-shelf-frame .shelf-list-author { font-size: .8125rem; line-height: 1.4; color: var(--reader-muted); }
 .one-shelf-frame .shelf-list-item:focus-visible { outline-offset: -3px; }
 /* A suggestion row held empty while the first suggestions arrive: its height only. */
 .one-shelf-frame .shelf-list-held { height: 71px; }
@@ -227,6 +229,7 @@
 .one-shelf-frame .light-toggle button[aria-pressed='true'] { background: var(--pressed-bg); color: var(--pressed-ink); font-weight: 600; }
 .one-shelf-frame .light-toggle button:focus-visible { outline-offset: -3px; }
 .one-shelf-frame .panel-links { margin-top: auto; padding-top: 24px; display: flex; flex-direction: column; }
+.one-shelf-frame .side-panel .panel-links h2 { margin-bottom: 8px; }
 .one-shelf-frame .panel-links .panel-row:last-child { border-bottom: 1px solid var(--reader-line); }
 .one-shelf-frame .panel-row { min-height: 52px; border-top: 1px solid var(--reader-line); display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--reader-accent); font-weight: 600; text-decoration: none; }
 .one-shelf-frame .panel-row-plain { border-top: 0; }
@@ -245,14 +248,20 @@
 /* A shared library link that could not be opened (plan Phase 7). */
 .one-shelf-frame .home-notice { margin: 16px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--reader-fill); color: var(--reader-ink); font-size: .9375rem; line-height: 1.45; }
 
-/* Library answers sit under covers and stay independent of the suggested label. */
+/* Library answers sit under covers, above the plank's top (its lip, 12 px):
+   an answer of more lines makes the row taller. Each slot is as tall as the
+   row, so the "Suggested" labels of one row stand in line on the plank front
+   whether or not a book has an answer. */
 .one-shelf-frame .has-library { --shelf-answer-space: 2.25rem; }
 .one-shelf-frame .has-library .bay-books, .one-shelf-frame .home-desk .has-library .bay-books {
-  height: calc(var(--bay-h, 132px) + var(--shelf-answer-space));
-  align-items: start;
+  height: auto;
+  min-height: calc(var(--bay-h, 132px) + var(--shelf-answer-space));
+  align-items: stretch;
   padding-top: 6px;
 }
-.one-shelf-frame .has-library .bay-books > li { flex-direction: column; align-items: center; gap: 4px; }
+.one-shelf-frame .has-library .bay-books > li { flex-direction: column; justify-content: flex-start; align-items: center; gap: 4px; min-width: 0; padding-bottom: 16px; }
+/* "Not in your library" may use part of the gap beside its column (18 px or more), so it seldom needs a second line. */
+.one-shelf-frame .has-library .bay-books > li > .cover-answer { margin-inline: -6px; }
 .one-shelf-frame .cover-answer { display: block; font-size: .75rem; line-height: 1.3; font-weight: 600; text-align: center; overflow-wrap: anywhere; }
 
 .one-shelf-frame .home-library-row, .one-shelf-frame .home-library-prompt h2 {
@@ -261,9 +270,13 @@
   gap: 8px;
   min-width: 0;
 }
+/* At large text the view switch moves below the library rather than squeezing its name to a few letters a line. */
+.one-shelf-frame .home-meta:has(> .home-library-row) { flex-wrap: wrap; }
+.one-shelf-frame .home-library-row { flex: 1 1 10rem; max-width: max-content; }
 .one-shelf-frame .home-library-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .one-shelf-frame .home-library-caption { margin-bottom: -10px; font-size: .75rem; line-height: 1.4; color: var(--reader-muted); }
-.one-shelf-frame .home-library-row .home-library { min-height: 44px; display: flex; align-items: center; }
+/* The caption sits in the name's own top padding, so it clears a name of any number of lines and any text size (one 14 px line: 44 px). */
+.one-shelf-frame .home-library-row .home-library { box-sizing: border-box; min-height: 44px; padding: 12px 0; display: flex; align-items: center; }
 .one-shelf-frame .home-library-tile { flex: 0 0 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--control-line); border-radius: 8px; }
 .one-shelf-frame .home-library-prompt {
   display: grid;
@@ -297,6 +310,8 @@
     outline: 2px solid var(--reader-accent);
     outline-offset: 2px;
   }
+  /* The picker's list scrolls: a ring outside the row would be cut off at both sides. */
+  .one-shelf-frame .library-row:hover:not(:focus-visible) { outline-offset: -2px; }
 }
 /* A press shows with a mouse and on touch. :is() (not :where()) and the
    doubled frame class make it outrank every hover rule (the global button

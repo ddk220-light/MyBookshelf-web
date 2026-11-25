@@ -51,6 +51,40 @@ describe('holdings store', () => {
     store.set('lib:a', { 'v1:isbn:3': 'unconfirmed' });
     expect(store.get('v1:isbn:3')).toBe('unconfirmed');
   });
+
+  it('a find, its record link and its rows are never taken away, and a not-found answer can still become found', () => {
+    const store = createHoldingsStore('lib:a');
+    const rows = [{ title: 'Wings of fire', url: 'https://catalog.example.test/record/1' }];
+    store.set('lib:a', { 'v1:isbn:1': 'found', 'v1:isbn:2': 'not_found' }, { 'v1:isbn:1': rows[0].url }, { 'v1:isbn:1': rows, 'v1:isbn:2': rows });
+    store.set('lib:a', { 'v1:isbn:1': 'not_found' });
+    expect([store.get('v1:isbn:1'), store.recordUrl('v1:isbn:1'), store.matches('v1:isbn:1')]).toEqual(['found', rows[0].url, rows]);
+    expect(store.matches('v1:isbn:2')).toBeUndefined();
+    store.set('lib:a', { 'v1:isbn:2': 'found' });
+    expect(store.get('v1:isbn:2')).toBe('found');
+  });
+
+  it('keeps the catalog’s rows of a find in memory, for the chosen library only; an answer without rows leaves them', () => {
+    const store = createHoldingsStore('lib:a');
+    let calls = 0;
+    store.subscribe(() => { calls += 1; });
+    const key = 'v1:isbn:1', rows = [{ title: 'One' }], better = [{ title: 'Two' }];
+    store.set('lib:a', { [key]: 'found' });
+    expect(store.matches(key)).toBeUndefined();
+    // Asked, and the answer had none (a stored one).
+    store.set('lib:a', { [key]: 'found' }, undefined, { [key]: [] });
+    expect(store.matches(key)).toEqual([]);
+    store.set('lib:a', { [key]: 'found' }, undefined, { [key]: rows });
+    expect(calls).toBe(3);
+    store.set('lib:a', { [key]: 'found' }, undefined, { [key]: [] });
+    expect([store.matches(key), calls]).toEqual([rows, 3]);
+    store.set('lib:a', { [key]: 'found' }, undefined, { [key]: better });
+    expect(store.matches(key)).toBe(better);
+    store.setLibrary('lib:b');
+    expect(store.matches(key)).toBeUndefined();
+    store.set('lib:a', { [key]: 'found' }, undefined, { [key]: rows });
+    store.setLibrary('lib:a');
+    expect(store.matches(key)).toBeUndefined();
+  });
 });
 
 describe('HoldingsProvider', () => {

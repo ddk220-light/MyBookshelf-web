@@ -246,6 +246,31 @@ test.describe('Desktop layout', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
   });
 
+  test('crossing the phone and desktop layouts checks the open book once, and keeps its answer', async ({ page }) => {
+    await setup(page, { saved: TWELVE.slice(1) });
+    const checks = [];
+    await page.route('**/api/v2/holdings/check', async route => {
+      checks.push(route.request().postDataJSON().bookKey);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      await route.fulfill({ json: { answer: 'not_found' } }).catch(() => {});
+    });
+    await page.goto(bookPath);
+    await expect.poll(() => checks.length).toBe(1);
+    const cross = async () => {
+      for (const size of [{ width: 390, height: 844 }, { width: 800, height: 900 }, WIDE]) {
+        await page.setViewportSize(size);
+        await expect(slot(page)).toHaveCount(size.width < 640 ? 0 : 1);
+        await expect(page.getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
+      }
+    };
+    await cross();
+    await expect(page.getByRole('group', { name: 'Not in your library' })).toBeVisible();
+    await cross();
+    await expect(page.getByRole('group', { name: 'Not in your library' })).toBeVisible();
+    await page.waitForTimeout(300);
+    expect(checks).toEqual([BOOK.bookKey]);
+  });
+
   test('adding a book in the slot puts it on the shelf beside it', async ({ page }) => {
     await setup(page, { saved: TWELVE.slice(1) });
     await page.goto('/');

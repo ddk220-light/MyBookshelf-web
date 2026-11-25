@@ -180,9 +180,10 @@ export const publicApi = Object.freeze({
   },
 
   // One-shelf background check for search results (plan 5.7): NDJSON lines
-  // Each found mark can carry a catalog record link. The terminal line
-  // explicitly names the books found absent or whose check failed.
-  async holdingsSearch(libraryId: string, query: string, bookKeys: readonly string[], onMark: (bookKey: string, catalogUrl?: string) => void, signal?: AbortSignal): Promise<HoldingsSearchDone> {
+  // Each found mark can carry a catalog record link and the catalog's
+  // matching rows; a book can be marked again when its rows arrive. The
+  // terminal line names the books found absent or whose check failed.
+  async holdingsSearch(libraryId: string, query: string, bookKeys: readonly string[], onMark: (bookKey: string, catalogUrl?: string, matches?: CatalogMatch[]) => void, signal?: AbortSignal): Promise<HoldingsSearchDone> {
     const asked = [...new Set(bookKeys)].slice(0, 12);
     const response = await send('/holdings/search', { libraryId, query, books: asked.map(bookKey => ({ bookKey })) }, signal, true);
     if (!response.ok) throw await failure(response);
@@ -199,7 +200,8 @@ export const publicApi = Object.freeze({
       if (event.type === 'mark') {
         if (event.answer === 'found' && typeof event.bookKey === 'string' && wanted.has(event.bookKey)) {
           found.add(event.bookKey);
-          onMark(event.bookKey, webLink(event.catalogUrl));
+          const matches = catalogMatches(event.matches);
+          onMark(event.bookKey, webLink(event.catalogUrl), matches.length ? matches : undefined);
         }
       } else if (event.type === 'done') {
         const couldNotCheck = askedKeys(event.couldntCheck).filter(key => !found.has(key));
